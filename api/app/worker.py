@@ -32,16 +32,28 @@ from .services.call_sheet_generator import CallSheetGenerator
 # ---------------------------------------------------------------------------
 
 def get_redis_settings() -> RedisSettings:
-    url = settings.redis_url  # e.g. "redis://redis:6379/0"
-    # arq RedisSettings accepts host/port/db separately
-    import re
-    m = re.match(r"redis://([^:/]+)(?::(\d+))?(?:/(\d+))?", url)
-    if m:
-        host = m.group(1)
-        port = int(m.group(2) or 6379)
-        db = int(m.group(3) or 0)
-        return RedisSettings(host=host, port=port, database=db)
-    return RedisSettings()
+    """Parse ``redis_url`` into RedisSettings.
+
+    Handles all common shapes:
+        redis://host:6379
+        redis://host:6379/0
+        redis://:PASSWORD@host:6379
+        redis://USERNAME:PASSWORD@host:6379/0   (Railway / Upstash style)
+        rediss://...                             (TLS)
+    """
+    url = settings.redis_url
+    if not url:
+        return RedisSettings()
+    from urllib.parse import urlparse
+    parsed = urlparse(url)
+    return RedisSettings(
+        host=parsed.hostname or "localhost",
+        port=parsed.port or 6379,
+        database=int(parsed.path.lstrip("/") or 0),
+        username=parsed.username,
+        password=parsed.password,
+        ssl=parsed.scheme == "rediss",
+    )
 
 
 # ---------------------------------------------------------------------------
