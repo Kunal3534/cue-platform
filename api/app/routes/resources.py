@@ -15,7 +15,7 @@ from __future__ import annotations
 from typing import Any
 
 import sqlalchemy as sa
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..auth import current_user
@@ -163,7 +163,7 @@ async def patch_resource(
 # DELETE /projects/{project_id}/resources/{kind}/{resource_id}
 # ---------------------------------------------------------------------------
 
-@router.delete("/{project_id}/resources/{kind}/{resource_id}", status_code=204)
+@router.delete("/{project_id}/resources/{kind}/{resource_id}", status_code=204, response_class=Response)
 async def delete_resource(
     project_id: str,
     kind: str,

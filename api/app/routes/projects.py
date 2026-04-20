@@ -5,7 +5,7 @@ import uuid
 from datetime import date
 
 import sqlalchemy as sa
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Response
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -248,7 +248,7 @@ async def get_project(
 # DELETE
 # ---------------------------------------------------------------------------
 
-@router.delete("/{project_id}", status_code=204)
+@router.delete("/{project_id}", status_code=204, response_class=Response)
 async def delete_project(
     project_id: str,
     user: User = Depends(current_user),
