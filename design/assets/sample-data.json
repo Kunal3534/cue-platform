@@ -1,0 +1,788 @@
+{
+  "title": "THE LAST SUMMER OF RATNAGIRI",
+  "window": "10th April to 10th May 2026",
+  "days": [
+    {
+      "row_idx": 4,
+      "date_raw": "10th April",
+      "day_label": "Shoot Day 1",
+      "is_shoot": true,
+      "shoot_day_no": 1,
+      "location": "RATNAGIRI",
+      "film_location": "VELNESHWAR BEACH",
+      "shift": "6 AM to 6 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "DR": 1.0,
+        "JR": 25.0,
+        "PV": 1.0,
+        "HC": 1.0,
+        "TS": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera",
+        "Priya"
+      ],
+      "supporting_cast": [
+        "Fisherman1",
+        "Fisherman2"
+      ],
+      "picture_vehicles": [
+        "Aarav's Motorcycle",
+        "Fishing Boat"
+      ],
+      "extras": "MOB - 25 (villagers)",
+      "notes": "Golden hour critical for closing shot."
+    },
+    {
+      "row_idx": 5,
+      "date_raw": "11th April",
+      "day_label": "Shoot Day 2",
+      "is_shoot": true,
+      "shoot_day_no": 2,
+      "location": "RATNAGIRI",
+      "film_location": "VELNESHWAR BEACH",
+      "shift": "6 AM to 6 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "DR": 1.0,
+        "JR": 40.0,
+        "PV": 1.0,
+        "HC": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera"
+      ],
+      "supporting_cast": [
+        "Fisherman1"
+      ],
+      "picture_vehicles": [
+        "Fishing Boat"
+      ],
+      "extras": "MOB - 40 (tourists)",
+      "notes": "Weather window tight \u2014 rain backup: scene 14."
+    },
+    {
+      "row_idx": 6,
+      "date_raw": "12th April",
+      "day_label": "Shoot Day 3",
+      "is_shoot": true,
+      "shoot_day_no": 3,
+      "location": "RATNAGIRI",
+      "film_location": "BHAGAWATI MANDIR",
+      "shift": "4 AM to 4 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "JJ": 1.0,
+        "JR": 60.0,
+        "HC": 1.0,
+        "TS": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera",
+        "Priya",
+        "Dada"
+      ],
+      "supporting_cast": [
+        "Priest",
+        "Singers x4"
+      ],
+      "picture_vehicles": [
+        "Vintage Ambassador Car"
+      ],
+      "extras": "MOB - 60 (devotees)",
+      "notes": "Temple permission \u2014 no shoes inside."
+    },
+    {
+      "row_idx": 7,
+      "date_raw": "13th April",
+      "day_label": "Shoot Day 4",
+      "is_shoot": true,
+      "shoot_day_no": 4,
+      "location": "RATNAGIRI",
+      "film_location": "DADA'S HOUSE",
+      "shift": "9 AM to 9 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "HC": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Dada",
+        "Aaji"
+      ],
+      "supporting_cast": [
+        "Neighbor"
+      ],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": "Interior, no exterior noise \u2014 blankets on windows."
+    },
+    {
+      "row_idx": 8,
+      "date_raw": "14th April",
+      "day_label": "Shoot Day 5",
+      "is_shoot": true,
+      "shoot_day_no": 5,
+      "location": "RATNAGIRI",
+      "film_location": "DADA'S HOUSE",
+      "shift": "9 AM to 9 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "HC": 1.0,
+        "VFX": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Aaji"
+      ],
+      "supporting_cast": [],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": "VFX plate shot of window \u2014 sun flare ref."
+    },
+    {
+      "row_idx": 9,
+      "date_raw": "15th April",
+      "day_label": "Break Day",
+      "is_shoot": false,
+      "shoot_day_no": null,
+      "location": "",
+      "film_location": "",
+      "shift": "",
+      "units": {},
+      "cast": [],
+      "supporting_cast": [],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": ""
+    },
+    {
+      "row_idx": 10,
+      "date_raw": "16th April",
+      "day_label": "Shoot Day 6",
+      "is_shoot": true,
+      "shoot_day_no": 6,
+      "location": "RATNAGIRI",
+      "film_location": "FORT / OLD RUINS",
+      "shift": "6 AM to 6 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "JJ": 1.0,
+        "DR": 1.0,
+        "CR": 1.0,
+        "HC": 1.0,
+        "TS": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera",
+        "Antagonist"
+      ],
+      "supporting_cast": [
+        "Guard",
+        "Tourists x2"
+      ],
+      "picture_vehicles": [
+        "Aarav's Motorcycle"
+      ],
+      "extras": "MOB - 15 (walkers)",
+      "notes": "Drone permits cleared; shot list A priority."
+    },
+    {
+      "row_idx": 11,
+      "date_raw": "17th April",
+      "day_label": "Shoot Day 7",
+      "is_shoot": true,
+      "shoot_day_no": 7,
+      "location": "RATNAGIRI",
+      "film_location": "FORT / OLD RUINS",
+      "shift": "6 AM to 6 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "JJ": 1.0,
+        "DR": 1.0,
+        "CR": 1.0,
+        "HC": 1.0,
+        "SFX": 1.0,
+        "TS": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Antagonist"
+      ],
+      "supporting_cast": [
+        "Guard"
+      ],
+      "picture_vehicles": [
+        "Aarav's Motorcycle",
+        "Antagonist's Jeep"
+      ],
+      "extras": "",
+      "notes": "Action sequence \u2014 SFX squibs, rehearsal at 5 AM."
+    },
+    {
+      "row_idx": 12,
+      "date_raw": "18th April",
+      "day_label": "Shoot Day 8",
+      "is_shoot": true,
+      "shoot_day_no": 8,
+      "location": "GANPATIPULE",
+      "film_location": "HIGHWAY / COASTAL ROAD",
+      "shift": "6 AM to 6 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "DR": 1.0,
+        "PV": 1.0,
+        "HC": 1.0,
+        "TS": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera"
+      ],
+      "supporting_cast": [],
+      "picture_vehicles": [
+        "Aarav's Motorcycle",
+        "Meera's Scooter"
+      ],
+      "extras": "",
+      "notes": "Traffic control permit \u2014 highway 17."
+    },
+    {
+      "row_idx": 13,
+      "date_raw": "19th April",
+      "day_label": "Shoot Day 9",
+      "is_shoot": true,
+      "shoot_day_no": 9,
+      "location": "GANPATIPULE",
+      "film_location": "COASTAL CAFE",
+      "shift": "12 PM to 12 AM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "HC": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera",
+        "Priya"
+      ],
+      "supporting_cast": [
+        "Cafe Staff x2",
+        "Musicians x2"
+      ],
+      "picture_vehicles": [],
+      "extras": "MOB - 20 (cafe patrons)",
+      "notes": "Live music rehearsed previous day."
+    },
+    {
+      "row_idx": 14,
+      "date_raw": "20th April",
+      "day_label": "Break Day",
+      "is_shoot": false,
+      "shoot_day_no": null,
+      "location": "",
+      "film_location": "",
+      "shift": "",
+      "units": {},
+      "cast": [],
+      "supporting_cast": [],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": ""
+    },
+    {
+      "row_idx": 15,
+      "date_raw": "21st April",
+      "day_label": "Shoot Day 10",
+      "is_shoot": true,
+      "shoot_day_no": 10,
+      "location": "KOLHAPUR",
+      "film_location": "UNIVERSITY COURTYARD",
+      "shift": "9 AM to 9 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "JJ": 1.0,
+        "JR": 80.0,
+        "HC": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Priya"
+      ],
+      "supporting_cast": [
+        "Professor",
+        "Students x6"
+      ],
+      "picture_vehicles": [],
+      "extras": "MOB - 80 (students)",
+      "notes": "Convocation recreation scene."
+    },
+    {
+      "row_idx": 16,
+      "date_raw": "22nd April",
+      "day_label": "Shoot Day 11",
+      "is_shoot": true,
+      "shoot_day_no": 11,
+      "location": "KOLHAPUR",
+      "film_location": "UNIVERSITY CORRIDORS",
+      "shift": "9 AM to 9 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "SL": 1.0,
+        "HC": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Priya"
+      ],
+      "supporting_cast": [
+        "Students x3"
+      ],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": ""
+    },
+    {
+      "row_idx": 17,
+      "date_raw": "23rd April",
+      "day_label": "Shoot Day 12",
+      "is_shoot": true,
+      "shoot_day_no": 12,
+      "location": "KOLHAPUR",
+      "film_location": "MAHALAKSHMI TEMPLE",
+      "shift": "4 AM to 4 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "JJ": 1.0,
+        "JR": 120.0,
+        "HC": 1.0,
+        "TS": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera",
+        "Dada"
+      ],
+      "supporting_cast": [
+        "Priest",
+        "Family x5"
+      ],
+      "picture_vehicles": [
+        "Vintage Ambassador Car"
+      ],
+      "extras": "MOB - 120 (devotees)",
+      "notes": "Morning aarti at 5 AM \u2014 respect devotees."
+    },
+    {
+      "row_idx": 18,
+      "date_raw": "24th April",
+      "day_label": "Dance Rehearsal",
+      "is_shoot": false,
+      "shoot_day_no": null,
+      "location": "",
+      "film_location": "",
+      "shift": "",
+      "units": {},
+      "cast": [],
+      "supporting_cast": [],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": ""
+    },
+    {
+      "row_idx": 19,
+      "date_raw": "25th April",
+      "day_label": "Shoot Day 13",
+      "is_shoot": true,
+      "shoot_day_no": 13,
+      "location": "KOLHAPUR",
+      "film_location": "WEDDING HALL",
+      "shift": "6 PM to 6 AM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "JJ": 1.0,
+        "JR": 180.0,
+        "CR": 1.0,
+        "HC": 1.0,
+        "TS": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera",
+        "Dada",
+        "Aaji",
+        "Priya",
+        "Antagonist"
+      ],
+      "supporting_cast": [
+        "Family x12",
+        "Band x6"
+      ],
+      "picture_vehicles": [
+        "Vintage Ambassador Car",
+        "Decorated Horse Cart"
+      ],
+      "extras": "MOB - 180 (wedding guests)",
+      "notes": "Song sequence \u2014 playback coordinated with band."
+    },
+    {
+      "row_idx": 20,
+      "date_raw": "26th April",
+      "day_label": "Shoot Day 14",
+      "is_shoot": true,
+      "shoot_day_no": 14,
+      "location": "KOLHAPUR",
+      "film_location": "WEDDING HALL",
+      "shift": "6 PM to 6 AM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "HC": 1.0,
+        "VFX": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera",
+        "Priya"
+      ],
+      "supporting_cast": [
+        "Family x6"
+      ],
+      "picture_vehicles": [],
+      "extras": "MOB - 80 (wedding guests)",
+      "notes": "Emotional sequence \u2014 closed set."
+    },
+    {
+      "row_idx": 21,
+      "date_raw": "27th April",
+      "day_label": "Break Day",
+      "is_shoot": false,
+      "shoot_day_no": null,
+      "location": "",
+      "film_location": "",
+      "shift": "",
+      "units": {},
+      "cast": [],
+      "supporting_cast": [],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": ""
+    },
+    {
+      "row_idx": 22,
+      "date_raw": "28th April",
+      "day_label": "Shoot Day 15",
+      "is_shoot": true,
+      "shoot_day_no": 15,
+      "location": "MUMBAI",
+      "film_location": "CST STATION",
+      "shift": "4 AM to 4 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "JJ": 1.0,
+        "JR": 100.0,
+        "HC": 1.0,
+        "TS": 1.0
+      },
+      "cast": [
+        "Aarav"
+      ],
+      "supporting_cast": [
+        "Porter",
+        "Travellers x4"
+      ],
+      "picture_vehicles": [
+        "Local Train Replica"
+      ],
+      "extras": "MOB - 100 (commuters)",
+      "notes": "Station permit 4-8 AM only \u2014 strict window."
+    },
+    {
+      "row_idx": 23,
+      "date_raw": "29th April",
+      "day_label": "Shoot Day 16",
+      "is_shoot": true,
+      "shoot_day_no": 16,
+      "location": "MUMBAI",
+      "film_location": "BANDRA STREETS",
+      "shift": "12 PM to 12 AM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "DR": 1.0,
+        "HC": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera"
+      ],
+      "supporting_cast": [
+        "Street Vendor",
+        "Shopkeeper"
+      ],
+      "picture_vehicles": [
+        "Aarav's Motorcycle",
+        "Taxi"
+      ],
+      "extras": "",
+      "notes": "Night-time street shoot \u2014 traffic police cleared."
+    },
+    {
+      "row_idx": 24,
+      "date_raw": "30th April",
+      "day_label": "Shoot Day 17",
+      "is_shoot": true,
+      "shoot_day_no": 17,
+      "location": "MUMBAI",
+      "film_location": "CAFE MONDEGAR",
+      "shift": "6 PM to 6 AM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "HC": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera"
+      ],
+      "supporting_cast": [
+        "Waiter"
+      ],
+      "picture_vehicles": [],
+      "extras": "MOB - 30 (cafe patrons)",
+      "notes": "Intimate dialogue scene."
+    },
+    {
+      "row_idx": 25,
+      "date_raw": "1st May",
+      "day_label": "Shoot Day 18",
+      "is_shoot": true,
+      "shoot_day_no": 18,
+      "location": "MUMBAI",
+      "film_location": "MARINE DRIVE",
+      "shift": "6 PM to 6 AM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "JJ": 1.0,
+        "DR": 1.0,
+        "HC": 1.0,
+        "TS": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera"
+      ],
+      "supporting_cast": [],
+      "picture_vehicles": [
+        "Aarav's Motorcycle"
+      ],
+      "extras": "MOB - 40",
+      "notes": "Iconic shot \u2014 queen's necklace pan."
+    },
+    {
+      "row_idx": 26,
+      "date_raw": "2nd May",
+      "day_label": "Break Day",
+      "is_shoot": false,
+      "shoot_day_no": null,
+      "location": "",
+      "film_location": "",
+      "shift": "",
+      "units": {},
+      "cast": [],
+      "supporting_cast": [],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": ""
+    },
+    {
+      "row_idx": 27,
+      "date_raw": "3rd May",
+      "day_label": "Shoot Day 19",
+      "is_shoot": true,
+      "shoot_day_no": 19,
+      "location": "FILM CITY MUMBAI",
+      "film_location": "SET A \u2014 APARTMENT",
+      "shift": "9 AM to 9 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "HC": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Priya"
+      ],
+      "supporting_cast": [],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": "Controlled interior \u2014 pickup shots."
+    },
+    {
+      "row_idx": 28,
+      "date_raw": "4th May",
+      "day_label": "Shoot Day 20",
+      "is_shoot": true,
+      "shoot_day_no": 20,
+      "location": "FILM CITY MUMBAI",
+      "film_location": "SET B \u2014 OFFICE",
+      "shift": "9 AM to 9 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "HC": 1.0,
+        "VFX": 1.0
+      },
+      "cast": [
+        "Aarav"
+      ],
+      "supporting_cast": [
+        "Colleagues x3"
+      ],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": "VFX backdrop plate."
+    },
+    {
+      "row_idx": 29,
+      "date_raw": "5th May",
+      "day_label": "Shoot Day 21",
+      "is_shoot": true,
+      "shoot_day_no": 21,
+      "location": "FILM CITY MUMBAI",
+      "film_location": "SET A \u2014 APARTMENT",
+      "shift": "9 AM to 9 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "C2": 1.0,
+        "L2": 1.0,
+        "SL": 1.0,
+        "HC": 1.0,
+        "VFX": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Meera",
+        "Priya",
+        "Antagonist"
+      ],
+      "supporting_cast": [],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": "Climax confrontation scene."
+    },
+    {
+      "row_idx": 30,
+      "date_raw": "6th May",
+      "day_label": "Shoot Day 22",
+      "is_shoot": true,
+      "shoot_day_no": 22,
+      "location": "FILM CITY MUMBAI",
+      "film_location": "SET C \u2014 HOSPITAL",
+      "shift": "6 AM to 6 PM",
+      "units": {
+        "C1": 1.0,
+        "L1": 1.0,
+        "HC": 1.0
+      },
+      "cast": [
+        "Aarav",
+        "Dada",
+        "Aaji"
+      ],
+      "supporting_cast": [
+        "Doctor",
+        "Nurses x2"
+      ],
+      "picture_vehicles": [],
+      "extras": "",
+      "notes": "Final scene."
+    }
+  ],
+  "unit_cols": [
+    "C1",
+    "L1",
+    "C2",
+    "L2",
+    "SL",
+    "DR",
+    "JR",
+    "PV",
+    "HC",
+    "TS",
+    "JJ",
+    "VFX",
+    "CR",
+    "SFX"
+  ],
+  "cast_map": {
+    "AARAV": "SIDDHARTH CHANDEKAR",
+    "MEERA": "AMRUTA KHANVILKAR",
+    "PRIYA": "SHRUTI MARATHE",
+    "DADA": "MOHAN AGASHE",
+    "AAJI": "ROHINI HATTANGADI",
+    "ANTAGONIST": "ABHIJEET KHANDKEKAR"
+  }
+}

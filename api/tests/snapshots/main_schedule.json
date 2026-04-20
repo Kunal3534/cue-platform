@@ -1,0 +1,1585 @@
+{
+  "view": "main_schedule",
+  "project_id": "...",
+  "scenario_id": "...",
+  "computed_at": "...",
+  "days": [
+    {
+      "day_id": "UUID",
+      "date": "2026-01-01",
+      "day_of_week": "Thursday",
+      "shoot_day_number": 1,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "VELNESHWAR BEACH",
+        "area": "RATNAGIRI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D1-1",
+          "title": "VELNESHWAR BEACH",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA",
+        "PRIYA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "DR",
+          "kind": "drone",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "PV",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        },
+        {
+          "unit_code": "TS",
+          "kind": "camera",
+          "count": 1
+        }
+      ],
+      "jr_count": 25,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-02",
+      "day_of_week": "Friday",
+      "shoot_day_number": 2,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "VELNESHWAR BEACH",
+        "area": "RATNAGIRI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D2-1",
+          "title": "VELNESHWAR BEACH",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "DR",
+          "kind": "drone",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "PV",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        }
+      ],
+      "jr_count": 40,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-03",
+      "day_of_week": "Saturday",
+      "shoot_day_number": 3,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "BHAGAWATI MANDIR",
+        "area": "RATNAGIRI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D3-1",
+          "title": "BHAGAWATI MANDIR",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA",
+        "PRIYA",
+        "DADA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "JJ",
+          "kind": "jib",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "TS",
+          "kind": "camera",
+          "count": 1
+        }
+      ],
+      "jr_count": 60,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-04",
+      "day_of_week": "Sunday",
+      "shoot_day_number": 4,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "DADA'S HOUSE",
+        "area": "RATNAGIRI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D4-1",
+          "title": "DADA'S HOUSE",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "DADA",
+        "AAJI"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-05",
+      "day_of_week": "Monday",
+      "shoot_day_number": 5,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "DADA'S HOUSE",
+        "area": "RATNAGIRI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D5-1",
+          "title": "DADA'S HOUSE",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "AAJI"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "VFX",
+          "kind": "special",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-06",
+      "day_of_week": "Tuesday",
+      "shoot_day_number": null,
+      "kind": "off",
+      "location": null,
+      "scenes": [],
+      "cast": [],
+      "camera_units": [],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-07",
+      "day_of_week": "Wednesday",
+      "shoot_day_number": 6,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "FORT / OLD RUINS",
+        "area": "RATNAGIRI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D6-1",
+          "title": "FORT / OLD RUINS",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA",
+        "ANTAGONIST"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "CR",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "DR",
+          "kind": "drone",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "JJ",
+          "kind": "jib",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        },
+        {
+          "unit_code": "TS",
+          "kind": "camera",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-08",
+      "day_of_week": "Thursday",
+      "shoot_day_number": 7,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "FORT / OLD RUINS",
+        "area": "RATNAGIRI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D7-1",
+          "title": "FORT / OLD RUINS",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "ANTAGONIST"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "CR",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "DR",
+          "kind": "drone",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "JJ",
+          "kind": "jib",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SFX",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "TS",
+          "kind": "camera",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-09",
+      "day_of_week": "Friday",
+      "shoot_day_number": 8,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "HIGHWAY / COASTAL ROAD",
+        "area": "GANPATIPULE",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D8-1",
+          "title": "HIGHWAY / COASTAL ROAD",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "DR",
+          "kind": "drone",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "PV",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "TS",
+          "kind": "camera",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-10",
+      "day_of_week": "Saturday",
+      "shoot_day_number": 9,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "COASTAL CAFE",
+        "area": "GANPATIPULE",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D9-1",
+          "title": "COASTAL CAFE",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA",
+        "PRIYA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-11",
+      "day_of_week": "Sunday",
+      "shoot_day_number": null,
+      "kind": "off",
+      "location": null,
+      "scenes": [],
+      "cast": [],
+      "camera_units": [],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-12",
+      "day_of_week": "Monday",
+      "shoot_day_number": 10,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "UNIVERSITY COURTYARD",
+        "area": "KOLHAPUR",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D10-1",
+          "title": "UNIVERSITY COURTYARD",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "PRIYA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "JJ",
+          "kind": "jib",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        }
+      ],
+      "jr_count": 80,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-13",
+      "day_of_week": "Tuesday",
+      "shoot_day_number": 11,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "UNIVERSITY CORRIDORS",
+        "area": "KOLHAPUR",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D11-1",
+          "title": "UNIVERSITY CORRIDORS",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "PRIYA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-14",
+      "day_of_week": "Wednesday",
+      "shoot_day_number": 12,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "MAHALAKSHMI TEMPLE",
+        "area": "KOLHAPUR",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D12-1",
+          "title": "MAHALAKSHMI TEMPLE",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA",
+        "DADA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "JJ",
+          "kind": "jib",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "TS",
+          "kind": "camera",
+          "count": 1
+        }
+      ],
+      "jr_count": 120,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-15",
+      "day_of_week": "Thursday",
+      "shoot_day_number": null,
+      "kind": "off",
+      "location": null,
+      "scenes": [],
+      "cast": [],
+      "camera_units": [],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-16",
+      "day_of_week": "Friday",
+      "shoot_day_number": 13,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "WEDDING HALL",
+        "area": "KOLHAPUR",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D13-1",
+          "title": "WEDDING HALL",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA",
+        "DADA",
+        "AAJI",
+        "PRIYA",
+        "ANTAGONIST"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "CR",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "JJ",
+          "kind": "jib",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        },
+        {
+          "unit_code": "TS",
+          "kind": "camera",
+          "count": 1
+        }
+      ],
+      "jr_count": 180,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-17",
+      "day_of_week": "Saturday",
+      "shoot_day_number": 14,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "WEDDING HALL",
+        "area": "KOLHAPUR",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D14-1",
+          "title": "WEDDING HALL",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA",
+        "PRIYA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        },
+        {
+          "unit_code": "VFX",
+          "kind": "special",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-18",
+      "day_of_week": "Sunday",
+      "shoot_day_number": null,
+      "kind": "off",
+      "location": null,
+      "scenes": [],
+      "cast": [],
+      "camera_units": [],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-19",
+      "day_of_week": "Monday",
+      "shoot_day_number": 15,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "CST STATION",
+        "area": "MUMBAI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D15-1",
+          "title": "CST STATION",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "JJ",
+          "kind": "jib",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        },
+        {
+          "unit_code": "TS",
+          "kind": "camera",
+          "count": 1
+        }
+      ],
+      "jr_count": 100,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-20",
+      "day_of_week": "Tuesday",
+      "shoot_day_number": 16,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "BANDRA STREETS",
+        "area": "MUMBAI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D16-1",
+          "title": "BANDRA STREETS",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "DR",
+          "kind": "drone",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-21",
+      "day_of_week": "Wednesday",
+      "shoot_day_number": 17,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "CAFE MONDEGAR",
+        "area": "MUMBAI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D17-1",
+          "title": "CAFE MONDEGAR",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-22",
+      "day_of_week": "Thursday",
+      "shoot_day_number": 18,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "MARINE DRIVE",
+        "area": "MUMBAI",
+        "kind": "ext"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D18-1",
+          "title": "MARINE DRIVE",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "DR",
+          "kind": "drone",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "JJ",
+          "kind": "jib",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "TS",
+          "kind": "camera",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-23",
+      "day_of_week": "Friday",
+      "shoot_day_number": null,
+      "kind": "off",
+      "location": null,
+      "scenes": [],
+      "cast": [],
+      "camera_units": [],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-24",
+      "day_of_week": "Saturday",
+      "shoot_day_number": 19,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "SET A \u2014 APARTMENT",
+        "area": "FILM CITY MUMBAI",
+        "kind": "studio"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D19-1",
+          "title": "SET A \u2014 APARTMENT",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "PRIYA"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-25",
+      "day_of_week": "Sunday",
+      "shoot_day_number": 20,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "SET B \u2014 OFFICE",
+        "area": "FILM CITY MUMBAI",
+        "kind": "studio"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D20-1",
+          "title": "SET B \u2014 OFFICE",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "VFX",
+          "kind": "special",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-26",
+      "day_of_week": "Monday",
+      "shoot_day_number": 21,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "SET A \u2014 APARTMENT",
+        "area": "FILM CITY MUMBAI",
+        "kind": "studio"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D21-1",
+          "title": "SET A \u2014 APARTMENT",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "MEERA",
+        "PRIYA",
+        "ANTAGONIST"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "C2",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "L2",
+          "kind": "lighting",
+          "count": 1
+        },
+        {
+          "unit_code": "SL",
+          "kind": "steadi",
+          "count": 1
+        },
+        {
+          "unit_code": "VFX",
+          "kind": "special",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    },
+    {
+      "day_id": "UUID",
+      "date": "2026-01-27",
+      "day_of_week": "Tuesday",
+      "shoot_day_number": 22,
+      "kind": "shoot",
+      "location": {
+        "id": "UUID",
+        "name": "SET C \u2014 HOSPITAL",
+        "area": "FILM CITY MUMBAI",
+        "kind": "studio"
+      },
+      "scenes": [
+        {
+          "scene_id": "UUID",
+          "scene_number": "D22-1",
+          "title": "SET C \u2014 HOSPITAL",
+          "dn": "day",
+          "page_eighths": null,
+          "setups_est": 0,
+          "order_in_day": 1
+        }
+      ],
+      "cast": [
+        "AARAV",
+        "DADA",
+        "AAJI"
+      ],
+      "camera_units": [
+        {
+          "unit_code": "C1",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "HC",
+          "kind": "camera",
+          "count": 1
+        },
+        {
+          "unit_code": "L1",
+          "kind": "lighting",
+          "count": 1
+        }
+      ],
+      "jr_count": 0,
+      "shift_start": null,
+      "shift_end": null,
+      "notes": null
+    }
+  ],
+  "meta": {
+    "total_days": 27,
+    "shoot_days": 22,
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-27"
+  }
+}

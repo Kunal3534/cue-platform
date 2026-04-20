@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Last Summer of Ratnagiri · Calendar · Cue</title>
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <div class="nav__left">
+      <a href="../index.html" class="wordmark"><img src="../assets/cue-mark.svg" alt="Cue" class="wordmark__svg"></a>
+      <span class="meta"><a href="../index.html" style="color: var(--slate-70);">Projects</a> / The Last Summer of Ratnagiri</span>
+    </div>
+    <div class="nav__right">
+      <span class="pill">Auto-saved · 9:47 AM</span>
+      <span>kunal@pixis.ai</span>
+    </div>
+  </div>
+</nav>
+
+<main class="page page--wide">
+
+  <section class="proj-head">
+    <div class="proj-head__eyebrow">
+      <span class="strip-badge" style="transform: rotate(-3deg);">Feature</span>
+      <span class="meta meta--red">·  M A R A T H I</span>
+    </div>
+    <h1 class="proj-head__title">The Last Summer of Ratnagiri<span class="red">.</span></h1>
+    <div class="proj-head__sub">
+      <span>10th April — 10th May 2026</span>
+      <span>22 shoot days</span>
+      <span>94 scenes · 162 pages</span>
+      <span>dir. Sumitra Bhave</span>
+    </div>
+  </section>
+
+  <nav class="tabs">
+    <a class="tab" href="chat.html">Chat</a>
+    <a class="tab" href="schedule.html">Schedule</a>
+    <a class="tab is-active" href="calendar.html">Calendar</a>
+    <a class="tab" href="scenes.html">Scenes <span class="tab__count">94</span></a>
+    <a class="tab" href="resources.html">Resources <span class="tab__count">12</span></a>
+    <a class="tab" href="callsheets.html">Call sheets <span class="tab__count">22</span></a>
+    <a class="tab" href="master.html" style="margin-left: auto; color: var(--cue-red);">Edit master</a>
+  </nav>
+
+  <div class="row" style="padding: 28px 0 14px;">
+    <div>
+      <div class="meta">View</div>
+      <h2 style="font-family: var(--serif); font-weight: 400; font-size: 32px; margin: 4px 0 0; letter-spacing: -0.01em;">
+        Stripboard calendar <span class="voice" style="font-size: 18px; margin-left: 8px;">— every scene, laid onto the month.</span>
+      </h2>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn btn--ghost btn--sm">← Mar</button>
+      <button class="btn btn--ghost btn--sm" style="background: var(--slate); color: var(--chalk);">Apr</button>
+      <button class="btn btn--ghost btn--sm">May</button>
+      <span style="width: 12px;"></span>
+      <a href="#" class="btn btn--day btn--sm">Download .xlsx ↓</a>
+    </div>
+  </div>
+
+  <p class="voice" style="max-width: 760px; font-size: 14px; margin: 0 0 20px;">
+    Every scene is a draggable strip. <strong style="font-style: normal; color: var(--cue-red); font-family: var(--mono); font-weight: 500; font-size: 13px; letter-spacing: 0.04em;">Try it →</strong>
+    grab <em style="color: var(--slate);">SC 14</em> from Day 1 and drop it on Day 2 · grab <em style="color: var(--slate);">SC 53</em> from Unscheduled and drop it on any shoot day. Propagation preview runs before anything commits.
+  </p>
+
+  <!-- Toolbar -->
+  <div class="cal-toolbar">
+    <div class="cal-toolbar__group">
+      <span class="cal-toolbar__lbl">Layout</span>
+      <select class="cal-toolbar__sel">
+        <option>By scene</option>
+        <option>By cast</option>
+        <option>By location</option>
+        <option>By element</option>
+      </select>
+    </div>
+    <div class="cal-toolbar__group">
+      <span class="cal-toolbar__lbl">Board</span>
+      <select class="cal-toolbar__sel">
+        <option>Shoot plan (live)</option>
+        <option>What-if · Priya cancel replan</option>
+        <option>Director cut</option>
+        <option>+ new scenario…</option>
+      </select>
+    </div>
+    <div class="cal-toolbar__group">
+      <span class="cal-toolbar__lbl">Week</span>
+      <select class="cal-toolbar__sel">
+        <option>6-day week · Sun off</option>
+        <option>5-day week</option>
+        <option>7-day sprint</option>
+      </select>
+    </div>
+    <div class="cal-toolbar__spacer"></div>
+    <div class="cal-toolbar__group">
+      <span class="cal-toolbar__lbl">Legend</span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: var(--day);"></span> <span style="color: #D0C9BA;">D-ext</span></span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: var(--night);"></span> <span style="color: #D0C9BA;">N-ext</span></span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: var(--day-int); border: 1px solid #D0C9BA;"></span> <span style="color: #D0C9BA;">D-int</span></span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: var(--night-int);"></span> <span style="color: #D0C9BA;">N-int</span></span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: var(--dusk);"></span> <span style="color: #D0C9BA;">Dusk</span></span>
+      <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; background: #6B4EA8;"></span> <span style="color: #D0C9BA;">VFX-heavy</span></span>
+    </div>
+  </div>
+
+  <!-- The grid -->
+  <div class="cal-shell">
+
+    <!-- MAIN grid -->
+    <div class="cal-main">
+      <div class="cal-head">
+        <div class="cal-head__cell cal-head__cell--off">Sun</div>
+        <div class="cal-head__cell">Mon</div>
+        <div class="cal-head__cell">Tue</div>
+        <div class="cal-head__cell">Wed</div>
+        <div class="cal-head__cell">Thu</div>
+        <div class="cal-head__cell">Fri</div>
+        <div class="cal-head__cell">Sat</div>
+      </div>
+
+      <div class="cal-grid">
+
+        <!-- ─── Week of Apr 5 ─── -->
+        <div class="cal-cell cal-cell--outside">
+          <div class="cal-cell__head"><span class="cal-cell__day-n">·</span><span class="cal-cell__date">5</span></div>
+        </div>
+        <div class="cal-cell">
+          <div class="cal-cell__head"><span class="cal-cell__day-n" style="color: var(--slate-50);">Pre-pro</span><span class="cal-cell__date">6</span></div>
+          <div class="cal-cell__banner">DoP arrives · Avinash Arun</div>
+        </div>
+        <div class="cal-cell">
+          <div class="cal-cell__head"><span class="cal-cell__day-n" style="color: var(--slate-50);">Pre-pro</span><span class="cal-cell__date">7</span></div>
+          <div class="cal-cell__banner">Camera test · Indiacine Mumbai</div>
+        </div>
+        <div class="cal-cell">
+          <div class="cal-cell__head"><span class="cal-cell__day-n" style="color: var(--slate-50);">Pre-pro</span><span class="cal-cell__date">8</span></div>
+          <div class="cal-cell__banner">Costume fit · Lovalekar studio</div>
+        </div>
+        <div class="cal-cell cal-cell--today">
+          <div class="cal-cell__head"><span class="cal-cell__day-n">Travel</span><span class="cal-cell__date">9</span></div>
+          <div class="cal-cell__tag">TODAY</div>
+          <div class="cal-big-banner cal-big-banner--travel">
+            <div class="cal-big-banner__lbl">Unit travel</div>
+            <div class="cal-big-banner__sub">Mumbai → Ratnagiri<br>convoy dep 04:15 tomorrow</div>
+          </div>
+        </div>
+        <!-- DAY 1 · Velneshwar -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 1</span></div>
+            <span class="cal-cell__date">10</span>
+          </div>
+          <div class="cal-cell__summary">06:00–18:00 · 4 2/8 pgs · 9 setups</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">14</span><span class="cal-strip__desc">Velneshwar Beach</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">17</span><span class="cal-strip__desc">Aarav &amp; Meera walk</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">18A</span><span class="cal-strip__desc">Priya arrives</span></a>
+            <a href="day.html" class="cal-strip cal-strip--dusk"><span class="cal-strip__num">21</span><span class="cal-strip__desc">Closing shot — boat</span></a>
+          </div>
+        </div>
+        <!-- DAY 2 · Bhatye Fort -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 2</span></div>
+            <span class="cal-cell__date">11</span>
+          </div>
+          <div class="cal-cell__summary">07:00–19:00 · 3 4/8 pgs · 6 setups</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">6</span><span class="cal-strip__desc">Fort ramparts</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">7</span><span class="cal-strip__desc">Dada &amp; elders</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">8</span><span class="cal-strip__desc">Steadicam descent</span></a>
+          </div>
+        </div>
+
+        <!-- ─── Week of Apr 12 ─── -->
+        <!-- DAY 3 N · Ganpatipule -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 3 · N</span></div>
+            <span class="cal-cell__date">12</span>
+          </div>
+          <div class="cal-cell__summary">18:00–06:00 · 6 6/8 pgs · 14 setups</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--night"><span class="cal-strip__num">41</span><span class="cal-strip__desc">Festival procession</span></a>
+            <a href="day.html" class="cal-strip cal-strip--night"><span class="cal-strip__num">42</span><span class="cal-strip__desc">Aarav meets crowd</span></a>
+            <a href="day.html" class="cal-strip cal-strip--night"><span class="cal-strip__num">43</span><span class="cal-strip__desc">Dancers circle</span></a>
+            <a href="day.html" class="cal-strip cal-strip--night"><span class="cal-strip__num">44</span><span class="cal-strip__desc">Dada confronts</span></a>
+            <a href="day.html" class="cal-strip cal-strip--vfx"><span class="cal-strip__num">45</span><span class="cal-strip__desc">Crowd aug · vfx plate</span></a>
+          </div>
+        </div>
+        <!-- Mon 13 · Travel -->
+        <div class="cal-cell cal-cell--off">
+          <div class="cal-cell__head"><span class="cal-cell__day-n" style="color: var(--slate-50);">Travel</span><span class="cal-cell__date">13</span></div>
+          <div class="cal-big-banner cal-big-banner--travel">
+            <div class="cal-big-banner__lbl">Company move</div>
+            <div class="cal-big-banner__sub">Ratnagiri → Gaganbawda<br>4 hr convoy · dep 08:00</div>
+          </div>
+        </div>
+        <!-- DAY 4 · Abhay Wada -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 4</span></div>
+            <span class="cal-cell__date">14</span>
+          </div>
+          <div class="cal-cell__summary">08:00–20:00 · 12 pgs · 18 setups</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">22</span><span class="cal-strip__desc">Family home entry</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">23</span><span class="cal-strip__desc">Meera &amp; Aaji tea</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">24</span><span class="cal-strip__desc">Dada's study</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">26</span><span class="cal-strip__desc">Corridor POV</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">27</span><span class="cal-strip__desc">Letter discovered</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">28</span><span class="cal-strip__desc">Dinner confrontation</span></a>
+          </div>
+        </div>
+        <!-- DAY 5 · Abhay Wada kitchen -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 5</span></div>
+            <span class="cal-cell__date">15</span>
+          </div>
+          <div class="cal-cell__summary">08:00–20:00 · 2 pgs · 5 setups</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">29</span><span class="cal-strip__desc">Kitchen · Aaji teaches Meera</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">30</span><span class="cal-strip__desc">Priya enters</span></a>
+          </div>
+        </div>
+        <!-- DAY 6 · Village square -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 6</span></div>
+            <span class="cal-cell__date">16</span>
+          </div>
+          <div class="cal-cell__summary">07:00–19:00 · 4 pgs · 8 setups</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">31</span><span class="cal-strip__desc">Village square</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">32</span><span class="cal-strip__desc">Vasudev arrives</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">33</span><span class="cal-strip__desc">Market chatter</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">34</span><span class="cal-strip__desc">Police Gypsy pull-up</span></a>
+          </div>
+        </div>
+        <!-- DAY 7 N · Mahadwar bazaar -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 7 · N</span></div>
+            <span class="cal-cell__date">17</span>
+          </div>
+          <div class="cal-cell__summary">17:00–03:00 · 5 4/8 pgs · 11 setups</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--night"><span class="cal-strip__num">47</span><span class="cal-strip__desc">Bazaar oner</span></a>
+            <a href="day.html" class="cal-strip cal-strip--night"><span class="cal-strip__num">48</span><span class="cal-strip__desc">Hawker encounter</span></a>
+            <a href="day.html" class="cal-strip cal-strip--night"><span class="cal-strip__num">49</span><span class="cal-strip__desc">Inspector reveal</span></a>
+          </div>
+        </div>
+        <!-- Sat 18 -->
+        <div class="cal-cell cal-cell--off">
+          <div class="cal-cell__head"><span class="cal-cell__day-n" style="color: var(--slate-50);">Off</span><span class="cal-cell__date">18</span></div>
+          <div class="cal-big-banner cal-big-banner--off">
+            <div class="cal-big-banner__lbl">Weekly off</div>
+            <div class="cal-big-banner__sub">Unit rests · HMU refresh</div>
+          </div>
+        </div>
+
+        <!-- ─── Week of Apr 19 ─── -->
+        <!-- Sun 19 · Weather buffer -->
+        <div class="cal-cell cal-cell--off">
+          <div class="cal-cell__head"><span class="cal-cell__day-n" style="color: var(--slate-50);">Buffer</span><span class="cal-cell__date">19</span></div>
+          <div class="cal-big-banner cal-big-banner--hold">
+            <div class="cal-big-banner__lbl">Weather buffer</div>
+            <div class="cal-big-banner__sub">Hold — Day 3 reshoot<br>if Ganpatipule weather turns</div>
+          </div>
+        </div>
+        <!-- DAY 8 Dusk · NH-66 -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 8 · Dsk</span></div>
+            <span class="cal-cell__date">20</span>
+          </div>
+          <div class="cal-cell__summary">15:00–20:30 · 2 2/8 pgs · 4 setups</div>
+          <div class="cal-cell__banner">⚡ Road perm 15:00–20:30 · stunt coord on site</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--dusk"><span class="cal-strip__num">58</span><span class="cal-strip__desc">NH-66 motorcycle</span></a>
+            <a href="day.html" class="cal-strip cal-strip--dusk"><span class="cal-strip__num">59</span><span class="cal-strip__desc">Swerve · stunt dbl</span></a>
+          </div>
+        </div>
+        <!-- DAY 9 N/I · Rankala -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 9 · N/I</span></div>
+            <span class="cal-cell__date">21</span>
+          </div>
+          <div class="cal-cell__summary">18:00–04:00 · 3 pgs · 7 setups</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--night-int"><span class="cal-strip__num">61</span><span class="cal-strip__desc">Lakeside dinner</span></a>
+            <a href="day.html" class="cal-strip cal-strip--night-int"><span class="cal-strip__num">62</span><span class="cal-strip__desc">Dada confronts Aarav</span></a>
+          </div>
+        </div>
+        <!-- DAY 10 · Kolhapur Palace -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 10</span></div>
+            <span class="cal-cell__date">22</span>
+          </div>
+          <div class="cal-cell__summary">07:00–19:00 · 4 4/8 pgs · 11 setups</div>
+          <div class="cal-cell__banner">⚠ No drone · DGCA zone</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">66</span><span class="cal-strip__desc">Palace arrival</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">67</span><span class="cal-strip__desc">Horse entrance</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">68</span><span class="cal-strip__desc">Throne room reveal</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">70</span><span class="cal-strip__desc">Priya breaks down</span></a>
+          </div>
+        </div>
+        <!-- Thu 23 · Weather hold -->
+        <div class="cal-cell cal-cell--off">
+          <div class="cal-cell__head"><span class="cal-cell__day-n" style="color: var(--cue-red);">Hold</span><span class="cal-cell__date">23</span></div>
+          <div class="cal-big-banner cal-big-banner--hold">
+            <div class="cal-big-banner__lbl">IMD yellow alert</div>
+            <div class="cal-big-banner__sub">Kolhapur district<br>decision by 16:00 prev day</div>
+          </div>
+        </div>
+        <!-- DAY 11 · Panhala Fort -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 11</span></div>
+            <span class="cal-cell__date">24</span>
+          </div>
+          <div class="cal-cell__summary">08:00–20:00 · 5 pgs · 9 setups · stunts</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">72</span><span class="cal-strip__desc">Fight · Panhala rampart</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">73</span><span class="cal-strip__desc">Aftermath insert</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">74</span><span class="cal-strip__desc">Police arrive</span></a>
+          </div>
+        </div>
+        <!-- DAY 12 · Jyotiba temple road -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 12</span></div>
+            <span class="cal-cell__date">25</span>
+          </div>
+          <div class="cal-cell__summary">07:00–19:00 · 4 pgs · 8 setups · animals</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">75</span><span class="cal-strip__desc">Temple road · stray dogs</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">76</span><span class="cal-strip__desc">Aarav walks · VO</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day"><span class="cal-strip__num">78</span><span class="cal-strip__desc">Meera calls</span></a>
+          </div>
+        </div>
+
+        <!-- ─── Week of Apr 26 ─── -->
+        <div class="cal-cell cal-cell--off">
+          <div class="cal-cell__head"><span class="cal-cell__day-n" style="color: var(--slate-50);">Off</span><span class="cal-cell__date">26</span></div>
+          <div class="cal-big-banner cal-big-banner--off">
+            <div class="cal-big-banner__lbl">Weekly off</div>
+          </div>
+        </div>
+        <div class="cal-cell cal-cell--off">
+          <div class="cal-cell__head"><span class="cal-cell__day-n" style="color: var(--slate-50);">Travel</span><span class="cal-cell__date">27</span></div>
+          <div class="cal-big-banner cal-big-banner--travel">
+            <div class="cal-big-banner__lbl">Company move</div>
+            <div class="cal-big-banner__sub">Kolhapur → Mumbai studio</div>
+          </div>
+        </div>
+        <!-- DAY 13 · Studio -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 13</span></div>
+            <span class="cal-cell__date">28</span>
+          </div>
+          <div class="cal-cell__summary">09:00–21:00 · 4 pgs · 10 setups</div>
+          <div class="cal-cell__banner">⚠ Amruta hold · contract conflict</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--vfx"><span class="cal-strip__num">79</span><span class="cal-strip__desc">Greenscreen · Bombay window</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">80</span><span class="cal-strip__desc">Studio flat · interior</span></a>
+          </div>
+        </div>
+        <!-- DAY 14 · Studio -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 14</span></div>
+            <span class="cal-cell__date">29</span>
+          </div>
+          <div class="cal-cell__summary">09:00–21:00 · 2 pgs · 5 setups</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">1</span><span class="cal-strip__desc">Prologue · Aarav VO</span></a>
+            <a href="day.html" class="cal-strip cal-strip--day-int"><span class="cal-strip__num">83</span><span class="cal-strip__desc">Bombay flat · morning</span></a>
+          </div>
+        </div>
+        <!-- DAY 15 N/I · Studio · prosthetics -->
+        <div class="cal-cell">
+          <div class="cal-cell__head">
+            <div class="cal-cell__head-left"><span class="cal-cell__day-n">Day 15 · N/I</span></div>
+            <span class="cal-cell__date">30</span>
+          </div>
+          <div class="cal-cell__summary">17:00–05:00 · 4 pgs · 7 setups · prosthetic</div>
+          <div class="cal-strips">
+            <a href="day.html" class="cal-strip cal-strip--night-int"><span class="cal-strip__num">81</span><span class="cal-strip__desc">1994 flashback — Dada aged</span></a>
+            <a href="day.html" class="cal-strip cal-strip--night-int"><span class="cal-strip__num">82</span><span class="cal-strip__desc">Aaji young · prosthetic</span></a>
+          </div>
+        </div>
+        <!-- Fri 1 May -->
+        <div class="cal-cell cal-cell--outside">
+          <div class="cal-cell__head"><span class="cal-cell__day-n">·</span><span class="cal-cell__date">1</span></div>
+        </div>
+        <div class="cal-cell cal-cell--outside">
+          <div class="cal-cell__head"><span class="cal-cell__day-n">·</span><span class="cal-cell__date">2</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- UNSCHEDULED column -->
+    <div class="cal-unsched">
+      <div class="cal-unsched__head">
+        Unscheduled <span class="tab__count" style="color: var(--cue-red); letter-spacing: 0;">4</span>
+        <div class="cal-unsched__sub">Drop scenes here to lift out of the plan</div>
+      </div>
+
+      <div class="cal-unsched__drop">
+        <div class="cal-strip cal-strip--day">
+          <span class="cal-strip__num">53</span>
+          <span class="cal-strip__desc">Aarav phone call · pickup</span>
+        </div>
+        <div class="cal-strip cal-strip--day-int">
+          <span class="cal-strip__num">92</span>
+          <span class="cal-strip__desc">Reaction insert · Meera</span>
+        </div>
+        <div class="cal-strip cal-strip--night-int">
+          <span class="cal-strip__num">87</span>
+          <span class="cal-strip__desc">Radio · 1994 flashback</span>
+        </div>
+        <div class="cal-strip cal-strip--vfx">
+          <span class="cal-strip__num">94</span>
+          <span class="cal-strip__desc">End title plate · Velneshwar</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--hair);">
+        <div class="cal-unsched__head" style="padding: 0; border: none; margin: 0 0 8px;">Day banner</div>
+        <p class="voice" style="font-size: 12px; line-height: 1.4; font-style: italic; color: var(--slate-70); margin: 0;">
+          Click any day cell to add a custom banner —<br>
+          e.g. <em style="color: var(--cue-red); font-style: normal;">"Shift 06–08 · no lunch break"</em>
+          or <em style="color: var(--cue-red); font-style: normal;">"Director travel — Sumitra back EOD"</em>.
+        </p>
+      </div>
+
+      <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--hair);">
+        <div class="cal-unsched__head" style="padding: 0; border: none; margin: 0 0 8px;">This month</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-family: var(--mono); font-size: 11px;">
+          <div><div style="color: var(--slate-50); font-size: 9px; letter-spacing: 0.1em;">SHOOT</div><div style="font-family: var(--serif); font-size: 20px; color: var(--slate);">16</div></div>
+          <div><div style="color: var(--slate-50); font-size: 9px; letter-spacing: 0.1em;">PAGES</div><div style="font-family: var(--serif); font-size: 20px; color: var(--slate);">108</div></div>
+          <div><div style="color: var(--slate-50); font-size: 9px; letter-spacing: 0.1em;">OFF</div><div style="font-family: var(--serif); font-size: 20px; color: var(--slate);">5</div></div>
+          <div><div style="color: var(--slate-50); font-size: 9px; letter-spacing: 0.1em;">HOLD</div><div style="font-family: var(--serif); font-size: 20px; color: var(--cue-red);">2</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Status bar (Movie Magic nod) -->
+  <div class="cal-status">
+    <div class="cal-status__group">
+      <span>94 scenes</span>
+      <span>162 pages</span>
+      <span>22 shooting days</span>
+      <span>6 non-shoot days</span>
+    </div>
+    <div class="cal-status__group">
+      <span>Starts · Fri 10 Apr 2026</span>
+      <span>Ends · Sun 10 May 2026</span>
+    </div>
+  </div>
+
+  <!-- What this calendar does -->
+  <section style="margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+    <div class="card" style="padding: 22px 24px;">
+      <div class="lbl" style="color: var(--cue-red);">Drag to reschedule</div>
+      <p class="voice" style="font-size: 14px; margin-top: 8px;">
+        Grab any scene strip and drop it on another day. Cue checks cast availability, location continuity, and crew travel before it commits — <a href="master.html" style="color: var(--cue-red); text-decoration: underline;">propagation preview</a> walks you through the downstream edits.
+      </p>
+    </div>
+    <div class="card" style="padding: 22px 24px;">
+      <div class="lbl" style="color: var(--cue-red);">Drop to unschedule</div>
+      <p class="voice" style="font-size: 14px; margin-top: 8px;">
+        Drag a scene into the Unscheduled column and it lifts out of the plan — no longer counted in totals, never lost.
+        Helpful for "let's see what the week looks like without SC 42" conversations.
+      </p>
+    </div>
+    <div class="card" style="padding: 22px 24px;">
+      <div class="lbl" style="color: var(--cue-red);">Scenarios</div>
+      <p class="voice" style="font-size: 14px; margin-top: 8px;">
+        Fork the live shoot plan into a what-if board — Priya cancel replan, director cut, rain contingency — without touching production. Diff against the live board before deciding.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<div class="proto-banner">
+  Prototype · <a href="chat.html">chat</a>
+  <a href="schedule.html">schedule</a>
+  <a href="day.html">shift-click a strip →</a>
+</div>
+
+<script>
+  // Live drag-and-drop: scene strips between day cells and Unscheduled.
+  // Shift+click any strip opens the day detail (navigation stays intact).
+
+  (function () {
+    let dragging = null;
+
+    function wireStrip(strip) {
+      strip.setAttribute('draggable', 'true');
+      strip.addEventListener('dragstart', function (e) {
+        dragging = strip;
+        strip.classList.add('is-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        // Firefox requires some data set to initiate drag
+        try { e.dataTransfer.setData('text/plain', strip.querySelector('.cal-strip__num')?.textContent || 'cue-strip'); } catch (_) {}
+      });
+      strip.addEventListener('dragend', function () {
+        strip.classList.remove('is-dragging');
+        document.querySelectorAll('.is-drop-target').forEach(function (z) { z.classList.remove('is-drop-target'); });
+        dragging = null;
+      });
+      // Shift-click opens day detail (click alone is ambiguous with drag-start on some browsers)
+      strip.addEventListener('click', function (e) {
+        if (e.shiftKey) {
+          window.location.href = 'day.html';
+        }
+      });
+    }
+
+    function wireZone(zone) {
+      zone.addEventListener('dragover', function (e) {
+        if (!dragging) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        zone.classList.add('is-drop-target');
+      });
+      zone.addEventListener('dragleave', function (e) {
+        // Only remove when leaving the zone entirely (not child elements)
+        if (e.target === zone) zone.classList.remove('is-drop-target');
+      });
+      zone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        zone.classList.remove('is-drop-target');
+        if (dragging && dragging.parentNode !== zone) {
+          zone.appendChild(dragging);
+          pulse(dragging);
+          // Also pulse the source cell's summary since totals conceptually change
+          // (We don't recompute — it's a prototype — but the visual sell is there.)
+        }
+      });
+    }
+
+    function pulse(el) {
+      el.animate(
+        [
+          { background: '#FFF4D1', transform: 'translateX(4px)' },
+          { transform: 'translateX(0)' }
+        ],
+        { duration: 280, easing: 'ease-out' }
+      );
+    }
+
+    // Wire up existing strips
+    document.querySelectorAll('.cal-strip').forEach(wireStrip);
+
+    // Drop zones: every day's strip stack + unscheduled drop container
+    document.querySelectorAll('.cal-strips, .cal-unsched__drop').forEach(wireZone);
+  })();
+</script>
+
+</body>
+</html>

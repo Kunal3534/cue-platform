@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>{{ project_title }} — Call Sheet · Day {{ shoot_day_number }}</title>
+<style>
+/* ---- tokens ---- */
+:root {
+  --slate:     #141418;
+  --slate-70:  #141418B3;
+  --slate-50:  #14141880;
+  --chalk:     #F4EEDF;
+  --paper:     #FAF5E6;
+  --hair:      #D0C9BA;
+  --cue-red:   #BC2F2A;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: #ffffff;
+  color: var(--slate);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+@page {
+  size: A4;
+  margin: 18mm 16mm;
+}
+.cs {
+  background: var(--paper);
+  border: 1px solid var(--hair);
+  padding: 40px 48px 36px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px;
+  color: var(--slate);
+  max-width: 860px;
+  margin: 0 auto;
+}
+/* header */
+.cs__hdr { text-align: center; border-bottom: 2px solid var(--slate); padding-bottom: 14px; }
+.cs__hdr-eyebrow {
+  font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--slate-70); margin-bottom: 6px;
+}
+.cs__hdr-title { font-size: 26px; font-weight: bold; letter-spacing: -0.01em; margin: 0 0 4px; }
+.cs__hdr-sub { font-size: 16px; font-weight: 800; letter-spacing: 0.06em; color: var(--cue-red); margin: 4px 0; text-transform: uppercase; }
+.cs__hdr-meta { font-size: 10px; letter-spacing: 0.08em; color: var(--slate-70); margin-top: 6px; }
+
+/* info grid */
+.cs__grid { display: table; width: 100%; margin-top: 20px; border: 1px solid var(--slate); border-collapse: collapse; }
+.cs__grid-row { display: table-row; }
+.cs__field { display: table-cell; padding: 10px 12px; border-right: 1px solid var(--slate); border-bottom: 1px solid var(--slate); width: 25%; vertical-align: top; }
+.cs__field:last-child { border-right: none; }
+.cs__field-lbl { font-size: 8px; letter-spacing: 0.14em; color: var(--slate-50); text-transform: uppercase; font-weight: bold; }
+.cs__field-val { font-size: 14px; margin-top: 3px; color: var(--slate); font-weight: normal; }
+
+/* sections */
+.cs__sec-title {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.18em; color: var(--slate);
+  text-transform: uppercase; margin: 22px 0 8px; padding-bottom: 5px;
+  border-bottom: 2px solid var(--slate);
+}
+.cs__table { width: 100%; border-collapse: collapse; font-size: 10px; }
+.cs__table th {
+  text-align: left; padding: 6px 8px;
+  background: var(--slate); color: var(--chalk);
+  font-size: 9px; letter-spacing: 0.1em; font-weight: bold; text-transform: uppercase;
+}
+.cs__table td { padding: 6px 8px; border-bottom: 1px dashed var(--hair); }
+.cs__table tr:last-child td { border-bottom: none; }
+
+/* key-value table (location, jr, transport) */
+.cs__kv { width: 100%; border-collapse: collapse; font-size: 10px; }
+.cs__kv td { padding: 5px 8px; border-bottom: 1px dashed var(--hair); }
+.cs__kv tr:last-child td { border-bottom: none; }
+.cs__kv td:first-child { width: 28%; font-weight: bold; }
+
+/* footer */
+.cs__foot {
+  margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--hair);
+  display: flex; justify-content: space-between;
+  font-size: 9px; letter-spacing: 0.08em; color: var(--slate-50);
+}
+
+/* notes */
+.cs__notes { font-style: italic; line-height: 1.6; font-size: 11px; color: var(--slate-70); }
+
+/* no-data placeholder */
+.cs__empty { color: var(--slate-50); font-style: italic; padding: 6px 0; }
+</style>
+</head>
+<body>
+<div class="cs">
+
+  <header class="cs__hdr">
+    <div class="cs__hdr-eyebrow">{{ project_title }} — Call Sheet</div>
+    <div class="cs__hdr-title">{{ location_name or "TBC" }}</div>
+    <div class="cs__hdr-sub">SHOOT DAY {{ "%02d"|format(shoot_day_number) }} · {{ dn_label }}</div>
+    <div class="cs__hdr-meta">{{ day_of_week|upper }} · {{ date_formatted }}{% if shift %} · SHIFT {{ shift }}{% endif %}</div>
+  </header>
+
+  {# timing grid #}
+  <div class="cs__grid">
+    <div class="cs__grid-row">
+      <div class="cs__field">
+        <div class="cs__field-lbl">Crew call</div>
+        <div class="cs__field-val">{{ crew_call or "—" }}</div>
+      </div>
+      <div class="cs__field">
+        <div class="cs__field-lbl">Cast call</div>
+        <div class="cs__field-val">{{ cast_call or "—" }}</div>
+      </div>
+      <div class="cs__field">
+        <div class="cs__field-lbl">First shot</div>
+        <div class="cs__field-val">{{ first_shot or "—" }}</div>
+      </div>
+      <div class="cs__field" style="border-right: none;">
+        <div class="cs__field-lbl">Wrap target</div>
+        <div class="cs__field-val">{{ wrap_target or "—" }}</div>
+      </div>
+    </div>
+    <div class="cs__grid-row">
+      <div class="cs__field" style="border-bottom: none;">
+        <div class="cs__field-lbl">Sunrise</div>
+        <div class="cs__field-val">{{ sunrise or "—" }}</div>
+      </div>
+      <div class="cs__field" style="border-bottom: none;">
+        <div class="cs__field-lbl">Golden hour</div>
+        <div class="cs__field-val">{{ golden_hour or "—" }}</div>
+      </div>
+      <div class="cs__field" style="border-bottom: none;">
+        <div class="cs__field-lbl">Sunset</div>
+        <div class="cs__field-val">{{ sunset or "—" }}</div>
+      </div>
+      <div class="cs__field" style="border-bottom: none; border-right: none;">
+        <div class="cs__field-lbl">Weather</div>
+        <div class="cs__field-val">{{ weather_summary or "—" }}</div>
+      </div>
+    </div>
+  </div>
+
+  {# location #}
+  <h3 class="cs__sec-title">Location</h3>
+  <table class="cs__kv">
+    {% if location_name %}<tr><td><strong>Shoot location</strong></td><td>{{ location_name }}{% if location_area %} · {{ location_area }}{% endif %}</td></tr>{% endif %}
+    {% if unit_base %}<tr><td><strong>Unit base</strong></td><td>{{ unit_base }}</td></tr>{% endif %}
+    {% if hospital %}<tr><td><strong>Hospital</strong></td><td>{{ hospital }}</td></tr>{% endif %}
+    {% if banner_text %}<tr><td><strong>Notes</strong></td><td>{{ banner_text }}</td></tr>{% endif %}
+  </table>
+
+  {# scenes #}
+  {% if scenes %}
+  <h3 class="cs__sec-title">Scenes · {{ scenes|length }}</h3>
+  <table class="cs__table">
+    <thead>
+      <tr>
+        <th style="width:50px;">SC</th>
+        <th style="width:55px;">PAGES</th>
+        <th>Description</th>
+        <th style="width:130px;">Characters</th>
+        <th style="width:55px;">D/N</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sc in scenes %}
+      <tr>
+        <td>{{ sc.scene_number }}</td>
+        <td>{{ fmt_pages(sc.page_eighths) }}</td>
+        <td>{{ sc.title or sc.description or "—" }}</td>
+        <td>{{ sc.characters|join(", ") }}</td>
+        <td>{{ sc.dn|upper }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p style="margin: 5px 0 0; color: var(--slate-50); font-size: 9px; letter-spacing: 0.04em;">
+    Total pages: {{ total_pages }} · Est. setups: {{ total_setups }}
+  </p>
+  {% else %}
+  <h3 class="cs__sec-title">Scenes</h3>
+  <p class="cs__empty">No scenes scheduled.</p>
+  {% endif %}
+
+  {# cast #}
+  {% if cast %}
+  <h3 class="cs__sec-title">Cast</h3>
+  <table class="cs__table">
+    <thead>
+      <tr>
+        <th style="width:30px;">#</th>
+        <th>Character / Actor</th>
+        <th style="width:80px;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ch in cast %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{% if ch.is_principal %}<strong>{{ ch.display_name }}</strong>{% else %}<em>{{ ch.display_name }}</em>{% endif %}{% if ch.actor_name %} — {{ ch.actor_name }}{% endif %}</td>
+        <td>W</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {# junior artists #}
+  {% if jr_calls %}
+  <h3 class="cs__sec-title">Junior artists{% set total_jr = jr_calls|sum(attribute='count') %} · {{ total_jr }}</h3>
+  <table class="cs__kv">
+    {% for jr in jr_calls %}
+    <tr>
+      <td><strong>{{ jr.grade|title }} (×{{ jr.count }})</strong></td>
+      <td>{% if jr.vendor_name %}{{ jr.vendor_name }}{% endif %}{% if jr.context %} · {{ jr.context }}{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  {# picture vehicles #}
+  {% if vehicle_names %}
+  <h3 class="cs__sec-title">Transport &amp; picture vehicles</h3>
+  <table class="cs__kv">
+    {% for v in vehicle_names %}
+    <tr>
+      <td><strong>{{ v }}</strong></td>
+      <td>Picture vehicle</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  {# camera units #}
+  {% if camera_uses %}
+  <h3 class="cs__sec-title">Camera · lighting · grip</h3>
+  <table class="cs__kv">
+    {% for code, kind, count in camera_uses %}
+    <tr>
+      <td><strong>{{ code }}</strong>{% if count > 1 %} ×{{ count }}{% endif %}</td>
+      <td>{{ kind|replace("_", " ")|title }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  {# AD notes #}
+  {% if day_notes %}
+  <h3 class="cs__sec-title">Notes</h3>
+  <p class="cs__notes">{{ day_notes }}</p>
+  {% endif %}
+
+  <div class="cs__foot">
+    <span>GENERATED BY CUE · {{ generated_at }}</span>
+    <span>v{{ version }}{% if prev_version %} · replaces v{{ prev_version }}{% endif %}</span>
+  </div>
+
+</div>
+</body>
+</html>

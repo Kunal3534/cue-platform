@@ -1,0 +1,28 @@
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    database_url: str = "postgresql+asyncpg://cue:cue@db:5432/cue"
+    secret_key: str = "dev-change-me"
+    frontend_origin: str = "http://localhost:3000"
+    dev_auto_login_email: str | None = None
+    resend_api_key: str | None = None
+    mail_from: str | None = None
+
+    # v1 additions
+    redis_url: str = "redis://redis:6379/0"
+    s3_endpoint: str = "http://storage:9000"
+    s3_bucket: str = "cue-v1"
+    s3_access_key: str = "minioadmin"
+    s3_secret_key: str = "minioadmin"
+    s3_region: str = "us-east-1"
+    anthropic_api_key: str | None = None
+    anthropic_model: str = "claude-sonnet-4-5"
+    magic_link_ttl_seconds: int = 900
+    env: str = "development"
+
+    class Config:
+        env_file = ".env"
+
+
+settings = Settings()

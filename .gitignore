@@ -1,0 +1,40 @@
+# ---------- Secrets ----------
+.env
+.env.local
+.env.*.local
+cookies.txt
+
+# ---------- Python ----------
+**/__pycache__/
+**/*.pyc
+**/.venv/
+**/venv/
+*.egg-info/
+
+# ---------- Node / Next ----------
+**/node_modules/
+**/.next/
+**/dist/
+**/build/
+web/tsconfig.tsbuildinfo
+web/next-env.d.ts
+
+# ---------- Local dev databases ----------
+**/test.db
+**/test.db-journal
+**/*.sqlite
+**/*.sqlite3
+
+# ---------- Archives / scratch ----------
+design.zip
+*.tmp
+*.swp
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+
+# ---------- IDE ----------
+.idea/
+.vscode/
+*.iml

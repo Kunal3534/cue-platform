@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Last Summer of Ratnagiri · Edit master · Cue</title>
+<link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <div class="nav__left">
+      <a href="../index.html" class="wordmark"><img src="../assets/cue-mark.svg" alt="Cue" class="wordmark__svg"></a>
+      <span class="meta"><a href="../index.html" style="color: var(--slate-70);">Projects</a> / The Last Summer of Ratnagiri / <span style="color: var(--cue-red);">Edit master</span></span>
+    </div>
+    <div class="nav__right">
+      <span class="pill pill--red">3 unsaved changes</span>
+      <span>kunal@pixis.ai</span>
+    </div>
+  </div>
+</nav>
+
+<main class="page page--wide">
+
+  <section class="proj-head">
+    <div class="proj-head__eyebrow">
+      <span class="strip-badge" style="transform: rotate(-3deg); background: var(--cue-red); color: var(--chalk);">Editing</span>
+      <span class="meta meta--red">·  M A S T E R  B R E A K D O W N</span>
+    </div>
+    <h1 class="proj-head__title">The Last Summer of Ratnagiri<span class="red">.</span></h1>
+    <div class="proj-head__sub">
+      <span>Direct edit mode · all 7 views regenerate on save</span>
+      <span>Undo ⌘Z · Redo ⌘⇧Z</span>
+      <span>Autosave paused</span>
+    </div>
+  </section>
+
+  <nav class="tabs">
+    <a class="tab" href="chat.html">Chat</a>
+    <a class="tab" href="schedule.html">Schedule</a>
+    <a class="tab" href="calendar.html">Calendar</a>
+    <a class="tab" href="scenes.html">Scenes <span class="tab__count">94</span></a>
+    <a class="tab " href="resources.html">Resources <span class="tab__count">12</span></a>
+    <a class="tab " href="callsheets.html">Call sheets <span class="tab__count">22</span></a>
+    <a class="tab is-active" href="master.html" style="margin-left: auto; color: var(--cue-red);">Edit master</a>
+  </nav>
+
+  <div class="row" style="padding: 28px 0 16px;">
+    <div>
+      <div class="meta">Edit mode</div>
+      <h2 style="font-family: var(--serif); font-weight: 400; font-size: 32px; margin: 4px 0 0; letter-spacing: -0.01em;">
+        Master grid <span class="voice" style="font-size: 18px; margin-left: 8px;">— the single source of truth.</span>
+      </h2>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button class="btn btn--ghost btn--sm">⟲ Undo</button>
+      <button class="btn btn--ghost btn--sm">Discard</button>
+      <a href="#preview" class="btn btn--primary">Save &amp; preview <span class="btn__arrow">→</span></a>
+    </div>
+  </div>
+
+  <p class="voice" style="max-width: 760px; font-size: 15px; margin-bottom: 24px;">
+    Edit any cell. Changes stay local until you save — then Cue regenerates all seven views and shows you
+    exactly what's changing before it commits. The propagation preview is your safety net.
+  </p>
+
+  <!-- The editable grid -->
+  <div class="mgrid">
+    <div class="mgrid__banner">
+      <span><strong>3 edits pending</strong> · Day 3 cast · Day 3 juniors · Day 10 location · <a href="#" style="color: var(--chalk); text-decoration: underline;">show changes</a></span>
+      <span>Last save: 14 APR at 18:32 by kunal@pixis.ai</span>
+    </div>
+    <table class="mgrid__table">
+      <thead>
+        <tr>
+          <th style="min-width: 90px;">Date</th>
+          <th style="min-width: 120px;">Day</th>
+          <th style="min-width: 140px;">Location</th>
+          <th style="min-width: 180px;">Film loc.</th>
+          <th style="min-width: 110px;">Shift</th>
+          <th style="min-width: 60px;">C1</th>
+          <th style="min-width: 60px;">C2</th>
+          <th style="min-width: 60px;">L1</th>
+          <th style="min-width: 60px;">SL</th>
+          <th style="min-width: 60px;">JR</th>
+          <th style="min-width: 60px;">PV</th>
+          <th style="min-width: 220px;">Cast</th>
+          <th style="min-width: 180px;">Supporting</th>
+          <th style="min-width: 220px;">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">10 Apr</td><td>Shoot Day 1</td><td>Ratnagiri</td><td>Velneshwar Beach</td>
+          <td class="mono">06–18</td><td>1</td><td>1</td><td>1</td><td>1</td><td>25</td><td>1</td>
+          <td>Aarav, Meera, Priya</td><td>Fisherman 1, Fisherman 2</td><td>Golden hour critical.</td>
+        </tr>
+        <tr>
+          <td class="mono">11 Apr</td><td>Shoot Day 2</td><td>Ratnagiri</td><td>Bhatye Fort</td>
+          <td class="mono">07–19</td><td>1</td><td>·</td><td>·</td><td>·</td><td>12</td><td>·</td>
+          <td>Aarav, Dada</td><td>Elders × 4</td><td>Steadicam. ASI permission.</td>
+        </tr>
+        <tr>
+          <td class="mono">12 Apr</td><td>Shoot Day 3 · N</td><td>Ratnagiri</td><td>Ganpatipule</td>
+          <td class="mono">18–06</td><td>1</td><td>1</td><td>3</td><td>1</td>
+          <td class="mgrid__cell--edit">48</td>
+          <td>·</td>
+          <td class="mgrid__cell--edit">Aarav, Meera, Priya, Dada, Vasudev</td>
+          <td>Dancers × 8, Musicians × 5</td>
+          <td>Full moon 11th. Weather buffer 19th.</td>
+        </tr>
+        <tr class="mgrid__row--head"><td colspan="14">— Travel day · 13 Apr · Ratnagiri → Gaganbawda —</td></tr>
+        <tr>
+          <td class="mono">14 Apr</td><td>Shoot Day 4</td><td>Gaganbawda</td><td>Abhay Wada interior</td>
+          <td class="mono">08–20</td><td>1</td><td>·</td><td>·</td><td>·</td><td>2</td><td>·</td>
+          <td>Meera, Dada, Aaji</td><td>—</td><td>12 pages coverage.</td>
+        </tr>
+        <tr>
+          <td class="mono">15 Apr</td><td>Shoot Day 5 · D/I</td><td>Gaganbawda</td><td>Abhay Wada kitchen</td>
+          <td class="mono">08–20</td><td>1</td><td>1</td><td>·</td><td>·</td><td>6</td><td>·</td>
+          <td>Meera, Aaji, Priya</td><td>—</td><td>Continuity from Day 4.</td>
+        </tr>
+        <tr>
+          <td class="mono">16 Apr</td><td>Shoot Day 6</td><td>Gaganbawda</td><td>Village square</td>
+          <td class="mono">07–19</td><td>1</td><td>·</td><td>·</td><td>·</td><td>12</td><td>1</td>
+          <td>Aarav, Vasudev, Inspector Thorat</td><td>—</td><td>Police Gypsy on set.</td>
+        </tr>
+        <tr>
+          <td class="mono">17 Apr</td><td>Shoot Day 7 · N</td><td>Kolhapur</td><td>Mahadwar bazaar</td>
+          <td class="mono">17–03</td><td>1</td><td>1</td><td>·</td><td>1</td><td>35</td><td>·</td>
+          <td>Aarav, Meera, Inspector</td><td>Hawkers</td><td>Closed set permissions.</td>
+        </tr>
+        <tr>
+          <td class="mono">20 Apr</td><td>Shoot Day 8 · Dsk</td><td>Konkan Highway</td>
+          <td class="mgrid__cell--edit">NH-66 · mile 218 pullout</td>
+          <td class="mono">15–20:30</td><td>1</td><td>·</td><td>·</td><td>1</td><td>·</td><td>2</td>
+          <td>Aarav, Meera</td><td>—</td><td>Traffic permission 15:00–20:30.</td>
+        </tr>
+        <tr>
+          <td class="mono">21 Apr</td><td>Shoot Day 9 · N/I</td><td>Kolhapur</td><td>Rankala Bungalow</td>
+          <td class="mono">18–04</td><td>1</td><td>·</td><td>1</td><td>·</td><td>·</td><td>·</td>
+          <td>Aarav, Meera, Dada</td><td>Dinner guests × 6</td><td>Closed set. No phones.</td>
+        </tr>
+        <tr style="background: var(--chalk);">
+          <td colspan="14" style="text-align: center; padding: 16px; font-family: var(--serif); font-style: italic; color: var(--slate-50);">
+            13 more rows · scroll or <a href="#" style="color: var(--cue-red); text-decoration: underline;">expand all</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- PROPAGATION PREVIEW MODAL -->
+<div class="modal-scrim" id="preview" style="display: flex;">
+  <div class="modal">
+    <div class="modal__eyebrow">
+      <span class="strip-badge" style="background: var(--cue-red); color: var(--chalk); transform: rotate(-2deg);">Preview</span>
+      <span class="meta meta--red">·  BEFORE YOU SAVE</span>
+    </div>
+    <h2 class="modal__title">Your 3 edits will change 5 views<span class="red">.</span></h2>
+    <p class="modal__body">
+      Cue traced every downstream effect. Here's what gets rewritten when you commit:
+    </p>
+
+    <div class="modal__impact">
+      <div class="impact-row">
+        <div class="impact-row__view">Main schedule</div>
+        <div class="impact-row__desc">Day 3 cast +Vasudev · Day 8 film loc updated · Day 3 JR 40 → 48</div>
+        <div class="impact-row__count">3 rows</div>
+      </div>
+      <div class="impact-row">
+        <div class="impact-row__view">Cast DOOD</div>
+        <div class="impact-row__desc">Vasudev becomes <strong>W</strong> on Day 3 (was <strong>·</strong>) · Vasudev W-count 9 → 10</div>
+        <div class="impact-row__count">1 row, 1 cell</div>
+      </div>
+      <div class="impact-row">
+        <div class="impact-row__view">Junior artists</div>
+        <div class="impact-row__desc">Day 3 total 40 → 48 · grand total 382 → 390 · vendor brief needs resend</div>
+        <div class="impact-row__count">1 row</div>
+      </div>
+      <div class="impact-row">
+        <div class="impact-row__view">Requirements</div>
+        <div class="impact-row__desc">Day 3 cast list + JR count · Day 8 unit base ref</div>
+        <div class="impact-row__count">2 days</div>
+      </div>
+      <div class="impact-row">
+        <div class="impact-row__view">Call sheets</div>
+        <div class="impact-row__desc">Day 3 v4 regenerated (v3 was already sent) · Day 8 v2</div>
+        <div class="impact-row__count">2 sheets</div>
+      </div>
+    </div>
+
+    <p class="voice" style="font-size: 14px; padding: 14px 0; border-top: var(--rule-soft); margin: 0;">
+      Day 3's call sheet was emailed 18:20 last night. Confirming will <strong style="color: var(--cue-red); font-style: normal;">re-send v4</strong>
+      to the unit — Aarav's driver, Meera's agent, Rohit at Mumbai Crowd Co. (+8 JR), and the night crew.
+    </p>
+
+    <div class="modal__actions">
+      <button class="btn btn--ghost">Keep editing</button>
+      <button class="btn btn--ghost">Save without notifying</button>
+      <button class="btn btn--primary" style="background: var(--cue-red);">Confirm &amp; re-send <span class="btn__arrow">→</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="proto-banner" style="bottom: auto; top: 80px; background: var(--cue-red); z-index: 50;">
+  Modal is open · <a href="schedule.html" style="color: var(--chalk);">exit to schedule</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cue — New project</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <div class="nav__left">
+      <a href="index.html" class="wordmark"><img src="assets/cue-mark.svg" alt="Cue" class="wordmark__svg"></a>
+      <span class="meta">Pre-production</span>
+    </div>
+    <div class="nav__right">
+      <a href="index.html" style="color: var(--slate-70);">← Projects</a>
+    </div>
+  </div>
+</nav>
+
+<main class="page upload stack-lg" style="padding-top: 80px;">
+
+  <header>
+    <div class="meta meta--red">New project</div>
+    <h1 class="display display--sm" style="margin-top: 14px;">Upload a master<span class="red">.</span></h1>
+    <p class="voice" style="margin-top: 20px; max-width: 560px;">
+      Any Katakirr-style .xlsx breakdown will do. Cue reads it, builds the project graph,
+      and renders the main schedule. The rest of the views come for free.
+    </p>
+  </header>
+
+  <div class="dropzone dropzone--active">
+    <div class="dropzone__headline">Ratnagiri_Master_v7.xlsx</div>
+    <div class="mono-sm" style="margin-top: 12px;">
+      38.4 KB · Katakirr-style master · 27 rows · ready to parse
+    </div>
+    <div class="dropzone__sub" style="margin-top: 18px;">
+      Looks right. Click <em style="color: var(--cue-red);">Build project</em> when you're ready.
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 16px; align-items: center;">
+    <a href="project/schedule.html" class="btn btn--primary">
+      Build project <span class="btn__arrow">→</span>
+    </a>
+    <button class="btn btn--ghost">Choose a different file</button>
+    <span class="voice" style="font-size: 14px; margin-left: auto;">or drag another .xlsx to replace.</span>
+  </div>
+
+  <hr class="hr" />
+
+  <section class="stack-md">
+    <h3 class="lbl">What Cue will do next</h3>
+
+    <div class="card" style="padding: 24px 28px;">
+      <div style="display: grid; grid-template-columns: 32px 1fr; gap: 20px; align-items: baseline;">
+        <span class="mono" style="color: var(--cue-red); font-size: 18px;">01</span>
+        <div>
+          <div class="lbl">Read the master</div>
+          <p class="voice" style="font-size: 15px; margin-top: 4px;">
+            We scan row 1 for the title, row 2 for the shoot window, row 3 for headers — then
+            walk every row below as either a shoot day or a break.
+          </p>
+        </div>
+      </div>
+      <div style="height: 1px; background: var(--hair-soft); margin: 18px 0;"></div>
+      <div style="display: grid; grid-template-columns: 32px 1fr; gap: 20px; align-items: baseline;">
+        <span class="mono" style="color: var(--cue-red); font-size: 18px;">02</span>
+        <div>
+          <div class="lbl">Build the graph</div>
+          <p class="voice" style="font-size: 15px; margin-top: 4px;">
+            Cast, vehicles, juniors, cameras, locations — every resource becomes a node.
+            Every shoot day, an edge.
+          </p>
+        </div>
+      </div>
+      <div style="height: 1px; background: var(--hair-soft); margin: 18px 0;"></div>
+      <div style="display: grid; grid-template-columns: 32px 1fr; gap: 20px; align-items: baseline;">
+        <span class="mono" style="color: var(--cue-red); font-size: 18px;">03</span>
+        <div>
+          <div class="lbl">Render seven views</div>
+          <p class="voice" style="font-size: 15px; margin-top: 4px;">
+            Main schedule. Cast DOOD. Picture vehicles. Juniors. Cameras. Requirement
+            breakdown. Call sheets for every shoot day. All cross-referenced, all exportable.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <p class="voice" style="font-size: 14px; color: var(--slate-50);">
+      Usually takes under 3 seconds. If your master has more than 80 days, make yourself a chai.
+    </p>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot__inner">
+    <span>Cue · v0.2 clickable prototype</span>
+    <span>Upload <span class="red">●</span> step 01 of 03</span>
+  </div>
+</footer>
+
+<div class="proto-banner">
+  Prototype · <a href="index.html">home</a> <a href="project/schedule.html">schedule</a>
+</div>
+
+</body>
+</html>

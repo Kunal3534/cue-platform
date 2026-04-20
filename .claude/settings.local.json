@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ' *)",
+      "Bash(docker --version)",
+      "Read(//Applications/Docker.app/**)"
+    ]
+  }
+}

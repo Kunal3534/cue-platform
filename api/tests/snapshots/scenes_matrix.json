@@ -1,0 +1,470 @@
+{
+  "view": "scenes_matrix",
+  "project_id": "...",
+  "scenario_id": "...",
+  "computed_at": "...",
+  "shoot_days": [
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 1,
+      "date": "2026-01-01",
+      "label": "D1"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 2,
+      "date": "2026-01-02",
+      "label": "D2"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 3,
+      "date": "2026-01-03",
+      "label": "D3"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 4,
+      "date": "2026-01-04",
+      "label": "D4"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 5,
+      "date": "2026-01-05",
+      "label": "D5"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 6,
+      "date": "2026-01-07",
+      "label": "D6"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 7,
+      "date": "2026-01-08",
+      "label": "D7"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 8,
+      "date": "2026-01-09",
+      "label": "D8"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 9,
+      "date": "2026-01-10",
+      "label": "D9"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 10,
+      "date": "2026-01-12",
+      "label": "D10"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 11,
+      "date": "2026-01-13",
+      "label": "D11"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 12,
+      "date": "2026-01-14",
+      "label": "D12"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 13,
+      "date": "2026-01-16",
+      "label": "D13"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 14,
+      "date": "2026-01-17",
+      "label": "D14"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 15,
+      "date": "2026-01-19",
+      "label": "D15"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 16,
+      "date": "2026-01-20",
+      "label": "D16"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 17,
+      "date": "2026-01-21",
+      "label": "D17"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 18,
+      "date": "2026-01-22",
+      "label": "D18"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 19,
+      "date": "2026-01-24",
+      "label": "D19"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 20,
+      "date": "2026-01-25",
+      "label": "D20"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 21,
+      "date": "2026-01-26",
+      "label": "D21"
+    },
+    {
+      "day_id": "UUID",
+      "shoot_day_number": 22,
+      "date": "2026-01-27",
+      "label": "D22"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "UUID",
+      "scene_number": "D1-1",
+      "title": "VELNESHWAR BEACH",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA",
+        "PRIYA"
+      ],
+      "day_numbers": [
+        1
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D10-1",
+      "title": "UNIVERSITY COURTYARD",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "PRIYA"
+      ],
+      "day_numbers": [
+        10
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D11-1",
+      "title": "UNIVERSITY CORRIDORS",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "PRIYA"
+      ],
+      "day_numbers": [
+        11
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D12-1",
+      "title": "MAHALAKSHMI TEMPLE",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA",
+        "DADA"
+      ],
+      "day_numbers": [
+        12
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D13-1",
+      "title": "WEDDING HALL",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA",
+        "DADA",
+        "AAJI",
+        "PRIYA",
+        "ANTAGONIST"
+      ],
+      "day_numbers": [
+        13
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D14-1",
+      "title": "WEDDING HALL",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA",
+        "PRIYA"
+      ],
+      "day_numbers": [
+        14
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D15-1",
+      "title": "CST STATION",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV"
+      ],
+      "day_numbers": [
+        15
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D16-1",
+      "title": "BANDRA STREETS",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA"
+      ],
+      "day_numbers": [
+        16
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D17-1",
+      "title": "CAFE MONDEGAR",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA"
+      ],
+      "day_numbers": [
+        17
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D18-1",
+      "title": "MARINE DRIVE",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA"
+      ],
+      "day_numbers": [
+        18
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D19-1",
+      "title": "SET A \u2014 APARTMENT",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "PRIYA"
+      ],
+      "day_numbers": [
+        19
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D2-1",
+      "title": "VELNESHWAR BEACH",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA"
+      ],
+      "day_numbers": [
+        2
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D20-1",
+      "title": "SET B \u2014 OFFICE",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV"
+      ],
+      "day_numbers": [
+        20
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D21-1",
+      "title": "SET A \u2014 APARTMENT",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA",
+        "PRIYA",
+        "ANTAGONIST"
+      ],
+      "day_numbers": [
+        21
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D22-1",
+      "title": "SET C \u2014 HOSPITAL",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "DADA",
+        "AAJI"
+      ],
+      "day_numbers": [
+        22
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D3-1",
+      "title": "BHAGAWATI MANDIR",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA",
+        "PRIYA",
+        "DADA"
+      ],
+      "day_numbers": [
+        3
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D4-1",
+      "title": "DADA'S HOUSE",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "DADA",
+        "AAJI"
+      ],
+      "day_numbers": [
+        4
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D5-1",
+      "title": "DADA'S HOUSE",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "AAJI"
+      ],
+      "day_numbers": [
+        5
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D6-1",
+      "title": "FORT / OLD RUINS",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA",
+        "ANTAGONIST"
+      ],
+      "day_numbers": [
+        6
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D7-1",
+      "title": "FORT / OLD RUINS",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "ANTAGONIST"
+      ],
+      "day_numbers": [
+        7
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D8-1",
+      "title": "HIGHWAY / COASTAL ROAD",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA"
+      ],
+      "day_numbers": [
+        8
+      ]
+    },
+    {
+      "scene_id": "UUID",
+      "scene_number": "D9-1",
+      "title": "COASTAL CAFE",
+      "dn": "day",
+      "page_eighths": null,
+      "characters": [
+        "AARAV",
+        "MEERA",
+        "PRIYA"
+      ],
+      "day_numbers": [
+        9
+      ]
+    }
+  ],
+  "meta": {
+    "total_pages_eighths": 0,
+    "day_count": 22,
+    "night_count": 0,
+    "ext_count": 18,
+    "int_count": 0
+  }
+}

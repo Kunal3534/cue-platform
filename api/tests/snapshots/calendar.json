@@ -1,0 +1,553 @@
+{
+  "view": "calendar",
+  "project_id": "...",
+  "scenario_id": "...",
+  "computed_at": "...",
+  "months": [
+    {
+      "label": "January 2026",
+      "year": 2026,
+      "month": 1,
+      "days": [
+        {
+          "date": "2026-01-01",
+          "day_of_week": "Thursday",
+          "kind": "shoot",
+          "shoot_day_number": 1,
+          "location": "VELNESHWAR BEACH",
+          "scenes": [
+            {
+              "scene_number": "D1-1",
+              "title": "VELNESHWAR BEACH",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 25,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-02",
+          "day_of_week": "Friday",
+          "kind": "shoot",
+          "shoot_day_number": 2,
+          "location": "VELNESHWAR BEACH",
+          "scenes": [
+            {
+              "scene_number": "D2-1",
+              "title": "VELNESHWAR BEACH",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 40,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-03",
+          "day_of_week": "Saturday",
+          "kind": "shoot",
+          "shoot_day_number": 3,
+          "location": "BHAGAWATI MANDIR",
+          "scenes": [
+            {
+              "scene_number": "D3-1",
+              "title": "BHAGAWATI MANDIR",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 60,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-04",
+          "day_of_week": "Sunday",
+          "kind": "shoot",
+          "shoot_day_number": 4,
+          "location": "DADA'S HOUSE",
+          "scenes": [
+            {
+              "scene_number": "D4-1",
+              "title": "DADA'S HOUSE",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-05",
+          "day_of_week": "Monday",
+          "kind": "shoot",
+          "shoot_day_number": 5,
+          "location": "DADA'S HOUSE",
+          "scenes": [
+            {
+              "scene_number": "D5-1",
+              "title": "DADA'S HOUSE",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-06",
+          "day_of_week": "Tuesday",
+          "kind": "off",
+          "shoot_day_number": null,
+          "location": null,
+          "scenes": [],
+          "scene_count": 0,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-07",
+          "day_of_week": "Wednesday",
+          "kind": "shoot",
+          "shoot_day_number": 6,
+          "location": "FORT / OLD RUINS",
+          "scenes": [
+            {
+              "scene_number": "D6-1",
+              "title": "FORT / OLD RUINS",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-08",
+          "day_of_week": "Thursday",
+          "kind": "shoot",
+          "shoot_day_number": 7,
+          "location": "FORT / OLD RUINS",
+          "scenes": [
+            {
+              "scene_number": "D7-1",
+              "title": "FORT / OLD RUINS",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-09",
+          "day_of_week": "Friday",
+          "kind": "shoot",
+          "shoot_day_number": 8,
+          "location": "HIGHWAY / COASTAL ROAD",
+          "scenes": [
+            {
+              "scene_number": "D8-1",
+              "title": "HIGHWAY / COASTAL ROAD",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-10",
+          "day_of_week": "Saturday",
+          "kind": "shoot",
+          "shoot_day_number": 9,
+          "location": "COASTAL CAFE",
+          "scenes": [
+            {
+              "scene_number": "D9-1",
+              "title": "COASTAL CAFE",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-11",
+          "day_of_week": "Sunday",
+          "kind": "off",
+          "shoot_day_number": null,
+          "location": null,
+          "scenes": [],
+          "scene_count": 0,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-12",
+          "day_of_week": "Monday",
+          "kind": "shoot",
+          "shoot_day_number": 10,
+          "location": "UNIVERSITY COURTYARD",
+          "scenes": [
+            {
+              "scene_number": "D10-1",
+              "title": "UNIVERSITY COURTYARD",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 80,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-13",
+          "day_of_week": "Tuesday",
+          "kind": "shoot",
+          "shoot_day_number": 11,
+          "location": "UNIVERSITY CORRIDORS",
+          "scenes": [
+            {
+              "scene_number": "D11-1",
+              "title": "UNIVERSITY CORRIDORS",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-14",
+          "day_of_week": "Wednesday",
+          "kind": "shoot",
+          "shoot_day_number": 12,
+          "location": "MAHALAKSHMI TEMPLE",
+          "scenes": [
+            {
+              "scene_number": "D12-1",
+              "title": "MAHALAKSHMI TEMPLE",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 120,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-15",
+          "day_of_week": "Thursday",
+          "kind": "off",
+          "shoot_day_number": null,
+          "location": null,
+          "scenes": [],
+          "scene_count": 0,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-16",
+          "day_of_week": "Friday",
+          "kind": "shoot",
+          "shoot_day_number": 13,
+          "location": "WEDDING HALL",
+          "scenes": [
+            {
+              "scene_number": "D13-1",
+              "title": "WEDDING HALL",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 180,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-17",
+          "day_of_week": "Saturday",
+          "kind": "shoot",
+          "shoot_day_number": 14,
+          "location": "WEDDING HALL",
+          "scenes": [
+            {
+              "scene_number": "D14-1",
+              "title": "WEDDING HALL",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-18",
+          "day_of_week": "Sunday",
+          "kind": "off",
+          "shoot_day_number": null,
+          "location": null,
+          "scenes": [],
+          "scene_count": 0,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-19",
+          "day_of_week": "Monday",
+          "kind": "shoot",
+          "shoot_day_number": 15,
+          "location": "CST STATION",
+          "scenes": [
+            {
+              "scene_number": "D15-1",
+              "title": "CST STATION",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 100,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-20",
+          "day_of_week": "Tuesday",
+          "kind": "shoot",
+          "shoot_day_number": 16,
+          "location": "BANDRA STREETS",
+          "scenes": [
+            {
+              "scene_number": "D16-1",
+              "title": "BANDRA STREETS",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-21",
+          "day_of_week": "Wednesday",
+          "kind": "shoot",
+          "shoot_day_number": 17,
+          "location": "CAFE MONDEGAR",
+          "scenes": [
+            {
+              "scene_number": "D17-1",
+              "title": "CAFE MONDEGAR",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-22",
+          "day_of_week": "Thursday",
+          "kind": "shoot",
+          "shoot_day_number": 18,
+          "location": "MARINE DRIVE",
+          "scenes": [
+            {
+              "scene_number": "D18-1",
+              "title": "MARINE DRIVE",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-23",
+          "day_of_week": "Friday",
+          "kind": "off",
+          "shoot_day_number": null,
+          "location": null,
+          "scenes": [],
+          "scene_count": 0,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-24",
+          "day_of_week": "Saturday",
+          "kind": "shoot",
+          "shoot_day_number": 19,
+          "location": "SET A \u2014 APARTMENT",
+          "scenes": [
+            {
+              "scene_number": "D19-1",
+              "title": "SET A \u2014 APARTMENT",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-25",
+          "day_of_week": "Sunday",
+          "kind": "shoot",
+          "shoot_day_number": 20,
+          "location": "SET B \u2014 OFFICE",
+          "scenes": [
+            {
+              "scene_number": "D20-1",
+              "title": "SET B \u2014 OFFICE",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-26",
+          "day_of_week": "Monday",
+          "kind": "shoot",
+          "shoot_day_number": 21,
+          "location": "SET A \u2014 APARTMENT",
+          "scenes": [
+            {
+              "scene_number": "D21-1",
+              "title": "SET A \u2014 APARTMENT",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        },
+        {
+          "date": "2026-01-27",
+          "day_of_week": "Tuesday",
+          "kind": "shoot",
+          "shoot_day_number": 22,
+          "location": "SET C \u2014 HOSPITAL",
+          "scenes": [
+            {
+              "scene_number": "D22-1",
+              "title": "SET C \u2014 HOSPITAL",
+              "dn": "day"
+            }
+          ],
+          "scene_count": 1,
+          "page_eighths_total": null,
+          "setups_total": 0,
+          "jr_count": 0,
+          "shift_start": null,
+          "shift_end": null,
+          "banner_text": null
+        }
+      ]
+    }
+  ],
+  "unscheduled": []
+}

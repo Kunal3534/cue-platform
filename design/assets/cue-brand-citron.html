@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Cue — Brand Book (Citron) · WGSN FC27 direction</title>
+<style>
+  @page { size: 1280px 780px; margin: 0; }
+
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
+
+  :root {
+    --citron:    #E2F24C;
+    --coral:     #FF5E4D;
+    --midnight:  #0F1419;
+    --bone:      #F6F1E4;
+    --mist:      #D8D4CA;
+    --shadow:    #5B5953;
+
+    --sans:  'Bricolage Grotesque', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', monospace;
+    --serif: 'Instrument Serif', Georgia, serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--midnight); background: var(--bone); }
+
+  .spread {
+    width: 1280px;
+    height: 780px;
+    padding: 64px 72px;
+    position: relative;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .spread:last-child { page-break-after: auto; }
+
+  /* ----- Chrome ----- */
+  .runner {
+    position: absolute; left: 72px; right: 72px; top: 32px;
+    display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--shadow);
+  }
+  .foot-num {
+    position: absolute; left: 72px; bottom: 32px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--shadow);
+  }
+  .foot-nav {
+    position: absolute; right: 72px; bottom: 32px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--shadow);
+  }
+
+  /* ----- Wordmark ----- */
+  .mark {
+    font-family: var(--sans);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--midnight);
+  }
+  .mark--sm { font-size: 28px; }
+
+  /* ----- Spread 1: cover ----- */
+  .cover { background: var(--citron); padding: 0; }
+  .cover__wordmark {
+    font-family: var(--sans); font-weight: 700;
+    font-size: 380px; line-height: 0.78;
+    letter-spacing: -0.06em;
+    color: var(--midnight);
+    position: absolute; left: 60px; bottom: 68px;
+  }
+  .cover__tag {
+    position: absolute; top: 68px; right: 72px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--midnight);
+    text-align: right;
+  }
+  .cover__tag strong { display: block; font-family: var(--sans); font-weight: 700; font-size: 18px; letter-spacing: -0.01em; text-transform: none; margin-bottom: 2px; }
+  .cover__dot {
+    position: absolute; top: 92px; left: 72px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--coral);
+  }
+
+  /* ----- Philosophy ----- */
+  .philo { background: var(--bone); }
+  .philo__eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--coral); }
+  .philo__h { font-family: var(--sans); font-weight: 700; font-size: 84px; letter-spacing: -0.035em; line-height: 0.95; margin: 20px 0 40px; color: var(--midnight); max-width: 900px; }
+  .philo__body { font-family: var(--serif); font-size: 30px; line-height: 1.35; color: var(--midnight); max-width: 820px; letter-spacing: -0.005em; }
+  .philo__body em { font-style: italic; color: var(--shadow); }
+  .philo__sign { position: absolute; bottom: 86px; left: 72px; font-family: var(--mono); font-size: 11px; color: var(--shadow); letter-spacing: 0.12em; text-transform: uppercase; }
+
+  /* ----- Palette ----- */
+  .pal { display: grid; grid-template-columns: 2fr 3fr; gap: 40px; align-items: start; height: 100%; padding-top: 40px; }
+  .pal__left h2 { font-family: var(--sans); font-weight: 700; font-size: 72px; letter-spacing: -0.035em; line-height: 0.95; margin: 14px 0 24px; max-width: 440px; }
+  .pal__left p { font-family: var(--serif); font-size: 22px; line-height: 1.4; color: var(--shadow); max-width: 460px; }
+  .pal__grid { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); gap: 16px; height: 580px; }
+  .sw {
+    padding: 24px 26px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative;
+  }
+  .sw__name { font-family: var(--sans); font-weight: 700; font-size: 32px; letter-spacing: -0.02em; }
+  .sw__role { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; margin-top: 2px; }
+  .sw__hex  { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; }
+
+  .sw--citron   { background: var(--citron); color: var(--midnight); grid-column: 1; grid-row: 1 / span 2; }
+  .sw--coral    { background: var(--coral);  color: var(--bone); }
+  .sw--midnight { background: var(--midnight); color: var(--citron); }
+  .sw--bone     { background: var(--bone); color: var(--midnight); border: 1px solid var(--mist); }
+  .sw--mist     { background: var(--mist); color: var(--midnight); }
+  .sw--shadow   { background: var(--shadow); color: var(--bone); }
+
+  /* ----- Type spread ----- */
+  .type { padding-top: 44px; }
+  .type__eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--coral); }
+  .type__h { font-family: var(--sans); font-weight: 700; font-size: 72px; letter-spacing: -0.035em; line-height: 0.95; margin: 14px 0 36px; }
+  .type__row { display: grid; grid-template-columns: 160px 1fr auto; gap: 30px; padding: 28px 0; border-top: 1px solid var(--mist); align-items: baseline; }
+  .type__row:last-child { border-bottom: 1px solid var(--mist); }
+  .type__role { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--shadow); padding-top: 8px; }
+  .type__sample-sans { font-family: var(--sans); font-weight: 700; font-size: 56px; letter-spacing: -0.025em; line-height: 1; color: var(--midnight); }
+  .type__sample-serif { font-family: var(--serif); font-size: 44px; font-style: italic; color: var(--midnight); }
+  .type__sample-mono { font-family: var(--mono); font-size: 28px; color: var(--midnight); }
+  .type__label { font-family: var(--mono); font-size: 11px; color: var(--shadow); text-align: right; letter-spacing: 0.04em; }
+
+  /* ----- Icon spread ----- */
+  .icon { padding: 0; display: grid; grid-template-columns: 1fr 1fr; height: 100%; }
+  .icon__left { background: var(--midnight); color: var(--bone); padding: 72px; display: flex; flex-direction: column; justify-content: space-between; }
+  .icon__right { background: var(--citron); color: var(--midnight); padding: 72px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .icon__tile {
+    width: 420px; height: 420px;
+    background: var(--citron);
+    border-radius: 92px; /* ~22% of 420 */
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 1px rgba(15, 20, 25, 0.08);
+  }
+  .icon__c {
+    font-family: var(--sans); font-weight: 800; font-size: 400px;
+    letter-spacing: -0.08em;
+    color: var(--midnight);
+    line-height: 0.78;
+    margin-top: -14px;
+  }
+  .icon__eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--citron); opacity: 0.82; }
+  .icon__title { font-family: var(--sans); font-weight: 700; font-size: 64px; letter-spacing: -0.035em; line-height: 1; margin-top: 14px; }
+  .icon__body { font-family: var(--serif); font-size: 20px; line-height: 1.45; color: #CFC9BD; max-width: 420px; margin-top: 22px; }
+  .icon__specs { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; line-height: 1.9; color: #A39E94; margin-top: 32px; }
+  .icon__specs span { color: var(--citron); }
+  .icon__scale {
+    position: absolute; bottom: 72px; right: 72px;
+    display: flex; align-items: baseline; gap: 18px;
+  }
+  .icon__scale span {
+    background: var(--midnight); color: var(--citron);
+    border-radius: 16px;
+  }
+  .icon__scale .s1 { width: 32px; height: 32px; border-radius: 8px; }
+  .icon__scale .s2 { width: 56px; height: 56px; border-radius: 12px; }
+  .icon__scale .s3 { width: 96px; height: 96px; border-radius: 22px; }
+
+  /* ----- Wordmark spread ----- */
+  .wm { padding-top: 44px; }
+  .wm__eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--coral); }
+  .wm__title { font-family: var(--sans); font-weight: 700; font-size: 72px; letter-spacing: -0.035em; line-height: 0.95; margin: 14px 0 46px; }
+  .wm__show {
+    background: var(--midnight); padding: 80px 60px;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .wm__show-word { font-family: var(--sans); font-weight: 700; font-size: 240px; letter-spacing: -0.06em; line-height: 1; color: var(--citron); }
+  .wm__rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .wm__rule { border-top: 2px solid var(--midnight); padding-top: 14px; }
+  .wm__rule-lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); }
+  .wm__rule-text { font-family: var(--serif); font-size: 19px; color: var(--midnight); line-height: 1.35; margin-top: 6px; }
+
+  /* ----- Usage spread (living system) ----- */
+  .usage { padding-top: 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; height: 100%; align-items: start; }
+  .usage__col > h3 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--coral); margin: 0 0 14px; }
+  .usage__btn-primary {
+    display: inline-block; padding: 16px 22px 14px;
+    background: var(--citron); color: var(--midnight);
+    font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.01em;
+    border-radius: 4px;
+  }
+  .usage__btn-dark {
+    display: inline-block; padding: 16px 22px 14px;
+    background: var(--midnight); color: var(--citron);
+    font-family: var(--sans); font-weight: 700; font-size: 16px; letter-spacing: -0.01em;
+    border-radius: 4px;
+  }
+  .usage__card {
+    background: var(--midnight); color: var(--bone); padding: 28px 30px;
+    border-radius: 4px; margin-top: 14px;
+  }
+  .usage__card-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--citron); }
+  .usage__card-h { font-family: var(--sans); font-weight: 700; font-size: 28px; letter-spacing: -0.02em; margin: 6px 0 4px; }
+  .usage__card-body { font-family: var(--serif); font-size: 15px; color: #CFC9BD; line-height: 1.4; }
+  .usage__chip {
+    display: inline-block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
+    padding: 4px 9px; background: var(--mist); color: var(--midnight); border-radius: 2px; margin-right: 6px;
+  }
+  .usage__chip--hot { background: var(--citron); }
+  .usage__chip--alert { background: var(--coral); color: var(--bone); }
+
+  /* ----- Closing spread ----- */
+  .close { background: var(--coral); color: var(--bone); padding: 0; }
+  .close__h { position: absolute; left: 72px; bottom: 86px;
+    font-family: var(--sans); font-weight: 700; font-size: 160px; letter-spacing: -0.05em; line-height: 0.85; color: var(--bone); }
+  .close__sub { position: absolute; left: 72px; top: 72px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--bone); }
+  .close__sub strong { display: block; font-family: var(--sans); font-weight: 700; font-size: 22px; letter-spacing: -0.01em; text-transform: none; margin-top: 4px; color: var(--citron); }
+  .close__meta { position: absolute; right: 72px; bottom: 86px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--bone); opacity: 0.8; text-align: right; line-height: 1.8; }
+
+</style>
+</head>
+<body>
+
+<!-- ═════════ Spread 1 — cover ═════════ -->
+<section class="spread cover">
+  <div class="cover__dot"></div>
+  <div class="cover__tag">
+    <strong>Brand Book</strong>
+    Vol. 00 · Citron direction<br>
+    WGSN FC27 Emotions reference<br>
+    April 2026
+  </div>
+  <div class="cover__wordmark">cue<span style="color: var(--coral);">.</span></div>
+</section>
+
+<!-- ═════════ Spread 2 — philosophy ═════════ -->
+<section class="spread philo">
+  <div class="runner">
+    <span>Cue · Citron direction</span>
+    <span>01 · Philosophy</span>
+  </div>
+  <div class="philo__eyebrow">Philosophy</div>
+  <h1 class="philo__h">Pre-production should feel like waking up, not like filing taxes.</h1>
+  <p class="philo__body">
+    Cue is saturated, certain, and loud. It treats the master breakdown as a living document rather than a spreadsheet to be tolerated. Every decision in this book bends toward one purpose — <em>make production people feel that the tool is on their side.</em> Six emotions, no more. Color as signal, not decoration. Type that sounds like a human, not a template.
+  </p>
+  <div class="philo__sign">Direction · WGSN FC27 Emotions · saturated colour fields as primary speech</div>
+  <div class="foot-num">02</div>
+</section>
+
+<!-- ═════════ Spread 3 — palette ═════════ -->
+<section class="spread">
+  <div class="runner">
+    <span>Cue · Citron direction</span>
+    <span>02 · Palette</span>
+  </div>
+  <div class="pal">
+    <div class="pal__left">
+      <div class="philo__eyebrow">Palette</div>
+      <h2>Six emotions. No more.</h2>
+      <p>
+        Citron is the voice. Coral is the pulse. Midnight is the ground. Bone is the air. Mist and Shadow handle the quiet type. Every interface pixel lives in this family — no off-palette greys, no photo filters, no decorative tints.
+      </p>
+    </div>
+
+    <div class="pal__grid">
+      <div class="sw sw--citron">
+        <div>
+          <div class="sw__name">Citron</div>
+          <div class="sw__role">Hero · the signal</div>
+        </div>
+        <div class="sw__hex">#E2F24C</div>
+      </div>
+      <div class="sw sw--coral">
+        <div>
+          <div class="sw__name">Coral</div>
+          <div class="sw__role">Warmth · heartbeat</div>
+        </div>
+        <div class="sw__hex">#FF5E4D</div>
+      </div>
+      <div class="sw sw--midnight">
+        <div>
+          <div class="sw__name">Midnight</div>
+          <div class="sw__role">Ink · near-black</div>
+        </div>
+        <div class="sw__hex">#0F1419</div>
+      </div>
+      <div class="sw sw--bone">
+        <div>
+          <div class="sw__name">Bone</div>
+          <div class="sw__role">Surface · warm paper</div>
+        </div>
+        <div class="sw__hex">#F6F1E4</div>
+      </div>
+      <div class="sw sw--mist">
+        <div>
+          <div class="sw__name">Mist</div>
+          <div class="sw__role">Support · hairlines</div>
+        </div>
+        <div class="sw__hex">#D8D4CA</div>
+      </div>
+      <div class="sw sw--shadow">
+        <div>
+          <div class="sw__name">Shadow</div>
+          <div class="sw__role">Quiet type</div>
+        </div>
+        <div class="sw__hex">#5B5953</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot-num">03</div>
+</section>
+
+<!-- ═════════ Spread 4 — type ═════════ -->
+<section class="spread type">
+  <div class="runner">
+    <span>Cue · Citron direction</span>
+    <span>03 · Typography</span>
+  </div>
+  <div class="type__eyebrow">Typography</div>
+  <h1 class="type__h">Three families.<br>Humanist, not editorial.</h1>
+
+  <div class="type__row">
+    <div class="type__role">Display<br><span style="text-transform: none; letter-spacing: 0;">weights 700 · 800</span></div>
+    <div class="type__sample-sans">Build the day, gently.</div>
+    <div class="type__label">Bricolage Grotesque<br>open-source · humanist geometry</div>
+  </div>
+
+  <div class="type__row">
+    <div class="type__role">Voice<br><span style="text-transform: none; letter-spacing: 0;">italic · for warmth</span></div>
+    <div class="type__sample-serif">Golden hour is the day. We protect it.</div>
+    <div class="type__label">Instrument Serif<br>used only for long-form voice</div>
+  </div>
+
+  <div class="type__row">
+    <div class="type__role">Detail<br><span style="text-transform: none; letter-spacing: 0;">data · metadata · codes</span></div>
+    <div class="type__sample-mono">SHOOT DAY 01  ·  06:00–18:00</div>
+    <div class="type__label">JetBrains Mono<br>for dates, unit codes, specs</div>
+  </div>
+  <div class="foot-num">04</div>
+</section>
+
+<!-- ═════════ Spread 5 — wordmark ═════════ -->
+<section class="spread wm">
+  <div class="runner">
+    <span>Cue · Citron direction</span>
+    <span>04 · Wordmark</span>
+  </div>
+  <div class="wm__eyebrow">Wordmark</div>
+  <h1 class="wm__title">The wordmark is the brand.<br>No glyph, no stripboard, no crest.</h1>
+
+  <div class="wm__show">
+    <div class="wm__show-word">cue<span style="color: var(--coral);">.</span></div>
+  </div>
+
+  <div class="wm__rules">
+    <div class="wm__rule">
+      <div class="wm__rule-lbl">Case &amp; weight</div>
+      <p class="wm__rule-text">Always lowercase. Always Bricolage Grotesque Bold (700). Never italic. Coral dot is optional — use it only when the wordmark stands alone as a product moment.</p>
+    </div>
+    <div class="wm__rule">
+      <div class="wm__rule-lbl">Spacing</div>
+      <p class="wm__rule-text">Letter-spacing −0.06em. Baseline-clear margin equal to the cap height. Never anchor to the corner of a layout — the wordmark needs to breathe.</p>
+    </div>
+    <div class="wm__rule">
+      <div class="wm__rule-lbl">Colour pairings</div>
+      <p class="wm__rule-text">Midnight on Citron, Citron on Midnight, Midnight on Bone. Coral is for emphasis only. Never outline, never gradient, never drop-shadow.</p>
+    </div>
+  </div>
+  <div class="foot-num">05</div>
+</section>
+
+<!-- ═════════ Spread 6 — app icon ═════════ -->
+<section class="spread icon">
+  <div class="icon__left">
+    <div>
+      <div class="icon__eyebrow">App icon</div>
+      <h2 class="icon__title">One letter.<br>One field.</h2>
+      <p class="icon__body">
+        A lowercase <strong style="color: var(--citron);">c</strong> in Bricolage Bold, set at 88% of tile height, centred on a Citron rounded square with 22% corner radius. The letter becomes the mark. No ornament, no mascot, no inner shadow.
+      </p>
+      <div class="icon__specs">
+        <div><span>Tile</span>    Citron · #E2F24C</div>
+        <div><span>Corner</span>  22% radius</div>
+        <div><span>Letter</span>  Bricolage Grotesque 800 · Midnight</div>
+        <div><span>Size</span>    88% of tile height · optically centred</div>
+        <div><span>Safe area</span> 6% inset on all edges</div>
+      </div>
+    </div>
+    <div class="icon__eyebrow" style="margin-top: 40px;">Cue · Citron direction · 06 · App icon</div>
+  </div>
+
+  <div class="icon__right">
+    <div class="icon__tile">
+      <span class="icon__c">c</span>
+    </div>
+    <div class="icon__scale">
+      <span class="s1"></span>
+      <span class="s2"></span>
+      <span class="s3"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ Spread 7 — UI in the wild ═════════ -->
+<section class="spread usage">
+  <div class="runner">
+    <span>Cue · Citron direction</span>
+    <span>07 · In the wild</span>
+  </div>
+
+  <div class="usage__col">
+    <h3>Buttons · UI</h3>
+    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+      <span class="usage__btn-primary">Build project →</span>
+      <span class="usage__btn-dark">Download .xlsx ↓</span>
+    </div>
+
+    <h3 style="margin-top: 40px;">Chips &amp; status</h3>
+    <div>
+      <span class="usage__chip">Shoot day</span>
+      <span class="usage__chip usage__chip--hot">Peak JR 48</span>
+      <span class="usage__chip usage__chip--alert">Flag</span>
+      <span class="usage__chip">Mon · 14 Apr</span>
+    </div>
+
+    <h3 style="margin-top: 40px;">Type rhythm on a card</h3>
+    <div class="usage__card">
+      <div class="usage__card-eyebrow">Main schedule · Day 3 · N</div>
+      <div class="usage__card-h">Ganpatipule — festival procession.</div>
+      <div class="usage__card-body">18:00–06:00 · 48 junior artists · 5 scenes. <em>Full moon on 11th — buffer 19 Apr if weather turns.</em></div>
+    </div>
+  </div>
+
+  <div class="usage__col">
+    <h3>Big citron moments</h3>
+    <div style="background: var(--citron); padding: 40px 38px; border-radius: 4px;">
+      <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--midnight);">Tomorrow</div>
+      <div style="font-family: var(--sans); font-weight: 700; font-size: 40px; letter-spacing: -0.03em; margin: 10px 0 6px; color: var(--midnight);">Velneshwar Beach.</div>
+      <div style="font-family: var(--serif); font-size: 20px; font-style: italic; color: var(--midnight);">Day 1 · call 04:30 · golden hour 17:20.</div>
+    </div>
+
+    <h3 style="margin-top: 40px;">Rule of thumb</h3>
+    <p style="font-family: var(--serif); font-size: 19px; line-height: 1.45; color: var(--midnight);">
+      Use citron where you'd normally use "hero image". It's the subject, not the frame. Every surface gets one citron moment — never two. Coral only for urgent, small, earned.
+    </p>
+  </div>
+  <div class="foot-num">07</div>
+</section>
+
+<!-- ═════════ Spread 8 — close ═════════ -->
+<section class="spread close">
+  <div class="close__sub">
+    Cue · Citron direction
+    <strong>FIN.</strong>
+  </div>
+  <h1 class="close__h">Make<br>the room<br>feel seen.</h1>
+  <div class="close__meta">
+    Archived — this direction was<br>
+    set aside 16 Apr in favour of the<br>
+    stripboard system. Kept on file<br>
+    for reference.<br><br>
+    <strong style="color: var(--citron);">KUNAL PANJWANI · 2026</strong>
+  </div>
+</section>
+
+</body>
+</html>
