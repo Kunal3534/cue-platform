@@ -20,13 +20,13 @@ import type {
 export const getMe = () => apiFetch<{ id: string; email: string }>("/auth/me");
 
 export const requestMagicLink = (email: string) =>
-  apiFetch<{ ok: boolean }>("/auth/request", {
+  apiFetch<{ ok: boolean }>("/auth/request_link", {
     method: "POST",
     body: JSON.stringify({ email }),
   });
 
 export const signOut = () =>
-  apiFetch<{ ok: boolean }>("/auth/sign-out", { method: "POST" });
+  apiFetch<{ ok: boolean }>("/auth/signout", { method: "POST" });
 
 // Projects
 export const listProjects = () => apiFetch<ProjectSummary[]>("/projects");
