@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc libpq-dev \
     libpango-1.0-0 libpangoft2-1.0-0 libpangocairo-1.0-0 \
-    libcairo2 libgdk-pixbuf2.0-0 libffi-dev \
+    libcairo2 libgdk-pixbuf-2.0-0 libffi-dev \
     shared-mime-info libglib2.0-0 \
     fontconfig fonts-liberation \
  && rm -rf /var/lib/apt/lists/*
