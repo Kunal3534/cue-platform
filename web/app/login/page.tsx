@@ -18,7 +18,12 @@ export default function LoginPage() {
   } = useForm<Fields>({ resolver: zodResolver(schema) });
 
   const onSubmit = async (data: Fields) => {
-    await requestMagicLink(data.email);
+    const res = await requestMagicLink(data.email);
+    // Dev mode: backend returns the magic link directly — auto-follow it.
+    if (res.dev_link) {
+      window.location.href = res.dev_link;
+      return;
+    }
     setEmail(data.email);
     setSent(true);
   };

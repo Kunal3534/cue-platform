@@ -20,7 +20,7 @@ import type {
 export const getMe = () => apiFetch<{ id: string; email: string }>("/auth/me");
 
 export const requestMagicLink = (email: string) =>
-  apiFetch<{ ok: boolean }>("/auth/request_link", {
+  apiFetch<{ ok: boolean; dev_link?: string }>("/auth/request_link", {
     method: "POST",
     body: JSON.stringify({ email }),
   });
