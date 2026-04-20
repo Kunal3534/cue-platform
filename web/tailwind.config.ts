@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss";
-// Load at build time — tokens.json lives outside the TS rootDir so we use require
+// Load at build time — tokens.json is mirrored into web/ so Docker builds work
+// (keep this file in sync with ../design/tokens.json)
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any
-const tokens: any = require("../design/tokens.json");
+const tokens: any = require("./tokens.json");
 
 // Extract hex value from a token leaf
 function val(t: { value: string }): string {
