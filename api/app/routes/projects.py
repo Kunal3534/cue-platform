@@ -248,12 +248,13 @@ async def get_project(
 # DELETE
 # ---------------------------------------------------------------------------
 
-@router.delete("/{project_id}", status_code=204, response_class=Response)
+@router.delete("/{project_id}", status_code=204, response_class=Response, response_model=None)
 async def delete_project(
     project_id: str,
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
-) -> None:
+):
     p = await _get_project_or_404(project_id, user, session)
     await session.delete(p)
     await session.commit()
+    return Response(status_code=204)

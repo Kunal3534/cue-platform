@@ -163,7 +163,7 @@ async def patch_resource(
 # DELETE /projects/{project_id}/resources/{kind}/{resource_id}
 # ---------------------------------------------------------------------------
 
-@router.delete("/{project_id}/resources/{kind}/{resource_id}", status_code=204, response_class=Response)
+@router.delete("/{project_id}/resources/{kind}/{resource_id}", status_code=204, response_class=Response, response_model=None)
 async def delete_resource(
     project_id: str,
     kind: str,

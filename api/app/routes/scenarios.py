@@ -340,7 +340,7 @@ async def merge_scenario(
 # DELETE /projects/{project_id}/scenarios/{scenario_id}
 # ---------------------------------------------------------------------------
 
-@router.delete("/{project_id}/scenarios/{scenario_id}", status_code=204, response_class=Response)
+@router.delete("/{project_id}/scenarios/{scenario_id}", status_code=204, response_class=Response, response_model=None)
 async def delete_scenario(
     project_id: str,
     scenario_id: str,
