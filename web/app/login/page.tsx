@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +9,11 @@ const schema = z.object({ email: z.string().email("Invalid email") });
 type Fields = z.infer<typeof schema>;
 
 export default function LoginPage() {
+  // Dev mode: no login needed — bounce straight to home.
+  useEffect(() => {
+    window.location.replace("/");
+  }, []);
+
   const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
   const {
