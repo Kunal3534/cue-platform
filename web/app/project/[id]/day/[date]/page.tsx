@@ -5,16 +5,8 @@ import Link from "next/link";
 import { getMainSchedule } from "@/lib/api";
 import { useProjectStore } from "@/stores/project";
 
-function dnClass(dn: string): string {
-  const d = dn.toLowerCase();
-  if (d.includes("night")) return d.includes("int") ? "strip-badge--night-int" : "strip-badge--night";
-  if (d.includes("int")) return "strip-badge--day-int";
-  if (d.includes("dusk") || d.includes("dawn")) return "strip-badge--dusk";
-  return "";
-}
-
-function dnStripClass(dn: string): string {
-  const d = dn.toLowerCase();
+function dnStripClass(dn: string | null | undefined): string {
+  const d = (dn ?? "").toLowerCase();
   if (d.includes("night")) return "scene-strip__dn--night";
   if (d.includes("dusk") || d.includes("dawn")) return "scene-strip__dn--dusk";
   return "";
@@ -52,7 +44,6 @@ export default function DayDetailPage() {
     );
   }
 
-  const dn = day.scenes[0]?.dn ?? "";
   const totalEighths = day.scenes.reduce((s, sc) => s + (sc.page_eighths ?? 0), 0);
 
   return (
@@ -97,7 +88,7 @@ export default function DayDetailPage() {
             <strong>{day.cast.length}</strong>
             cast
           </span>
-          {day.jr_count > 0 && (
+          {(day.jr_count ?? 0) > 0 && (
             <span>
               <strong>{day.jr_count}</strong>
               juniors
@@ -113,10 +104,10 @@ export default function DayDetailPage() {
           <div>
             <div className="scene-strip__num">{sc.scene_number}</div>
             <div className="scene-strip__pages">{sc.page_eighths ?? "—"}⅛</div>
-            <div className="scene-strip__pages-sub">{sc.setups_est} setups</div>
+            <div className="scene-strip__pages-sub">{sc.setups_est ?? 0} setups</div>
           </div>
           <div>
-            <span className={`scene-strip__dn ${dnStripClass(sc.dn)}`}>{sc.dn}</span>
+            <span className={`scene-strip__dn ${dnStripClass(sc.dn)}`}>{sc.dn ?? ""}</span>
           </div>
           <div>
             <div className="scene-strip__desc">{sc.title}</div>
@@ -134,7 +125,7 @@ export default function DayDetailPage() {
             {day.cast.map((name) => (
               <span key={name} className="element-chip element-chip--cast">{name}</span>
             ))}
-            {day.jr_count > 0 && (
+            {(day.jr_count ?? 0) > 0 && (
               <span className="element-chip">+{day.jr_count} juniors</span>
             )}
           </div>

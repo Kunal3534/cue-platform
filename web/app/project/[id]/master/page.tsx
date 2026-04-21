@@ -24,10 +24,10 @@ interface MasterRow {
   shootDay: number | null;
   date: string;
   sceneNumber: string;
-  title: string;
-  dn: string;
+  title: string | null;
+  dn: string | null;
   pageEighths: number | null;
-  setups: number;
+  setups: number | null;
   locationName: string;
   shiftStart: string;
   shiftEnd: string;

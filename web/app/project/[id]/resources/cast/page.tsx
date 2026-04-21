@@ -10,6 +10,16 @@ function cellClass(v: StatusCell): string {
   return `dood__cell dood__cell--${v}`;
 }
 
+function computeSummary(days: Record<string, string>): { W: number; H: number; T: number } {
+  let W = 0, H = 0, T = 0;
+  for (const v of Object.values(days)) {
+    if (v === "W") W += 1;
+    else if (v === "H") H += 1;
+    else if (v === "T") T += 1;
+  }
+  return { W, H, T };
+}
+
 export default function CastDoodPage() {
   const params = useParams();
   const projectId = params.id as string;
@@ -59,31 +69,34 @@ export default function CastDoodPage() {
             </tr>
           </thead>
           <tbody>
-            {[...principals, ...supporting].map((char) => (
-              <tr key={char.character_id}>
-                <td className="dood__actor">
-                  <div className="dood__actor-char">{char.canonical_name}</div>
-                  <div className="dood__actor-name">{char.actor_name}</div>
-                </td>
-                {data.shoot_days.map((sd) => {
-                  const v = (char.days[String(sd.shoot_day_number)] ?? ".") as StatusCell;
-                  return (
-                    <td key={sd.day_id} className={cellClass(v)}>
-                      {v === "." ? "" : v}
-                    </td>
-                  );
-                })}
-                <td className="dood__cell" style={{ background: "var(--cue-red-10)", color: "var(--cue-red)" }}>
-                  {char.summary.W}
-                </td>
-                <td className="dood__cell" style={{ background: "var(--day-int)" }}>
-                  {char.summary.H}
-                </td>
-                <td className="dood__cell" style={{ background: "#F2DDBF" }}>
-                  {char.summary.T}
-                </td>
-              </tr>
-            ))}
+            {[...principals, ...supporting].map((char) => {
+              const summary = char.summary ?? computeSummary(char.days);
+              return (
+                <tr key={char.character_id}>
+                  <td className="dood__actor">
+                    <div className="dood__actor-char">{char.canonical_name}</div>
+                    <div className="dood__actor-name">{char.actor_name ?? ""}</div>
+                  </td>
+                  {data.shoot_days.map((sd) => {
+                    const v = (char.days[String(sd.shoot_day_number)] ?? ".") as StatusCell;
+                    return (
+                      <td key={sd.day_id} className={cellClass(v)}>
+                        {v === "." ? "" : v}
+                      </td>
+                    );
+                  })}
+                  <td className="dood__cell" style={{ background: "var(--cue-red-10)", color: "var(--cue-red)" }}>
+                    {summary.W}
+                  </td>
+                  <td className="dood__cell" style={{ background: "var(--day-int)" }}>
+                    {summary.H}
+                  </td>
+                  <td className="dood__cell" style={{ background: "#F2DDBF" }}>
+                    {summary.T}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
           <tfoot className="dood__footer">
             <tr>

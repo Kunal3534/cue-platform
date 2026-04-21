@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,11 +37,19 @@ export default function LoginPage() {
   return (
     <main className="page" style={{ paddingTop: "80px" }}>
       <div className="upload">
+        <Image
+          src="/cue-mark.svg"
+          alt="Cue"
+          width={160}
+          height={56}
+          priority
+          style={{ height: "56px", width: "auto", display: "block", marginBottom: "24px" }}
+        />
         <div className="meta meta--red">Sign in</div>
-        <h1 className="display" style={{ marginTop: "12px", fontSize: "44px" }}>
-          Cue<span className="red">.</span>
-        </h1>
-        <p className="voice" style={{ marginTop: "16px" }}>
+        <p
+          className="voice"
+          style={{ marginTop: "12px", fontSize: "20px", lineHeight: 1.3 }}
+        >
           Pre-production, the way the room works.
         </p>
 

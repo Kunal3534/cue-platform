@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 const RESOURCES = [
   { slug: "cast", cat: "Department", name: "Cast DOOD", description: "Day-out-of-days grid for all characters" },

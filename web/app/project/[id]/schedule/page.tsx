@@ -5,8 +5,8 @@ import { getMainSchedule } from "@/lib/api";
 import { useProjectStore } from "@/stores/project";
 import type { MainScheduleDay } from "@/lib/api/types";
 
-function dnClass(dn: string): string {
-  const d = dn.toLowerCase();
+function dnClass(dn: string | null | undefined): string {
+  const d = (dn ?? "").toLowerCase();
   if (d.includes("night")) return d.includes("int") ? "strip-badge--night-int" : "strip-badge--night";
   if (d.includes("int")) return "strip-badge--day-int";
   if (d.includes("dusk") || d.includes("dawn")) return "strip-badge--dusk";
@@ -84,7 +84,7 @@ function ShootDayRow({ day }: { day: MainScheduleDay }) {
 
       <div className="cell__cast">
         {day.cast.join(", ") || "—"}
-        {day.jr_count > 0 && (
+        {(day.jr_count ?? 0) > 0 && (
           <div className="cell__cast-supp">+{day.jr_count} juniors</div>
         )}
       </div>

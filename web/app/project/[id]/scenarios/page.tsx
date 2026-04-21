@@ -2,7 +2,12 @@
 import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { listScenarios, forkScenario, deleteScenario, activateScenario } from "@/lib/api";
+import {
+  listScenarios,
+  forkScenario,
+  deleteScenario,
+  mergeScenario,
+} from "@/lib/api";
 import { useProjectStore } from "@/stores/project";
 
 export default function ScenariosPage() {
@@ -11,31 +16,37 @@ export default function ScenariosPage() {
   const qc = useQueryClient();
   const { activeScenarioId, setScenario } = useProjectStore();
   const [newName, setNewName] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: scenarios, isLoading } = useQuery({
+  const { data: scenarios, isLoading, error: loadError } = useQuery({
     queryKey: ["scenarios", projectId],
     queryFn: () => listScenarios(projectId),
+    retry: false,
   });
 
   const fork = useMutation({
     mutationFn: (name: string) => forkScenario(projectId, name),
     onSuccess: () => {
       setNewName("");
+      setError(null);
       qc.invalidateQueries({ queryKey: ["scenarios", projectId] });
     },
+    onError: (e) => setError(e instanceof Error ? e.message : "Fork failed"),
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteScenario(projectId, id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["scenarios", projectId] }),
+    onError: (e) => setError(e instanceof Error ? e.message : "Delete failed"),
   });
 
-  const activate = useMutation({
-    mutationFn: (id: string) => activateScenario(projectId, id),
-    onSuccess: (_, id) => {
-      setScenario(id);
-      qc.invalidateQueries({ queryKey: ["scenarios", projectId] });
+  const merge = useMutation({
+    mutationFn: (id: string) => mergeScenario(projectId, id),
+    onSuccess: () => {
+      setScenario(null);
+      qc.invalidateQueries();
     },
+    onError: (e) => setError(e instanceof Error ? e.message : "Merge failed"),
   });
 
   if (isLoading) {
@@ -56,6 +67,26 @@ export default function ScenariosPage() {
           </p>
         </div>
       </div>
+
+      {loadError && (
+        <div
+          className="mono-xs"
+          style={{
+            color: "var(--cue-red)",
+            background: "var(--cue-red-10)",
+            padding: "10px 14px",
+            border: "1px solid var(--cue-red)",
+            marginBottom: "24px",
+          }}
+        >
+          Failed to load scenarios: {loadError instanceof Error ? loadError.message : String(loadError)}
+        </div>
+      )}
+      {error && (
+        <div className="mono-xs" style={{ color: "var(--cue-red)", marginBottom: "12px" }}>
+          {error}
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: "12px", marginBottom: "32px" }}>
         <div className="chat-input" style={{ flex: 1 }}>
@@ -81,7 +112,7 @@ export default function ScenariosPage() {
       <div className="projects" style={{ borderTop: "var(--rule)" }}>
         <div
           className="project-row"
-          style={{ cursor: "default" }}
+          style={{ cursor: "pointer" }}
           onClick={() => setScenario(null)}
         >
           <span
@@ -103,15 +134,16 @@ export default function ScenariosPage() {
           </span>
         </div>
 
-        {scenarios?.map((sc) => (
+        {(scenarios ?? []).map((sc) => (
           <div key={sc.id} className="project-row" style={{ cursor: "default" }}>
             <span
               className="project-row__chip"
               style={{ background: activeScenarioId === sc.id ? "var(--cue-red)" : "var(--day-int)" }}
+              onClick={() => setScenario(sc.id)}
             >
               {sc.name[0]?.toUpperCase()}
             </span>
-            <div>
+            <div onClick={() => setScenario(sc.id)} style={{ cursor: "pointer" }}>
               <div className="project-row__title">{sc.name}</div>
               <div className="project-row__sub">
                 Forked {new Date(sc.created_at).toLocaleDateString("en-IN")}
@@ -120,13 +152,30 @@ export default function ScenariosPage() {
             <div style={{ display: "flex", gap: "8px" }}>
               <button
                 className="btn btn--sm btn--day"
-                onClick={() => activate.mutate(sc.id)}
+                onClick={() => setScenario(sc.id)}
+                disabled={activeScenarioId === sc.id}
               >
-                Activate
+                {activeScenarioId === sc.id ? "Viewing" : "View"}
+              </button>
+              <button
+                className="btn btn--sm btn--primary"
+                onClick={() => {
+                  if (window.confirm(`Merge "${sc.name}" into Live?`)) {
+                    merge.mutate(sc.id);
+                  }
+                }}
+                disabled={merge.isPending}
+              >
+                Merge → Live
               </button>
               <button
                 className="btn btn--sm btn--ghost"
-                onClick={() => remove.mutate(sc.id)}
+                onClick={() => {
+                  if (window.confirm(`Delete scenario "${sc.name}"?`)) {
+                    remove.mutate(sc.id);
+                  }
+                }}
+                disabled={remove.isPending}
               >
                 Delete
               </button>

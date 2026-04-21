@@ -204,6 +204,8 @@ export default function ChatPage() {
       thread_id: tid,
       role: "user",
       content: text,
+      tool_calls: null,
+      edits_batch_id: null,
       created_at: new Date().toISOString(),
     });
 
@@ -236,26 +238,34 @@ export default function ChatPage() {
             </div>
           )}
 
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`chat-msg${msg.role === "user" ? " chat-msg--you" : ""}`}
-            >
+          {messages.map((msg) => {
+            const body = msg.content ?? "";
+            if (!body && (!msg.tool_calls || msg.tool_calls.length === 0)) {
+              return null;
+            }
+            return (
               <div
-                className={`chat-msg__avatar${msg.role === "user" ? " chat-msg__avatar--you" : ""}`}
+                key={msg.id}
+                className={`chat-msg${msg.role === "user" ? " chat-msg--you" : ""}`}
               >
-                {msg.role === "user" ? "Y" : "C"}
-              </div>
-              <div>
-                <div className="chat-msg__who">
-                  {msg.role === "user" ? "You" : "Cue"}
+                <div
+                  className={`chat-msg__avatar${msg.role === "user" ? " chat-msg__avatar--you" : ""}`}
+                >
+                  {msg.role === "user" ? "Y" : "C"}
                 </div>
-                <div className="chat-msg__body">
-                  <p>{msg.content}</p>
+                <div>
+                  <div className="chat-msg__who">
+                    {msg.role === "user" ? "You" : "Cue"}
+                  </div>
+                  {body && (
+                    <div className="chat-msg__body">
+                      <p>{body}</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* In-flight tool calls (current stream) */}
           {turns.length > 0 && (

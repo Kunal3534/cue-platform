@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getMainSchedule } from "@/lib/api";
 import { useProjectStore } from "@/stores/project";
 
-function dnBadgeClass(dn: string): string {
-  const d = dn.toLowerCase();
+function dnBadgeClass(dn: string | null | undefined): string {
+  const d = (dn ?? "").toLowerCase();
   if (d.includes("night")) return d.includes("int") ? "strip-badge--night-int" : "strip-badge--night";
   if (d.includes("int")) return "strip-badge--day-int";
   if (d.includes("dusk") || d.includes("dawn")) return "strip-badge--dusk";
@@ -78,7 +78,7 @@ export default function RequirementsPage() {
               </div>
               <div className="reqitem">
                 <div className="reqitem__lbl">Junior Artists</div>
-                <div className="reqitem__val reqitem__val--mono">{day.jr_count || "—"}</div>
+                <div className="reqitem__val reqitem__val--mono">{day.jr_count ?? "—"}</div>
               </div>
               <div className="reqitem">
                 <div className="reqitem__lbl">Shift</div>
