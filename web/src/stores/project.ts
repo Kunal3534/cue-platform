@@ -1,11 +1,11 @@
 "use client";
 import { create } from "zustand";
-import type { ProjectSummary } from "@/lib/api/types";
+import type { ProjectDetail } from "@/lib/api/types";
 
 interface ProjectState {
-  project: ProjectSummary | null;
+  project: ProjectDetail | null;
   activeScenarioId: string | null;
-  setProject: (p: ProjectSummary) => void;
+  setProject: (p: ProjectDetail) => void;
   setScenario: (id: string | null) => void;
   clear: () => void;
 }

@@ -108,6 +108,8 @@ export function useChatStream(projectId: string, threadId: string | null) {
                       thread_id: threadId,
                       role: "assistant" as const,
                       content: accumulated,
+                      tool_calls: null,
+                      edits_batch_id: null,
                       created_at: new Date().toISOString(),
                     } satisfies ChatMessage)
                   : null);

@@ -14,6 +14,9 @@ type ProjectEvent = {
   view?: string;
 };
 
+// EventSource does not surface reconnect attempts; it silently reconnects on
+// its own. We add a manual backoff layer on top: if the connection errors, we
+// close it and reopen after a delay that grows up to 30s, capped.
 export function useProjectEvents(projectId: string | null) {
   const addFlag = useFlagsStore((s) => s.addFlag);
   const queryClient = useQueryClient();
@@ -21,53 +24,79 @@ export function useProjectEvents(projectId: string | null) {
   useEffect(() => {
     if (!projectId) return;
 
-    const es = new EventSource(`${API}/projects/${projectId}/events`, {
-      withCredentials: true,
-    });
+    let es: EventSource | null = null;
+    let closed = false;
+    let attempt = 0;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
-    es.onmessage = (e) => {
-      try {
-        const payload = JSON.parse(e.data) as ProjectEvent;
+    const connect = () => {
+      if (closed) return;
 
-        // Flag raised — push to flags store
-        if (payload.kind === "flag_raised" && payload.flag) {
-          addFlag(payload.flag);
-        }
+      es = new EventSource(`${API}/projects/${projectId}/events`, {
+        withCredentials: true,
+      });
 
-        // View-level invalidation (multiple views in one event)
-        const viewInvalidate = (views: string[]) => {
-          for (const view of views) {
+      es.onopen = () => {
+        attempt = 0;
+      };
+
+      es.onmessage = (e) => {
+        try {
+          const payload = JSON.parse(e.data) as ProjectEvent;
+
+          if (payload.kind === "flag_raised" && payload.flag) {
+            addFlag(payload.flag);
+          }
+
+          const viewInvalidate = (views: string[]) => {
+            for (const view of views) {
+              queryClient.invalidateQueries({
+                queryKey: ["view", projectId, view],
+              });
+            }
+          };
+
+          if (
+            payload.kind === "scene_rescheduled" ||
+            payload.kind === "day_updated" ||
+            payload.kind === "edit_committed"
+          ) {
+            viewInvalidate(payload.views_affected ?? []);
+          }
+
+          if (payload.kind === "view_regenerated" && payload.view) {
             queryClient.invalidateQueries({
-              queryKey: ["view", projectId, view],
+              queryKey: ["view", projectId, payload.view],
             });
           }
-        };
 
-        if (
-          payload.kind === "scene_rescheduled" ||
-          payload.kind === "day_updated" ||
-          payload.kind === "edit_committed"
-        ) {
-          viewInvalidate(payload.views_affected ?? []);
+          if (payload.kind === "call_sheet_regenerated") {
+            queryClient.invalidateQueries({
+              queryKey: ["callsheets", projectId],
+            });
+          }
+        } catch {
+          // ignore parse errors
         }
+      };
 
-        // view_regenerated fires once per view with the new payload
-        if (payload.kind === "view_regenerated" && payload.view) {
-          queryClient.invalidateQueries({
-            queryKey: ["view", projectId, payload.view],
-          });
+      es.onerror = () => {
+        // EventSource handles transient disconnects on its own, but on hard
+        // failure (CONNECTING stays stuck) we force a reconnect with backoff.
+        if (es?.readyState === EventSource.CLOSED) {
+          attempt += 1;
+          const delay = Math.min(30_000, 500 * 2 ** Math.min(attempt, 6));
+          reconnectTimer = setTimeout(connect, delay);
         }
-
-        if (payload.kind === "call_sheet_regenerated") {
-          queryClient.invalidateQueries({
-            queryKey: ["callsheets", projectId],
-          });
-        }
-      } catch {
-        // ignore parse errors
-      }
+      };
     };
 
-    return () => es.close();
+    connect();
+
+    return () => {
+      closed = true;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      es?.close();
+    };
   }, [projectId, addFlag, queryClient]);
 }

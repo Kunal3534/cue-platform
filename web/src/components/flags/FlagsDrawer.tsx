@@ -1,7 +1,5 @@
 "use client";
 import { useFlagsStore } from "@/stores/flags";
-import { resolveFlag } from "@/lib/api";
-import { useQueryClient } from "@tanstack/react-query";
 
 const RULE_LABELS: Record<string, string> = {
   cast_holds: "Cast Hold",
@@ -13,18 +11,18 @@ const RULE_LABELS: Record<string, string> = {
   continuity: "Continuity Break",
 };
 
-export default function FlagsDrawer({ projectId }: { projectId: string }) {
+export default function FlagsDrawer() {
   const { flags, drawerOpen, closeDrawer, removeFlag } = useFlagsStore();
-  const qc = useQueryClient();
 
   if (!drawerOpen) return null;
 
   const openFlags = flags.filter((f) => !f.resolved_at);
 
-  const handleResolve = async (flagId: string) => {
-    await resolveFlag(projectId, flagId);
+  // The backend does not expose a flag-resolve endpoint yet, so we only
+  // dismiss locally. Once the API ships, wire this up to POST the resolve
+  // and invalidate the ["flags"] query.
+  const handleDismiss = (flagId: string) => {
     removeFlag(flagId);
-    qc.invalidateQueries({ queryKey: ["flags", projectId] });
   };
 
   return (
@@ -77,9 +75,9 @@ export default function FlagsDrawer({ projectId }: { projectId: string }) {
               </p>
               <button
                 className="btn btn--sm btn--ghost"
-                onClick={() => handleResolve(flag.id)}
+                onClick={() => handleDismiss(flag.id)}
               >
-                Resolve
+                Dismiss
               </button>
             </div>
           ))}
