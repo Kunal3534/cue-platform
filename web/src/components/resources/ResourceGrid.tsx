@@ -16,12 +16,13 @@ export default function ResourceGrid({ kind, title, description, columns }: Prop
   const params = useParams();
   const projectId = params.id as string;
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["resources", projectId, kind],
     queryFn: () => listResources(projectId, kind),
+    retry: false,
   });
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return (
       <div style={{ padding: "48px 0" }}>
         <p className="voice">Loading {title.toLowerCase()}…</p>
@@ -41,7 +42,17 @@ export default function ResourceGrid({ kind, title, description, columns }: Prop
         </p>
       )}
 
-      {data.length === 0 ? (
+      {error ? (
+        <div className="empty">
+          <span className="empty__mark">CUE</span>
+          <p className="voice" style={{ fontSize: "15px" }}>
+            {title} aren&rsquo;t available yet.
+          </p>
+          <p className="mono-xs" style={{ color: "var(--slate-50)", marginTop: "8px" }}>
+            {error instanceof Error ? error.message : String(error)}
+          </p>
+        </div>
+      ) : !data || data.length === 0 ? (
         <div className="empty">
           <span className="empty__mark">CUE</span>
           <p className="voice" style={{ fontSize: "15px" }}>No {title.toLowerCase()} found.</p>
