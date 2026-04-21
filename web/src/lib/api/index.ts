@@ -1,23 +1,24 @@
 import { apiFetch, apiUpload } from "./client";
 import type {
   ProjectSummary,
+  ProjectDetail,
+  UserProfile,
   MainScheduleResponse,
   CalendarResponse,
   CastDoodResponse,
   ScenesMatrixResponse,
   PreviewResponse,
   CommitResponse,
-  Flag,
   Scenario,
   ChatThread,
   ChatMessage,
-  CallSheet,
+  CallSheetSummary,
   EditItem,
   ResourceItem,
 } from "./types";
 
 // Auth
-export const getMe = () => apiFetch<{ id: string; email: string }>("/auth/me");
+export const getMe = () => apiFetch<UserProfile>("/auth/me");
 
 export const requestMagicLink = (email: string) =>
   apiFetch<{ ok: boolean; dev_link?: string }>("/auth/request_link", {
@@ -34,31 +35,37 @@ export const listProjects = () => apiFetch<ProjectSummary[]>("/projects");
 export const createProject = (file: File) => {
   const form = new FormData();
   form.append("file", file);
-  return apiUpload<ProjectSummary>("/projects", form);
+  return apiUpload<ProjectDetail>("/projects", form);
 };
 
 export const getProject = (id: string) =>
-  apiFetch<ProjectSummary>(`/projects/${id}`);
+  apiFetch<ProjectDetail>(`/projects/${id}`);
+
+export const deleteProject = (id: string) =>
+  apiFetch<{ ok: boolean }>(`/projects/${id}`, { method: "DELETE" });
 
 // Views
+const q = (scenarioId?: string) =>
+  scenarioId ? `?scenario_id=${encodeURIComponent(scenarioId)}` : "";
+
 export const getMainSchedule = (id: string, scenarioId?: string) =>
   apiFetch<MainScheduleResponse>(
-    `/projects/${id}/views/main_schedule${scenarioId ? `?scenario_id=${scenarioId}` : ""}`,
+    `/projects/${id}/views/main_schedule${q(scenarioId)}`,
   );
 
 export const getCalendar = (id: string, scenarioId?: string) =>
   apiFetch<CalendarResponse>(
-    `/projects/${id}/views/calendar${scenarioId ? `?scenario_id=${scenarioId}` : ""}`,
+    `/projects/${id}/views/calendar${q(scenarioId)}`,
   );
 
 export const getCastDood = (id: string, scenarioId?: string) =>
   apiFetch<CastDoodResponse>(
-    `/projects/${id}/views/cast_dood${scenarioId ? `?scenario_id=${scenarioId}` : ""}`,
+    `/projects/${id}/views/cast_dood${q(scenarioId)}`,
   );
 
 export const getScenesMatrix = (id: string, scenarioId?: string) =>
   apiFetch<ScenesMatrixResponse>(
-    `/projects/${id}/views/scenes_matrix${scenarioId ? `?scenario_id=${scenarioId}` : ""}`,
+    `/projects/${id}/views/scenes_matrix${q(scenarioId)}`,
   );
 
 // Edits
@@ -69,7 +76,7 @@ export const previewEdits = (
 ) =>
   apiFetch<PreviewResponse>(`/projects/${projectId}/edits`, {
     method: "POST",
-    body: JSON.stringify({ edits, scenario_id: scenarioId }),
+    body: JSON.stringify({ edits, scenario_id: scenarioId ?? null }),
   });
 
 export const commitEdits = (projectId: string, batchId: string) =>
@@ -82,7 +89,7 @@ export const rescheduleScene = (
   projectId: string,
   sceneId: string,
   toDayId: string,
-  orderInDay: number,
+  orderInDay: number = 1,
 ) =>
   apiFetch<PreviewResponse>(
     `/projects/${projectId}/scenes/${sceneId}/reschedule`,
@@ -92,23 +99,18 @@ export const rescheduleScene = (
     },
   );
 
-// Flags
-export const getFlags = (projectId: string) =>
-  apiFetch<Flag[]>(`/projects/${projectId}/flags`);
-
-export const resolveFlag = (projectId: string, flagId: string) =>
-  apiFetch<Flag>(`/projects/${projectId}/flags/${flagId}/resolve`, {
-    method: "POST",
-  });
-
 // Scenarios
 export const listScenarios = (projectId: string) =>
   apiFetch<Scenario[]>(`/projects/${projectId}/scenarios`);
 
-export const forkScenario = (projectId: string, name: string) =>
+export const forkScenario = (
+  projectId: string,
+  name: string,
+  notes?: string,
+) =>
   apiFetch<Scenario>(`/projects/${projectId}/scenarios`, {
     method: "POST",
-    body: JSON.stringify({ name }),
+    body: JSON.stringify({ name, notes: notes ?? null }),
   });
 
 export const deleteScenario = (projectId: string, scenarioId: string) =>
@@ -117,10 +119,15 @@ export const deleteScenario = (projectId: string, scenarioId: string) =>
     { method: "DELETE" },
   );
 
-export const activateScenario = (projectId: string, scenarioId: string) =>
-  apiFetch<{ ok: boolean }>(
-    `/projects/${projectId}/scenarios/${scenarioId}/activate`,
+export const mergeScenario = (projectId: string, scenarioId: string) =>
+  apiFetch<CommitResponse>(
+    `/projects/${projectId}/scenarios/${scenarioId}/merge`,
     { method: "POST" },
+  );
+
+export const getScenarioDiff = (projectId: string, scenarioId: string) =>
+  apiFetch<unknown>(
+    `/projects/${projectId}/scenarios/${scenarioId}/diff`,
   );
 
 // Chat
@@ -140,20 +147,42 @@ export const getThread = (projectId: string, threadId: string) =>
 
 // Call sheets
 export const listCallSheets = (projectId: string) =>
-  apiFetch<CallSheet[]>(`/projects/${projectId}/callsheets`);
+  apiFetch<CallSheetSummary[]>(`/projects/${projectId}/callsheets`);
 
-export const getCallSheetUrl = (projectId: string, date: string) =>
+// Returns a presigned PDF URL for a given call sheet.
+// The backend route is GET /callsheets/{call_sheet_id}/pdf and typically
+// returns a redirect to an S3 URL. We pass through the JSON response shape.
+export const getCallSheetPdf = (projectId: string, callSheetId: string) =>
   apiFetch<{ url: string }>(
-    `/projects/${projectId}/callsheets/${date}/download`,
+    `/projects/${projectId}/callsheets/${callSheetId}/pdf`,
   );
 
-export const regenerateCallSheet = (
+export const generateCallSheet = (
   projectId: string,
   dayId: string,
-) =>
-  apiFetch<{ ok: boolean }>(
-    `/projects/${projectId}/callsheets/${dayId}/regenerate`,
+  opts?: { scenarioId?: string; sync?: boolean },
+) => {
+  const params = new URLSearchParams();
+  if (opts?.scenarioId) params.set("scenario_id", opts.scenarioId);
+  if (opts?.sync) params.set("sync", "true");
+  const qs = params.toString();
+  return apiFetch<unknown>(
+    `/projects/${projectId}/days/${dayId}/callsheets/generate${qs ? `?${qs}` : ""}`,
     { method: "POST" },
+  );
+};
+
+export const sendCallSheet = (
+  projectId: string,
+  callSheetId: string,
+  recipients: { name?: string; email: string }[],
+) =>
+  apiFetch<{ queued: boolean; job_id: string | null }>(
+    `/projects/${projectId}/callsheets/${callSheetId}/send`,
+    {
+      method: "POST",
+      body: JSON.stringify({ recipients }),
+    },
   );
 
 // Resources (parameterised)
@@ -212,7 +241,22 @@ export const deleteResource = (
   );
 
 // Exports
-export const exportBundle = (projectId: string) =>
-  apiFetch<{ url: string }>(`/projects/${projectId}/exports/bundle`, {
-    method: "POST",
-  });
+export const exportBundle = (projectId: string, scenarioId?: string) =>
+  apiFetch<{ job_id: string; arq_job_id: string | null }>(
+    `/projects/${projectId}/exports/bundle${q(scenarioId)}`,
+    { method: "POST" },
+  );
+
+export const getBundleJob = (projectId: string, jobId: string) =>
+  apiFetch<unknown>(
+    `/projects/${projectId}/exports/bundle/${jobId}`,
+  );
+
+export const getViewExport = (
+  projectId: string,
+  view: string,
+  scenarioId?: string,
+) =>
+  apiFetch<unknown>(
+    `/projects/${projectId}/exports/${view}${q(scenarioId)}`,
+  );

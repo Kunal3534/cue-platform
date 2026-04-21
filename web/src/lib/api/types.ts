@@ -1,3 +1,5 @@
+// Types mirror the backend OpenAPI schema. Keep in sync with /openapi.json.
+
 export interface ProjectSummary {
   id: string;
   title: string;
@@ -9,43 +11,64 @@ export interface ProjectSummary {
   updated_at: string;
 }
 
-export interface LocationRef {
-  id: string;
-  name: string;
-  area: string;
-  kind: string;
+export interface ProjectDetail extends ProjectSummary {
+  start_date: string | null;
+  end_date: string | null;
+  live_scenario_id: string | null;
+  unit_cols: string[];
 }
 
-export interface CameraUnit {
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string | null;
+  created_at: string;
+}
+
+export interface ScheduleLocation {
+  id: string | null;
+  name: string | null;
+  area: string | null;
+  kind: string | null;
+}
+
+export interface ScheduleCameraUnit {
   unit_code: string;
   kind: string;
   count: number;
 }
 
-export interface MainScheduleScene {
+export interface ScheduleScene {
   scene_id: string;
   scene_number: string;
-  title: string;
-  dn: string;
+  title: string | null;
+  dn: string | null;
   page_eighths: number | null;
-  setups_est: number;
-  order_in_day: number;
+  setups_est: number | null;
+  order_in_day: number | null;
 }
 
-export interface MainScheduleDay {
+export interface ScheduleDay {
   day_id: string;
   date: string;
   day_of_week: string;
   shoot_day_number: number | null;
   kind: string;
-  location: LocationRef | null;
-  scenes: MainScheduleScene[];
+  location: ScheduleLocation | null;
+  scenes: ScheduleScene[];
   cast: string[];
-  camera_units: CameraUnit[];
-  jr_count: number;
+  camera_units: ScheduleCameraUnit[];
+  jr_count: number | null;
   shift_start: string | null;
   shift_end: string | null;
   notes: string | null;
+}
+
+export interface ScheduleMeta {
+  total_days: number;
+  shoot_days: number;
+  start_date: string | null;
+  end_date: string | null;
 }
 
 export interface MainScheduleResponse {
@@ -53,32 +76,33 @@ export interface MainScheduleResponse {
   project_id: string;
   scenario_id: string | null;
   computed_at: string;
-  days: MainScheduleDay[];
-  meta: {
-    total_days: number;
-    shoot_days: number;
-    start_date: string | null;
-    end_date: string | null;
-  };
+  days: ScheduleDay[];
+  meta: ScheduleMeta;
 }
 
-export interface CalendarScene {
+// Backwards-compatible alias for existing imports.
+export type MainScheduleDay = ScheduleDay;
+export type MainScheduleScene = ScheduleScene;
+export type LocationRef = ScheduleLocation;
+export type CameraUnit = ScheduleCameraUnit;
+
+export interface CalendarSceneStrip {
   scene_number: string;
-  title: string;
-  dn: string;
+  title: string | null;
+  dn: string | null;
 }
 
 export interface CalendarDay {
   date: string;
   day_of_week: string;
-  kind: string;
+  kind: string | null;
   shoot_day_number: number | null;
   location: string | null;
-  scenes: CalendarScene[];
+  scenes: CalendarSceneStrip[];
   scene_count: number;
   page_eighths_total: number | null;
-  setups_total: number;
-  jr_count: number;
+  setups_total: number | null;
+  jr_count: number | null;
   shift_start: string | null;
   shift_end: string | null;
   banner_text: string | null;
@@ -92,21 +116,29 @@ export interface CalendarMonth {
 }
 
 export interface CalendarResponse {
+  view: string;
+  project_id: string;
+  scenario_id: string | null;
+  computed_at: string;
   months: CalendarMonth[];
-  unscheduled: CalendarScene[];
+  unscheduled: CalendarSceneStrip[];
 }
 
-export interface CastDoodCharacter {
+// Back-compat alias
+export type CalendarScene = CalendarSceneStrip;
+
+export interface DoodCharacter {
   character_id: string;
   canonical_name: string;
-  display_name: string;
-  actor_name: string;
+  display_name: string | null;
+  actor_name: string | null;
   is_principal: boolean;
-  days: Record<string, "W" | "H" | "T" | ".">;
-  summary: { W: number; H: number; T: number };
+  days: Record<string, string>;
+  // Optional — backend may or may not emit summary totals.
+  summary?: { W: number; H: number; T: number };
 }
 
-export interface CastDoodShootDay {
+export interface DoodShootDay {
   day_id: string;
   shoot_day_number: number;
   date: string;
@@ -114,46 +146,58 @@ export interface CastDoodShootDay {
 }
 
 export interface CastDoodResponse {
-  shoot_days: CastDoodShootDay[];
-  characters: CastDoodCharacter[];
+  view: string;
+  project_id: string;
+  scenario_id: string | null;
+  computed_at: string;
+  shoot_days: DoodShootDay[];
+  characters: DoodCharacter[];
   day_totals: Record<string, number>;
 }
 
-export interface ScenesMatrixScene {
+// Back-compat
+export type CastDoodCharacter = DoodCharacter;
+export type CastDoodShootDay = DoodShootDay;
+
+export interface SceneMatrixScene {
   scene_id: string;
   scene_number: string;
-  title: string;
-  dn: string;
+  title: string | null;
+  dn: string | null;
   page_eighths: number | null;
   characters: string[];
   day_numbers: number[];
 }
 
-export interface ScenesMatrixShootDay {
-  day_id: string;
-  shoot_day_number: number;
-  date: string;
-  label: string;
+export interface SceneMatrixMeta {
+  total_pages_eighths: number | null;
+  day_count: number;
+  night_count: number;
+  ext_count: number;
+  int_count: number;
 }
 
 export interface ScenesMatrixResponse {
-  shoot_days: ScenesMatrixShootDay[];
-  scenes: ScenesMatrixScene[];
-  meta: {
-    total_pages_eighths: number;
-    day_count: number;
-    night_count: number;
-    ext_count: number;
-    int_count: number;
-  };
+  view: string;
+  project_id: string;
+  scenario_id: string | null;
+  computed_at: string;
+  shoot_days: DoodShootDay[];
+  scenes: SceneMatrixScene[];
+  meta: SceneMatrixMeta;
 }
+
+// Back-compat
+export type ScenesMatrixScene = SceneMatrixScene;
+export type ScenesMatrixShootDay = DoodShootDay;
 
 export interface PreviewDiff {
   views_affected: string[];
   breaks: unknown[];
   side_effects: unknown[];
   flags_raised: unknown[];
-  request?: unknown;
+  // backend is intentionally loose (`extra=allow`).
+  [key: string]: unknown;
 }
 
 export interface PreviewResponse {
@@ -165,8 +209,11 @@ export interface PreviewResponse {
 export interface CommitResponse {
   ok: boolean;
   views_regenerated: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
+// Flags: no backend endpoint yet; kept so the SSE `flag_raised` event + drawer
+// UI continue to compile. When the API ships a flags route, we wire it up.
 export interface Flag {
   id: string;
   project_id: string;
@@ -187,44 +234,52 @@ export interface Scenario {
   forked_from: string | null;
   created_at: string;
   is_live: boolean;
+  [key: string]: unknown;
 }
 
 export interface ChatThread {
   id: string;
-  project_id: string;
   title: string | null;
   created_at: string;
-  updated_at: string;
+  last_active_at: string;
+  // Back-compat (older list UI expected updated_at/project_id)
+  project_id?: string;
+  updated_at?: string;
 }
 
 export interface ChatMessage {
   id: string;
-  thread_id: string;
   role: "user" | "assistant";
-  content: string;
+  content: string | null;
+  tool_calls: unknown[] | null;
+  edits_batch_id: string | null;
   created_at: string;
+  // Some client-side synthesized messages still set thread_id.
+  thread_id?: string;
 }
 
-export interface CallSheet {
+export interface CallSheetSummary {
   id: string;
-  project_id: string;
   day_id: string;
-  shoot_day_number: number;
-  date: string;
-  s3_key: string | null;
+  version: number;
   status: string;
-  created_at: string;
+  pdf_s3_key: string | null;
+  generated_at: string;
+  sent_at: string | null;
 }
+
+// Back-compat alias (older UI called this "CallSheet")
+export type CallSheet = CallSheetSummary;
 
 export interface DayDetail {
   day_id: string;
   date: string;
   shoot_day_number: number | null;
   kind: string;
-  location: LocationRef | null;
-  scenes: MainScheduleScene[];
+  location: ScheduleLocation | null;
+  scenes: ScheduleScene[];
   cast: string[];
-  jr_count: number;
+  jr_count: number | null;
   shift_start: string | null;
   shift_end: string | null;
   notes: string | null;
@@ -245,6 +300,6 @@ export type EditOp = "patch" | "create" | "delete";
 export interface EditItem {
   op: EditOp;
   entity: string;
-  id?: string;
-  fields?: Record<string, unknown>;
+  id?: string | null;
+  fields?: Record<string, unknown> | null;
 }
