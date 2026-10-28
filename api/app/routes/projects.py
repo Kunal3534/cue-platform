@@ -350,18 +350,23 @@ async def _send_welcome_email(email: str, name: str | None, role: str,
                  "You have full producer access: the calendar, day briefs, expenses "
                  "and the team.")
     body = (
-        f"<p style='margin:0 0 12px'>{greeting}</p>"
-        f"<p style='margin:0 0 12px'>{glad}</p>"
-        f"<p style='margin:0 0 4px'>{role_line}</p>"
+        f"<p style='margin:14px 0 10px'>{greeting}</p>"
+        f"<p style='margin:0 0 4px'>{glad}</p>"
+        + emailer.kv_rows([
+            ("Workspace", workspace),
+            ("Your role", "Producer" if role == "producer" else "Contributor"),
+            ("Added by", added_by),
+        ])
+        + f"<p style='margin:16px 0 0;font-size:14px;line-height:1.7'>{role_line}</p>"
         + emailer.button("Sign in to Cue", f"{emailer._base()}/login")
-        + f"<p style='margin:24px 0 0;font-size:13px;color:{emailer.MUTED};line-height:1.7'>"
+        + f"<p style='margin:22px 0 0;font-size:12.5px;color:{emailer.MUTED};line-height:1.7'>"
         f"Use this email address to sign in. <strong>Continue with Google</strong> is the "
         f"quickest way, or we&rsquo;ll send you a sign-in link.</p>"
     )
     html = emailer.frame(
         eyebrow="CUE · WORKSPACE INVITATION",
         headline="You&rsquo;re on the team.",
-        sub=f"{added_by} added you to <strong style='color:{emailer.INK}'>{workspace}</strong>.",
+        sub=None,
         body_html=body,
     )
     await emailer.send(email, f"You've been added to {workspace} on Cue", html)

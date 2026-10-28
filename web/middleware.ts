@@ -31,7 +31,8 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    // Everything except Next internals, static assets, and the API proxy
-    "/((?!_next/static|_next/image|favicon.ico|api/|cue-mark.svg|moty-logo.jpg).*)",
+    // Everything except Next internals, the API proxy, and any static file
+    // (anything with a dot — logos, fonts, email assets)
+    "/((?!_next/static|_next/image|favicon.ico|api/|.*\\..*).*)",
   ],
 };
