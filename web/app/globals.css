@@ -1395,9 +1395,9 @@ html[data-gq-theme="dark"] .gq-masthead__logo { mix-blend-mode: screen; filter: 
 .gq-month-nav:hover { background: var(--g-tile-strong); transform: translateY(-1px); box-shadow: var(--g-shadow-sm); }
 .gq-month-nav:active { transform: scale(0.94); }
 
-.gq-grid-head { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 6px; }
+.gq-grid-head { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-bottom: 6px; }
 .gq-grid-head div { padding: 4px 10px 6px; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--g-muted); }
-.gq-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.gq-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
 .gq-cell {
   min-height: 148px; padding: 10px 10px 12px;
   background: var(--g-tile);
