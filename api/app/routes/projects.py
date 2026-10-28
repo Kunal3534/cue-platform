@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Respons
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..auth import current_user
+from ..auth import current_user, is_team_member
 from ..db import get_async_db
 from ..models import Project, User
 from ..parser_service import parse_xlsx_bytes
@@ -61,7 +61,7 @@ async def _get_project_or_404(
     result = await session.execute(
         sa.select(Project).where(
             Project.id == project_id,
-            Project.owner_id == user.id,
+            sa.or_(Project.owner_id == user.id, sa.literal(is_team_member(user))),
         )
     )
     p = result.scalar_one_or_none()
@@ -88,11 +88,11 @@ async def list_projects(
                 COUNT(d.id) AS total_days
             FROM projects p
             LEFT JOIN days d ON d.project_id = p.id
-            WHERE p.owner_id = :uid
+            WHERE (p.owner_id = :uid OR :team = TRUE)
             GROUP BY p.id
             ORDER BY p.updated_at DESC
         """),
-        {"uid": user.id},
+        {"uid": user.id, "team": is_team_member(user)},
     )).fetchall()
 
     return [
@@ -206,9 +206,9 @@ async def get_project(
             "SELECT p.id, p.title, p.\"window\", p.status, p.start_date, p.end_date, "
             "p.live_scenario_id, p.settings, p.created_at, p.updated_at "
             "FROM projects p "
-            "WHERE p.id = :pid AND p.owner_id = :uid"
+            "WHERE p.id = :pid AND (p.owner_id = :uid OR :team = TRUE)"
         ),
-        {"pid": project_id, "uid": user.id},
+        {"pid": project_id, "uid": user.id, "team": is_team_member(user)},
     )).first()
     if not p_row:
         raise HTTPException(status_code=404, detail="Project not found")

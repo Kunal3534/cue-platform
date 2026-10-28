@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..auth import current_user
+from ..auth import current_user, is_team_member
 from ..db import get_async_db
 from ..models import User
 from ..schemas_v1 import (
@@ -52,7 +52,7 @@ async def _resolve_scenario(
         sa.text("SELECT live_scenario_id, owner_id FROM projects WHERE id = :pid"),
         {"pid": project_id},
     )).first()
-    if not row or row.owner_id != user.id:
+    if not row or (row.owner_id != user.id and not is_team_member(user)):
         raise HTTPException(status_code=404, detail="Project not found")
     return scenario_id or row.live_scenario_id
 

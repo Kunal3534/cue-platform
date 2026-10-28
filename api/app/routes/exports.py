@@ -20,7 +20,7 @@ import sqlalchemy as sa
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse, RedirectResponse
 
-from ..auth import current_user
+from ..auth import current_user, is_team_member
 from ..db import get_async_db
 from ..models import User
 from ..schemas_v1 import ExportBundleResponse
@@ -51,8 +51,8 @@ _XLSX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetm
 
 async def _assert_project_access(project_id: str, user: User, session) -> None:
     row = (await session.execute(
-        sa.text("SELECT id FROM projects WHERE id = :pid AND owner_id = :uid"),
-        {"pid": project_id, "uid": user.id},
+        sa.text("SELECT id FROM projects WHERE id = :pid AND (owner_id = :uid OR :team = TRUE)"),
+        {"pid": project_id, "uid": user.id, "team": is_team_member(user)},
     )).first()
     if not row:
         raise HTTPException(status_code=404, detail="Project not found")

@@ -24,7 +24,7 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..auth import current_user
+from ..auth import current_user, is_team_member
 from ..db import get_async_db
 from ..models import User, CallSheet
 from ..schemas_v1 import (
@@ -62,8 +62,8 @@ class SendRequest(BaseModel):
 
 async def _assert_project_access(project_id: str, user: User, session: AsyncSession) -> None:
     row = (await session.execute(
-        sa.text("SELECT id FROM projects WHERE id = :pid AND owner_id = :uid"),
-        {"pid": project_id, "uid": user.id},
+        sa.text("SELECT id FROM projects WHERE id = :pid AND (owner_id = :uid OR :team = TRUE)"),
+        {"pid": project_id, "uid": user.id, "team": is_team_member(user)},
     )).first()
     if not row:
         raise HTTPException(status_code=404, detail="Project not found")

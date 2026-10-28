@@ -21,6 +21,14 @@ from .db import get_async_db
 from .models import User
 
 
+def is_team_member(user: User) -> bool:
+    """Allowlisted producers act as one team: every listed email can see and
+    edit every project on this instance. With an empty allowlist (dev), only
+    ownership grants access."""
+    allowed = {e.strip().lower() for e in settings.allowed_emails.split(",") if e.strip()}
+    return user.email.lower() in allowed
+
+
 # ---------------------------------------------------------------------------
 # Session cookie helpers
 # ---------------------------------------------------------------------------

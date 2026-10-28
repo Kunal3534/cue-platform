@@ -17,7 +17,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..auth import current_user
+from ..auth import current_user, is_team_member
 from ..db import get_async_db
 from ..models import Project, Scenario, User
 from ..services.propagation_engine import PropagationEngine
@@ -33,7 +33,7 @@ async def _get_project(project_id: str, user: User, session: AsyncSession) -> Pr
     result = await session.execute(
         sa.select(Project).where(
             Project.id == project_id,
-            Project.owner_id == user.id,
+            sa.or_(Project.owner_id == user.id, sa.literal(is_team_member(user))),
         )
     )
     p = result.scalar_one_or_none()
