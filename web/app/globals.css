@@ -1439,7 +1439,7 @@ html[data-gq-theme="dark"] .gq-masthead__logo { mix-blend-mode: screen; filter: 
   text-transform: uppercase; color: var(--g-faint); opacity: 0; transition: opacity 0.15s;
 }
 .gq-cell--addable:hover .gq-cell__plus { opacity: 1; }
-.gq-cell__mini-emoji { margin-left: 6px; font-size: 13px; }
+.gq-cell__mini-orn { margin-left: 6px; font-size: 11px; color: var(--g-gold); }
 
 /* ── Day briefing ─────────────────────────────────────────────────── */
 .gq-detail { max-width: 720px; margin: 0 auto; }
@@ -1577,16 +1577,22 @@ select.gq-input {
     var(--g-personal-bg);
   border: 1px dashed var(--g-personal-border);
 }
-.gq-marker { margin-top: 8px; }
-.gq-marker__emoji {
-  display: inline-block; font-size: 22px; line-height: 1;
-  transform: rotate(-8deg); transform-origin: 50% 90%;
-  filter: drop-shadow(1px 2px 0 rgba(20, 20, 24, 0.15));
-  animation: gq-sway 3.4s ease-in-out infinite alternate;
+.gq-marker { margin-top: 10px; }
+.gq-marker__orn {
+  display: inline-block; font-size: 15px; line-height: 1; color: var(--g-gold);
+  animation: gq-orn-breathe 4s ease-in-out infinite alternate;
 }
-@keyframes gq-sway {
-  from { transform: rotate(-9deg); }
-  to { transform: rotate(5deg); }
+.gq-marker__orn--lg { font-size: 19px; }
+.gq-marker__coin {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; border-radius: 999px; flex: none;
+  background: var(--g-personal-bg); border: 1px solid var(--g-personal-border);
+  color: var(--g-personal-ink);
+  font-family: var(--serif); font-style: italic; font-size: 13px; line-height: 1;
+}
+@keyframes gq-orn-breathe {
+  from { opacity: 0.55; transform: scale(0.94) rotate(0deg); }
+  to { opacity: 1; transform: scale(1.06) rotate(22deg); }
 }
 .gq-marker__label {
   display: block; margin-top: 6px;
@@ -1603,7 +1609,7 @@ select.gq-input {
 }
 .gq-marker-chip--personal { border-color: var(--g-personal-border); background: var(--g-personal-bg); }
 .gq-marker-chip__label { flex: 1; font-family: var(--serif); font-style: italic; font-size: 15px; }
-.gq-marker-chip .gq-marker__emoji { font-size: 24px; }
+.gq-marker-chip .gq-marker__coin { width: 28px; height: 28px; font-size: 14px; }
 
 .gq-marker-form {
   margin-top: 12px; padding: 18px; border: 1px solid var(--g-glass-border); border-radius: var(--g-r);
@@ -1762,11 +1768,11 @@ select.gq-input {
   .gq-kv__k { width: auto; }
   .gq-moodboard__frame { height: 320px; }
 
-  /* compact cells: the emoji itself is the marker */
+  /* compact cells: the ornament/coin alone marks the day */
   .gq-cell--holiday .gq-marker__label,
   .gq-cell--personal .gq-marker__label { display: none; }
-  .gq-cell--holiday .gq-marker__emoji,
-  .gq-cell--personal .gq-marker__emoji { font-size: 15px; display: block; text-align: center; margin-top: 2px; }
+  .gq-cell--holiday .gq-marker__orn { display: block; text-align: center; margin-top: 2px; font-size: 13px; }
+  .gq-cell--personal .gq-marker__coin { margin: 2px auto 0; width: 18px; height: 18px; font-size: 10px; display: flex; }
   .gq-marker { margin-top: 2px; }
 
   /* form: one column, 16px inputs so iOS doesn't zoom, full-width buttons */
@@ -1789,7 +1795,7 @@ select.gq-input {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gq-marker__emoji, .gq-switch.is-dark .gq-switch__star { animation: none; }
+  .gq-marker__orn, .gq-switch.is-dark .gq-switch__star { animation: none; }
   .gq-switch__knob, .gq-switch__moon, .gq-cell--shoot::after { transition-duration: 0.01s; }
 }
 

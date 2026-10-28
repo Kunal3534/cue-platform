@@ -4,8 +4,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getEditorialSchedule, saveMarkers } from "@/lib/api";
 import type { EditorialMarker } from "@/lib/api/types";
 
-const EMOJI_IDEAS = ["🪔", "🎂", "🎉", "🌴", "✨", "🎊", "🏖️", "💐"];
-
 /**
  * Special days on one date — festival holidays for everyone, or someone's
  * own day (birthday, leave). Producer-only surface; holidays also appear on
@@ -26,7 +24,6 @@ export default function DayMarkers({
 
   const [adding, setAdding] = useState(false);
   const [label, setLabel] = useState("");
-  const [emoji, setEmoji] = useState("🎉");
   const [kind, setKind] = useState<"holiday" | "personal">("holiday");
   const [who, setWho] = useState("");
   const [saving, setSaving] = useState(false);
@@ -66,7 +63,7 @@ export default function DayMarkers({
         id: crypto.randomUUID(),
         date,
         label: label.trim(),
-        emoji: emoji.trim() || "🎉",
+        emoji: "✦", // legacy field — the UI renders ornaments now
         kind,
         who: kind === "personal" ? who.trim() || null : null,
       },
@@ -84,7 +81,13 @@ export default function DayMarkers({
 
       {dayMarkers.map((m) => (
         <div key={m.id} className={`gq-marker-chip gq-marker-chip--${m.kind}`}>
-          <span className="gq-marker__emoji">{m.emoji}</span>
+          {m.kind === "personal" ? (
+            <span className="gq-marker__coin" aria-hidden>
+              {(m.who || m.label).charAt(0).toUpperCase()}
+            </span>
+          ) : (
+            <span className="gq-marker__orn gq-marker__orn--lg" aria-hidden>✦</span>
+          )}
           <span className="gq-marker-chip__label">
             {m.label}
             {m.kind === "personal" && m.who ? ` — ${m.who}` : ""}
@@ -111,21 +114,6 @@ export default function DayMarkers({
                 placeholder="Diwali · Birthday · Day off…"
                 onChange={(e) => setLabel(e.target.value)}
               />
-            </div>
-            <div>
-              <label className="gq-label">Emoji</label>
-              <input
-                className="gq-input"
-                value={emoji}
-                onChange={(e) => setEmoji(e.target.value)}
-              />
-              <div className="gq-emoji-row">
-                {EMOJI_IDEAS.map((e) => (
-                  <button key={e} type="button" className="gq-emoji-pick" onClick={() => setEmoji(e)}>
-                    {e}
-                  </button>
-                ))}
-              </div>
             </div>
             <div>
               <label className="gq-label">Who’s off?</label>

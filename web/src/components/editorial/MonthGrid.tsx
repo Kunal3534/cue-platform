@@ -118,7 +118,7 @@ export default function MonthGrid({
               <div className="gq-cell__date">
                 {cell.num}
                 {shoot && dayMarkers.length > 0 && (
-                  <span className="gq-cell__mini-emoji">{dayMarkers[0].emoji}</span>
+                  <span className="gq-cell__mini-orn" aria-hidden>✦</span>
                 )}
               </div>
               {shoot && (
@@ -146,7 +146,13 @@ export default function MonthGrid({
                 </>
               ) : feature ? (
                 <div className="gq-marker">
-                  <span className="gq-marker__emoji">{feature.emoji}</span>
+                  {feature.kind === "personal" ? (
+                    <span className="gq-marker__coin" aria-hidden>
+                      {(feature.who || feature.label).charAt(0).toUpperCase()}
+                    </span>
+                  ) : (
+                    <span className="gq-marker__orn" aria-hidden>✦</span>
+                  )}
                   <span className="gq-marker__label">
                     {feature.label}
                     {feature.kind === "personal" && feature.who ? ` — ${feature.who}` : ""}
@@ -210,7 +216,14 @@ export default function MonthGrid({
                 {dateBlock}
                 <div className="gq-agenda__body">
                   <div className="gq-agenda__talent">
-                    <span className="gq-marker__emoji">{m.emoji}</span> {m.label}
+                    {m.kind === "personal" ? (
+                      <span className="gq-marker__coin" aria-hidden>
+                        {(m.who || m.label).charAt(0).toUpperCase()}
+                      </span>
+                    ) : (
+                      <span className="gq-marker__orn" aria-hidden>✦</span>
+                    )}{" "}
+                    {m.label}
                   </div>
                   {m.kind === "personal" && m.who && (
                     <div className="gq-agenda__meta">{m.who}’s day</div>
