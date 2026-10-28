@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import NavBar from "@/components/nav/NavBar";
 import ProjectNav from "@/components/nav/ProjectNav";
 import FlagsDrawer from "@/components/flags/FlagsDrawer";
+import Masthead from "@/components/editorial/Masthead";
 import { useProjectStore } from "@/stores/project";
 import { useProjectEvents } from "@/lib/sse/useProjectEvents";
 import { getProject } from "@/lib/api";
@@ -28,6 +29,23 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   // expose a GET flags endpoint yet, so we don't fetch them on mount.
 
   useProjectEvents(projectId);
+
+  if (!project) {
+    return <div style={{ minHeight: "100vh" }} />;
+  }
+
+  // Editorial projects get the minimal magazine chrome, no film machinery.
+  if (project.settings?.mode === "editorial") {
+    return (
+      <div className="gq-page">
+        <div className="gq-inner">
+          <Masthead projectId={projectId} />
+          <main style={{ paddingBottom: "64px" }}>{children}</main>
+          <div className="gq-foot">Produced on Cue</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

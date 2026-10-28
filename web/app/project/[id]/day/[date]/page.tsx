@@ -1,9 +1,18 @@
 "use client";
-import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useParams, useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { getMainSchedule } from "@/lib/api";
+import {
+  getMainSchedule,
+  getEditorialSchedule,
+  deleteShootDay,
+  moodboardUrl,
+  moodboardPageUrl,
+} from "@/lib/api";
 import { useProjectStore } from "@/stores/project";
+import { useIsEditorial } from "@/lib/terminology";
+import DayDetail from "@/components/editorial/DayDetail";
+import DayTodos from "@/components/editorial/DayTodos";
 
 function dnStripClass(dn: string | null | undefined): string {
   const d = (dn ?? "").toLowerCase();
@@ -13,6 +22,87 @@ function dnStripClass(dn: string | null | undefined): string {
 }
 
 export default function DayDetailPage() {
+  const isEditorial = useIsEditorial();
+  return isEditorial ? <GqDayPage /> : <FilmDayPage />;
+}
+
+function GqDayPage() {
+  const params = useParams();
+  const projectId = params.id as string;
+  const date = params.date as string;
+  const router = useRouter();
+  const qc = useQueryClient();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["editorial-schedule", projectId],
+    queryFn: () => getEditorialSchedule(projectId),
+  });
+
+  const day = data?.days.find((d) => d.date === date);
+
+  const handleDelete = async () => {
+    if (!window.confirm("Remove this shoot day? The date stays on the calendar as an empty day.")) return;
+    await deleteShootDay(projectId, date);
+    await qc.invalidateQueries({ queryKey: ["editorial-schedule", projectId] });
+    router.push(`/project/${projectId}/calendar`);
+  };
+
+  if (isLoading) {
+    return <p style={{ color: "#999", padding: "40px 0" }}>Loading…</p>;
+  }
+
+  if (!day) {
+    return (
+      <div style={{ padding: "40px 0", textAlign: "center" }}>
+        <p style={{ color: "#999" }}>No shoot on this date.</p>
+        <Link
+          href={`/project/${projectId}/day/${date}/edit`}
+          className="gq-btn"
+          style={{ display: "inline-block", marginTop: 16 }}
+        >
+          Add a shoot here
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <Link href={`/project/${projectId}/calendar`} style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#999" }}>
+          ← Calendar
+        </Link>
+        <div style={{ display: "flex", gap: 10 }}>
+          <Link
+            href={`/project/${projectId}/day/${date}/edit`}
+            className="gq-btn gq-btn--ghost"
+            style={{ padding: "8px 18px", fontSize: 10 }}
+          >
+            Edit
+          </Link>
+          <button
+            type="button"
+            className="gq-btn gq-btn--danger"
+            style={{ padding: "8px 18px", fontSize: 10 }}
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+      <DayDetail
+        day={day}
+        moodboardHref={day.moodboard ? moodboardUrl(projectId, date) : null}
+        moodboardPageHref={(page) => moodboardPageUrl(projectId, date, page)}
+      />
+      <div className="gq-detail">
+        <DayTodos projectId={projectId} date={date} />
+      </div>
+    </div>
+  );
+}
+
+function FilmDayPage() {
   const params = useParams();
   const projectId = params.id as string;
   const date = params.date as string;

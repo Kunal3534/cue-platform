@@ -15,6 +15,11 @@ import type {
   CallSheetSummary,
   EditItem,
   ResourceItem,
+  SharedCalendarResponse,
+  EditorialScheduleResponse,
+  EditorialDay,
+  ShootDayInput,
+  TodoItem,
 } from "./types";
 
 // Auth
@@ -57,6 +62,61 @@ export const getCalendar = (id: string, scenarioId?: string) =>
   apiFetch<CalendarResponse>(
     `/projects/${id}/views/calendar${q(scenarioId)}`,
   );
+
+// Editorial schedule (magazine shoots)
+export const getEditorialSchedule = (id: string) =>
+  apiFetch<EditorialScheduleResponse>(`/projects/${id}/editorial/schedule`);
+
+export const upsertShootDay = (id: string, date: string, body: ShootDayInput) =>
+  apiFetch<EditorialDay>(`/projects/${id}/editorial/days/${date}`, {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+
+export const deleteShootDay = (id: string, date: string) =>
+  apiFetch<void>(`/projects/${id}/editorial/days/${date}`, { method: "DELETE" });
+
+export const moveShootDay = (id: string, from: string, to: string) =>
+  apiFetch<EditorialDay>(`/projects/${id}/editorial/days/${from}/move`, {
+    method: "POST",
+    body: JSON.stringify({ to }),
+  });
+
+export const uploadMoodboard = (id: string, date: string, file: File) => {
+  const form = new FormData();
+  form.append("file", file);
+  return apiUpload<{ ok: boolean }>(`/projects/${id}/editorial/days/${date}/moodboard`, form);
+};
+
+export const moodboardUrl = (id: string, date: string) =>
+  `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/projects/${id}/editorial/days/${date}/moodboard`;
+
+export const moodboardPageUrl = (id: string, date: string, page: number) =>
+  `${moodboardUrl(id, date)}/pages/${page}`;
+
+export const sharedMoodboardUrl = (token: string, date: string) =>
+  `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/share/${token}/moodboard/${date}`;
+
+export const sharedMoodboardPageUrl = (token: string, date: string, page: number) =>
+  `${sharedMoodboardUrl(token, date)}/pages/${page}`;
+
+export const getTodos = (id: string) =>
+  apiFetch<{ todos: TodoItem[] }>(`/projects/${id}/todos`);
+
+export const saveTodos = (id: string, todos: TodoItem[]) =>
+  apiFetch<{ todos: TodoItem[] }>(`/projects/${id}/todos`, {
+    method: "PUT",
+    body: JSON.stringify({ todos }),
+  });
+
+// Share links
+export const mintShareLink = (id: string) =>
+  apiFetch<{ token: string; path: string }>(`/projects/${id}/share`, {
+    method: "POST",
+  });
+
+export const getSharedCalendar = (token: string) =>
+  apiFetch<SharedCalendarResponse>(`/share/${encodeURIComponent(token)}`);
 
 export const getCastDood = (id: string, scenarioId?: string) =>
   apiFetch<CastDoodResponse>(

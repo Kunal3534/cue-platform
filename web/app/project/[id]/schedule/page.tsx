@@ -1,8 +1,9 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { getMainSchedule } from "@/lib/api";
+import { getMainSchedule, getEditorialSchedule } from "@/lib/api";
 import { useProjectStore } from "@/stores/project";
+import { useIsEditorial } from "@/lib/terminology";
 import type { MainScheduleDay } from "@/lib/api/types";
 
 function dnClass(dn: string | null | undefined): string {
@@ -95,6 +96,63 @@ function ShootDayRow({ day }: { day: MainScheduleDay }) {
 }
 
 export default function SchedulePage() {
+  const isEditorial = useIsEditorial();
+  return isEditorial ? <GqSchedulePage /> : <FilmSchedulePage />;
+}
+
+function GqSchedulePage() {
+  const params = useParams();
+  const projectId = params.id as string;
+  const router = useRouter();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["editorial-schedule", projectId],
+    queryFn: () => getEditorialSchedule(projectId),
+  });
+
+  if (isLoading || !data) {
+    return <p style={{ color: "#999", padding: "40px 0" }}>Loading…</p>;
+  }
+
+  return (
+    <div style={{ maxWidth: 900, margin: "0 auto" }}>
+      <div style={{ borderTop: "1px solid #111" }}>
+        {data.days.map((day) => {
+          const d = new Date(`${day.date}T00:00:00`);
+          return (
+            <div
+              key={day.date}
+              className="gq-sched-row"
+              onClick={() => router.push(`/project/${projectId}/day/${day.date}`)}
+            >
+              <div className="gq-sched-row__date">
+                {d.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                <div className="gq-sched-row__meta">{day.day_of_week}</div>
+              </div>
+              <div className="gq-sched-row__talent">
+                {day.talent.map((t) => (
+                  <div key={t.name}>{t.name}</div>
+                ))}
+                <div className="gq-sched-row__meta" style={{ marginTop: 4 }}>
+                  Photos + Film
+                </div>
+              </div>
+              <div className="gq-sched-row__meta">
+                {day.location.name}
+                {day.location.area ? ` · ${day.location.area}` : ""}
+              </div>
+              <div className="gq-sched-row__meta">
+                {day.call_time ? `Call ${day.call_time}` : ""}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function FilmSchedulePage() {
   const params = useParams();
   const projectId = params.id as string;
   const scenarioId = useProjectStore((s) => s.activeScenarioId) ?? undefined;

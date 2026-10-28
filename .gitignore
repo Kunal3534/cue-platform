@@ -38,3 +38,7 @@ Thumbs.db
 .idea/
 .vscode/
 *.iml
+
+# ---------- Generated deliverables ----------
+api/export_pack/
+GQ_MOTY_Export_Pack/

@@ -16,6 +16,7 @@ export interface ProjectDetail extends ProjectSummary {
   end_date: string | null;
   live_scenario_id: string | null;
   unit_cols: string[];
+  settings: { mode?: "film" | "editorial"; share_token?: string } & Record<string, unknown>;
 }
 
 export interface UserProfile {
@@ -90,6 +91,8 @@ export interface CalendarSceneStrip {
   scene_number: string;
   title: string | null;
   dn: string | null;
+  start?: string | null;
+  duration_minutes?: number | null;
 }
 
 export interface CalendarDay {
@@ -103,6 +106,7 @@ export interface CalendarDay {
   page_eighths_total: number | null;
   setups_total: number | null;
   jr_count: number | null;
+  talent?: string[];
   shift_start: string | null;
   shift_end: string | null;
   banner_text: string | null;
@@ -126,6 +130,78 @@ export interface CalendarResponse {
 
 // Back-compat alias
 export type CalendarScene = CalendarSceneStrip;
+
+export interface SharedCalendarResponse {
+  title: string;
+  window: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  mode: "film" | "editorial";
+  calendar: CalendarResponse;
+  schedule?: EditorialDay[];
+}
+
+// Editorial (magazine-shoot) schedule — one payload drives calendar,
+// schedule and day pages.
+export interface EditorialTalent {
+  name: string;
+  role: string | null;
+  hmu_call: string | null;
+  hmu_lead: string | null;
+}
+
+export interface EditorialSegment {
+  ref: string;
+  title: string | null;
+  start: string | null;
+  duration_minutes: number | null;
+}
+
+export type EditorialMoodboard =
+  | { kind: "link"; url: string }
+  | { kind: "pdf"; filename: string | null; pages: number };
+
+export interface EditorialDay {
+  date: string;
+  day_of_week: string;
+  shoot_day_number: number | null;
+  headline: string | null;
+  location: { name: string | null; area: string | null };
+  call_time: string | null;
+  wrap_time: string | null;
+  photographer: string | null;
+  video: string | null;
+  talent: EditorialTalent[];
+  segments: EditorialSegment[];
+  notes: string | null;
+  moodboard: EditorialMoodboard | null;
+}
+
+export interface EditorialScheduleResponse {
+  days: EditorialDay[];
+}
+
+export interface ShootDayInput {
+  talent: { name: string; role?: string | null; hmu_call?: string | null; hmu_lead?: string | null }[];
+  location_name?: string | null;
+  location_area?: string | null;
+  call_time?: string | null;
+  wrap_time?: string | null;
+  photo_start?: string | null;
+  film_start?: string | null;
+  photographer?: string | null;
+  video?: string | null;
+  headline?: string | null;
+  notes?: string | null;
+  moodboard_link?: string | null;
+}
+
+export interface TodoItem {
+  id: string;
+  text: string;
+  done: boolean;
+  date?: string | null;
+}
 
 export interface DoodCharacter {
   character_id: string;

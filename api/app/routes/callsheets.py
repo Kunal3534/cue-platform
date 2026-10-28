@@ -129,8 +129,8 @@ async def generate_callsheet(
     )).first()
     if not day_row:
         raise HTTPException(status_code=404, detail="Day not found")
-    if day_row.kind != "shoot":
-        raise HTTPException(status_code=422, detail="Call sheets can only be generated for shoot days")
+    if day_row.kind not in ("shoot", "prep"):
+        raise HTTPException(status_code=422, detail="Call sheets can only be generated for shoot or prep days")
 
     if sync:
         sheet = await CallSheetGenerator.generate(project_id, day_id, user.id, session, scenario_id)

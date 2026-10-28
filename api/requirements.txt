@@ -22,3 +22,8 @@ anthropic==0.40.0
 typing-extensions==4.12.2
 # Week 5 additions
 httpx==0.27.2
+
+# weasyprint 62.x is incompatible with pydyf >= 0.11 (Stream.transform removed)
+pydyf==0.10.0
+pypdfium2==4.30.0
+pillow>=10

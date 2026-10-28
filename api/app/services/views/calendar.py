@@ -80,7 +80,8 @@ async def render(
     scene_rows = (await session.execute(
         sa.text("""
             SELECT ds.day_id, s.scene_number, s.title, s.dn,
-                   s.page_eighths, s.setups_est
+                   s.page_eighths, s.setups_est,
+                   ds.estimated_start, ds.estimated_duration_minutes
             FROM day_scenes ds
             JOIN scenes s ON s.id = ds.scene_id
             JOIN days d   ON d.id = ds.day_id
@@ -101,15 +102,35 @@ async def render(
         {"pid": project_id},
     )).fetchall()
 
+    # Talent per day (editorial calendars lead with who is on site)
+    talent_rows = (await session.execute(
+        sa.text("""
+            SELECT DISTINCT ds.day_id, c.display_name, c.is_principal
+            FROM day_scenes ds
+            JOIN scene_characters sc ON sc.scene_id = ds.scene_id
+            JOIN characters c ON c.id = sc.character_id
+            JOIN days d ON d.id = ds.day_id
+            WHERE d.project_id = :pid
+            ORDER BY ds.day_id, c.is_principal DESC, c.display_name
+        """),
+        {"pid": project_id},
+    )).fetchall()
+
     scenes_by_day: dict[str, list[dict]] = defaultdict(list)
     for r in scene_rows:
         scenes_by_day[r.day_id].append({
             "scene_number": r.scene_number,
             "title": r.title,
             "dn": r.dn,
+            "start": r.estimated_start.strftime("%H:%M") if r.estimated_start else None,
+            "duration_minutes": r.estimated_duration_minutes,
         })
 
     jr_by_day: dict[str, int] = {r.day_id: int(r.total) for r in jr_rows}
+
+    talent_by_day: dict[str, list[str]] = defaultdict(list)
+    for r in talent_rows:
+        talent_by_day[r.day_id].append(r.display_name)
 
     # Group days by (year, month)
     months_map: dict[tuple[int, int], list[dict]] = defaultdict(list)
@@ -137,6 +158,7 @@ async def render(
             "page_eighths_total": page_eighths or None,
             "setups_total": setups,
             "jr_count": jr_by_day.get(r.id, 0),
+            "talent": talent_by_day.get(r.id, []),
             "shift_start": str(r.shift_start) if r.shift_start else None,
             "shift_end": str(r.shift_end) if r.shift_end else None,
             "banner_text": r.banner_text,

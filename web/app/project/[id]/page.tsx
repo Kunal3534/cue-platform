@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listThreads, createThread, getThread } from "@/lib/api";
 import { useChatStore } from "@/stores/chat";
@@ -122,7 +122,15 @@ export default function ChatPage() {
   const params = useParams();
   const projectId = params.id as string;
   const qc = useQueryClient();
+  const router = useRouter();
   const project = useProjectStore((s) => s.project);
+
+  // Editorial projects are calendar-first: land there, chat stays on its tab.
+  useEffect(() => {
+    if (project?.id === projectId && project.settings?.mode === "editorial") {
+      router.replace(`/project/${projectId}/calendar`);
+    }
+  }, [project, projectId, router]);
 
   const {
     threads,

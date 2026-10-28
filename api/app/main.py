@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import settings
 from .routes import projects, edits, views, callsheets, exports, chat, events
-from .routes import auth, scenarios, resources
+from .routes import auth, scenarios, resources, share, editorial
 
 _log = logging.getLogger(__name__)
 
@@ -44,6 +44,8 @@ app.include_router(chat.router)
 app.include_router(events.router)
 app.include_router(scenarios.router)
 app.include_router(resources.router)
+app.include_router(share.router)
+app.include_router(editorial.router)
 
 
 @app.get("/")

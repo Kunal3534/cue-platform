@@ -44,6 +44,7 @@ class ProjectDetail(BaseModel):
     shoot_days: int
     total_days: int
     unit_cols: list[str]
+    settings: dict = {}
     created_at: str
     updated_at: str
 
@@ -151,7 +152,7 @@ async def create_project(
     p_row = (await session.execute(
         sa.text(
             "SELECT id, title, \"window\", status, start_date, end_date, "
-            "live_scenario_id, created_at, updated_at FROM projects WHERE id = :pid"
+            "live_scenario_id, settings, created_at, updated_at FROM projects WHERE id = :pid"
         ),
         {"pid": project_id},
     )).first()
@@ -184,6 +185,7 @@ async def create_project(
         shoot_days=int(counts.shoot_days),
         total_days=int(counts.total_days),
         unit_cols=unit_cols,
+        settings=p_row.settings or {},
         created_at=p_row.created_at.isoformat(),
         updated_at=p_row.updated_at.isoformat(),
     )
@@ -202,7 +204,7 @@ async def get_project(
     p_row = (await session.execute(
         sa.text(
             "SELECT p.id, p.title, p.\"window\", p.status, p.start_date, p.end_date, "
-            "p.live_scenario_id, p.created_at, p.updated_at "
+            "p.live_scenario_id, p.settings, p.created_at, p.updated_at "
             "FROM projects p "
             "WHERE p.id = :pid AND p.owner_id = :uid"
         ),
@@ -239,6 +241,7 @@ async def get_project(
         shoot_days=int(counts.shoot_days),
         total_days=int(counts.total_days),
         unit_cols=unit_cols,
+        settings=p_row.settings or {},
         created_at=p_row.created_at.isoformat(),
         updated_at=p_row.updated_at.isoformat(),
     )

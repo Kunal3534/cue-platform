@@ -71,6 +71,8 @@ class Day(Base):
     golden_hour_start: Mapped[time | None] = mapped_column(sa.Time)
     golden_hour_end: Mapped[time | None] = mapped_column(sa.Time)
     weather: Mapped[dict | None] = mapped_column(sa.JSON)
+    crew: Mapped[dict | None] = mapped_column(sa.JSON)
+    moodboard: Mapped[dict | None] = mapped_column(sa.JSON)
     notes: Mapped[str | None] = mapped_column(sa.Text)
     created_at: Mapped[datetime] = mapped_column(
         sa.DateTime(timezone=True), server_default=func.now()
