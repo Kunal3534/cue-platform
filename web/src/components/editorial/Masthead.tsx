@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
  */
 export default function Masthead({
   projectId,
-  subtitle = "Men of the Year 2026",
+  subtitle = "November 2026 · Shoot Calendar",
 }: {
   projectId?: string;
   subtitle?: string;
@@ -26,9 +26,9 @@ export default function Masthead({
   return (
     <header>
       <div className="gq-masthead">
-        <div className="gq-masthead__gq">GQ INDIA</div>
+        {/* Official MOTY lockup; multiply blend sinks its paper into ours */}
+        <img src="/moty-logo.jpg" alt="GQ Men of the Year" className="gq-masthead__logo" />
         <div className="gq-masthead__sub">{subtitle}</div>
-        <div className="gq-masthead__rule" />
       </div>
       {tabs.length > 0 && (
         <nav className="gq-tabs">
