@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     # {PUBLIC_API_URL or API base}/auth/google/callback.
     google_client_id: str | None = None
     google_client_secret: str | None = None
+    # Browser API key for the Google Picker dialog (moodboard Slides picker)
+    google_api_key: str | None = None
 
     class Config:
         env_file = ".env"

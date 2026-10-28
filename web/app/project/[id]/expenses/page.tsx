@@ -12,6 +12,8 @@ import {
   rereadExpenseReceipt,
   expenseReceiptUrl,
   expenseReportUrl,
+  exportReportToSlides,
+  getMe,
 } from "@/lib/api";
 import type { ExpenseItem, ExpensePatch } from "@/lib/api/types";
 import ReceiptScanner from "@/components/editorial/ReceiptScanner";
@@ -175,6 +177,22 @@ export default function ExpensesPage() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [slidesBusy, setSlidesBusy] = useState(false);
+  const [slidesError, setSlidesError] = useState<string | null>(null);
+  const { data: me } = useQuery({ queryKey: ["me"], queryFn: getMe, staleTime: 60_000 });
+
+  const openAsSlides = async () => {
+    setSlidesBusy(true);
+    setSlidesError(null);
+    try {
+      const { url } = await exportReportToSlides(projectId);
+      window.open(url, "_blank", "noopener");
+    } catch (e) {
+      setSlidesError(e instanceof Error ? e.message : "Could not create the Slides deck");
+    } finally {
+      setSlidesBusy(false);
+    }
+  };
 
   const refresh = () => qc.invalidateQueries({ queryKey: ["expenses", projectId] });
 
@@ -229,13 +247,25 @@ export default function ExpensesPage() {
           <span className="gq-exp-grand__label">Total spend</span>
           <span className="gq-exp-grand__num">{inr(data.totals.grand)}</span>
         </div>
-        <a className="gq-btn" href={expenseReportUrl(projectId)} download>
-          Download report deck
-        </a>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          {me?.google_calendar_connected && (
+            <button type="button" className="gq-btn" onClick={openAsSlides} disabled={slidesBusy}>
+              {slidesBusy ? "Creating Slides…" : "Open as Google Slides"}
+            </button>
+          )}
+          <a className={`gq-btn${me?.google_calendar_connected ? " gq-btn--ghost" : ""}`}
+             href={expenseReportUrl(projectId)} download>
+            Download .pptx
+          </a>
+        </div>
       </div>
+      {slidesError && (
+        <p style={{ color: "#C33", fontSize: 12, marginTop: 8 }}>{slidesError}</p>
+      )}
       <p className="gq-exp-note" style={{ marginTop: 6 }}>
-        The report is a .pptx — drop it into Google Drive and it opens as
-        Google Slides, ready for the accounts team.
+        {me?.google_calendar_connected
+          ? "One click drops the deck into your Google Drive as native Slides, ready for the accounts team."
+          : "The report is a .pptx — drop it into Google Drive and it opens as Google Slides, ready for the accounts team."}
       </p>
 
       {/* Upload */}

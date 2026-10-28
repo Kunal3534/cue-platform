@@ -178,7 +178,8 @@ export interface EditorialSegment {
 
 export type EditorialMoodboard =
   | { kind: "link"; url: string }
-  | { kind: "pdf"; filename: string | null; pages: number };
+  | { kind: "pdf"; filename: string | null; pages: number }
+  | { kind: "images"; filename: string | null; pages: number };
 
 export interface EditorialDay {
   date: string;

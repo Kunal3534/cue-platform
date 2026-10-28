@@ -193,7 +193,10 @@ async def verify(
 _GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 _GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 _GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
-_GOOGLE_SCOPES = "openid email profile https://www.googleapis.com/auth/calendar.events"
+_GOOGLE_SCOPES = ("openid email profile "
+                  "https://www.googleapis.com/auth/calendar.events "
+                  # drive.file = only files the app creates or the user picks
+                  "https://www.googleapis.com/auth/drive.file")
 
 
 def _google_redirect_uri(request: Request) -> str:
@@ -300,6 +303,23 @@ async def google_callback(
         max_age=_COOKIE_MAX_AGE,
     )
     return response
+
+
+@router.get("/google/picker")
+async def google_picker_config(
+    user: User = Depends(current_user),
+) -> dict:
+    """Short-lived config for the Google Picker dialog: the browser needs an
+    access token for the signed-in user's grant plus the public API key."""
+    if not user.google_refresh_token:
+        raise HTTPException(status_code=409, detail="Connect Google first")
+    if not settings.google_api_key:
+        raise HTTPException(status_code=503, detail="GOOGLE_API_KEY is not configured")
+    from ..services.google_calendar import access_token_for
+    token = await access_token_for(user.google_refresh_token)
+    if not token:
+        raise HTTPException(status_code=409, detail="Google access expired — reconnect Google")
+    return {"access_token": token, "api_key": settings.google_api_key}
 
 
 # ---------------------------------------------------------------------------

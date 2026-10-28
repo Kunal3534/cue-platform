@@ -8,7 +8,11 @@ import {
   upsertShootDay,
   uploadMoodboard,
   moveShootDay,
+  getMe,
+  getPickerConfig,
+  setMoodboardFromGoogle,
 } from "@/lib/api";
+import { openDrivePicker } from "@/lib/googlePicker";
 
 interface TalentRow {
   name: string;
@@ -60,6 +64,28 @@ export default function EditShootDayPage() {
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [driveMsg, setDriveMsg] = useState<string | null>(null);
+
+  const { data: me } = useQuery({ queryKey: ["me"], queryFn: getMe, staleTime: 60_000 });
+
+  const pickFromDrive = async () => {
+    setDriveMsg(null);
+    try {
+      const cfg = await getPickerConfig();
+      await openDrivePicker(cfg, async (files) => {
+        if (files.length === 0) return;
+        try {
+          await setMoodboardFromGoogle(projectId, date, files);
+          await qc.invalidateQueries({ queryKey: ["editorial-schedule", projectId] });
+          setDriveMsg("Moodboard set from Drive ✓");
+        } catch (e) {
+          setDriveMsg(e instanceof Error ? e.message : "Could not set the moodboard");
+        }
+      });
+    } catch (e) {
+      setDriveMsg(e instanceof Error ? e.message : "Could not open the Google picker");
+    }
+  };
 
   useEffect(() => {
     if (loaded || !data) return;
@@ -305,11 +331,28 @@ export default function EditShootDayPage() {
           />
         </div>
       </div>
+      {me?.google_calendar_connected && existing && (
+        <div style={{ marginTop: 12 }}>
+          <button type="button" className="gq-btn gq-btn--ghost"
+                  style={{ padding: "9px 16px", fontSize: 10 }}
+                  onClick={pickFromDrive}>
+            Choose from Google Drive — Slides, PDF or images
+          </button>
+          {driveMsg && (
+            <span style={{ marginLeft: 12, fontSize: 12,
+                           color: driveMsg.endsWith("✓") ? "#5B7A3A" : "#C33" }}>
+              {driveMsg}
+            </span>
+          )}
+        </div>
+      )}
       {existing?.moodboard && (
         <p style={{ fontSize: 12, color: "#999", marginTop: 8 }}>
           Current: {existing.moodboard.kind === "pdf"
             ? `uploaded PDF${existing.moodboard.filename ? ` (${existing.moodboard.filename})` : ""}`
-            : "external link"} — saving a new link or PDF replaces it; clear the link field to remove it.
+            : existing.moodboard.kind === "images"
+              ? `${existing.moodboard.pages} image${existing.moodboard.pages === 1 ? "" : "s"} from Drive`
+              : "external link"} — saving a new link or PDF replaces it; clear the link field to remove it.
         </p>
       )}
 

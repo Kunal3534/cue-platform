@@ -123,34 +123,34 @@ export default function DayDetail({
               Open in new tab ↗
             </a>
           </div>
-          {day.moodboard.kind === "pdf" ? (
-            day.moodboard.pages > 0 && moodboardPageHref ? (
-              <div>
-                {Array.from({ length: day.moodboard.pages }, (_, i) => (
-                  <img
-                    key={i}
-                    src={moodboardPageHref(i + 1)}
-                    alt={`Moodboard page ${i + 1}`}
-                    className="gq-moodboard__page"
-                    loading={i > 0 ? "lazy" : undefined}
-                  />
-                ))}
-              </div>
-            ) : (
-              <a href={moodboardHref} target="_blank" rel="noreferrer" className="gq-moodboard__fallback">
-                Open the moodboard PDF ↗
-              </a>
-            )
-          ) : (() => {
-            const embedSrc = slidesEmbedUrl(day.moodboard.url);
-            return embedSrc ? (
-              <iframe src={embedSrc} title="Moodboard" className="gq-moodboard__frame" allowFullScreen />
-            ) : (
-              <a href={moodboardHref} target="_blank" rel="noreferrer" className="gq-moodboard__fallback">
-                This moodboard link can’t be previewed inline — open it ↗
-              </a>
-            );
-          })()}
+          {day.moodboard.kind === "link" ? (
+            (() => {
+              const embedSrc = slidesEmbedUrl(day.moodboard.url);
+              return embedSrc ? (
+                <iframe src={embedSrc} title="Moodboard" className="gq-moodboard__frame" allowFullScreen />
+              ) : (
+                <a href={moodboardHref} target="_blank" rel="noreferrer" className="gq-moodboard__fallback">
+                  This moodboard link can’t be previewed inline — open it ↗
+                </a>
+              );
+            })()
+          ) : day.moodboard.pages > 0 && moodboardPageHref ? (
+            <div>
+              {Array.from({ length: day.moodboard.pages }, (_, i) => (
+                <img
+                  key={i}
+                  src={moodboardPageHref(i + 1)}
+                  alt={`Moodboard page ${i + 1}`}
+                  className="gq-moodboard__page"
+                  loading={i > 0 ? "lazy" : undefined}
+                />
+              ))}
+            </div>
+          ) : (
+            <a href={moodboardHref} target="_blank" rel="noreferrer" className="gq-moodboard__fallback">
+              Open the moodboard ↗
+            </a>
+          )}
         </div>
       )}
     </div>

@@ -197,6 +197,8 @@ def _moodboard_out(raw: dict | None) -> dict | None:
         return {"kind": "link", "url": raw.get("url")}
     if raw.get("kind") == "pdf":
         return {"kind": "pdf", "filename": raw.get("filename"), "pages": raw.get("pages", 0)}
+    if raw.get("kind") == "images":
+        return {"kind": "images", "filename": raw.get("filename"), "pages": raw.get("pages", 0)}
     return None
 
 
@@ -619,12 +621,17 @@ async def move_shoot_day(
                     {"sn": new_ref, "id": r.id},
                 )
 
-    # Moodboard PDFs live under date-keyed paths — copy them along
+    # Moodboard files live under date-keyed paths — copy them along
     mb = src_row.moodboard
-    if mb and mb.get("kind") == "pdf":
-        new_key = f"moodboards/{project_id}/{dst.isoformat()}.pdf"
+    if mb and mb.get("kind") in ("pdf", "images"):
         try:
-            storage.put_bytes(new_key, storage.get_bytes(mb["s3_key"]), content_type="application/pdf")
+            patch = dict(mb)
+            if mb.get("kind") == "pdf":
+                new_key = f"moodboards/{project_id}/{dst.isoformat()}.pdf"
+                storage.put_bytes(new_key, storage.get_bytes(mb["s3_key"]), content_type="application/pdf")
+                patch["s3_key"] = new_key
+            else:
+                patch["page_prefix"] = f"moodboards/{project_id}/{dst.isoformat()}/"
             for page in range(1, mb.get("pages", 0) + 1):
                 storage.put_bytes(
                     f"moodboards/{project_id}/{dst.isoformat()}/page-{page}.jpg",
@@ -633,7 +640,7 @@ async def move_shoot_day(
                 )
             await session.execute(
                 sa.text("UPDATE days SET moodboard = CAST(:mb AS jsonb) WHERE id = :id"),
-                {"mb": json.dumps({**mb, "s3_key": new_key}), "id": src_row.id},
+                {"mb": json.dumps(patch), "id": src_row.id},
             )
         except Exception:
             pass  # worst case the moodboard needs re-uploading; never block the move
@@ -761,8 +768,111 @@ async def upload_moodboard(
     return {"ok": True, "kind": "pdf", "filename": file.filename, "pages": pages}
 
 
+class GoogleMoodboardFile(BaseModel):
+    id: str
+    name: str | None = None
+    mime_type: str | None = None
+
+
+class GoogleMoodboardIn(BaseModel):
+    files: list[GoogleMoodboardFile]
+
+
+@router.post("/{project_id}/editorial/days/{date}/moodboard/google")
+async def set_moodboard_from_google(
+    project_id: str,
+    date: str,
+    body: GoogleMoodboardIn,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    """Moodboard straight from the Google Picker: a Slides deck links (and is
+    made link-viewable so it embeds everywhere), a PDF runs through the usual
+    rasterise pipeline, images become moodboard pages directly."""
+    from ..services import google_drive as gdrive
+    from ..services.google_calendar import access_token_for
+
+    await _owner_project(project_id, user, session)
+    day_date = _parse_date(date)
+    if not body.files:
+        raise HTTPException(status_code=422, detail="Nothing was picked")
+    if not user.google_refresh_token:
+        raise HTTPException(status_code=409, detail="Connect Google first")
+    token = await access_token_for(user.google_refresh_token)
+    if not token:
+        raise HTTPException(status_code=409, detail="Google access expired — reconnect Google")
+
+    day_row = (await session.execute(
+        sa.text("SELECT id FROM days WHERE project_id = :pid AND date = :dt"),
+        {"pid": project_id, "dt": day_date},
+    )).first()
+    if not day_row:
+        raise HTTPException(status_code=404, detail="Day not found — save the shoot day first")
+
+    date_iso = day_date.isoformat()
+    slides = next((f for f in body.files
+                   if (f.mime_type or "") == gdrive.SLIDES_MIME), None)
+    pdf = next((f for f in body.files if (f.mime_type or "") == "application/pdf"), None)
+    images = [f for f in body.files if (f.mime_type or "").startswith("image/")][:12]
+
+    if slides:
+        await gdrive.set_link_viewable(token, slides.id)  # best effort
+        url = f"https://docs.google.com/presentation/d/{slides.id}/edit"
+        mb = {"kind": "link", "url": url}
+        what = slides.name or "a Slides deck"
+    elif pdf:
+        data = await gdrive.download_file(token, pdf.id, MOODBOARD_MAX_BYTES)
+        if not data:
+            raise HTTPException(status_code=422, detail="Could not fetch that PDF (over 25 MB?)")
+        key = f"moodboards/{project_id}/{date_iso}.pdf"
+        storage.put_bytes(key, data, content_type="application/pdf")
+        try:
+            pages = _rasterize_pdf(project_id, date_iso, data)
+        except Exception:
+            pages = 0
+        mb = {"kind": "pdf", "s3_key": key, "filename": pdf.name, "pages": pages}
+        what = pdf.name or "a PDF"
+    elif images:
+        import io
+
+        from PIL import Image
+        pages = 0
+        for f in images:
+            data = await gdrive.download_file(token, f.id, 15 * 1024 * 1024)
+            if not data:
+                continue
+            try:
+                img = Image.open(io.BytesIO(data)).convert("RGB")
+            except Exception:
+                continue
+            img.thumbnail((2000, 2000))
+            buf = io.BytesIO()
+            img.save(buf, "JPEG", quality=86)
+            pages += 1
+            storage.put_bytes(f"moodboards/{project_id}/{date_iso}/page-{pages}.jpg",
+                              buf.getvalue(), content_type="image/jpeg")
+        if pages == 0:
+            raise HTTPException(status_code=422, detail="None of those images could be fetched")
+        mb = {"kind": "images", "pages": pages,
+              "page_prefix": f"moodboards/{project_id}/{date_iso}/",
+              "filename": images[0].name}
+        what = f"{pages} image{'s' if pages != 1 else ''}"
+    else:
+        raise HTTPException(status_code=422,
+                            detail="Pick a Slides deck, a PDF, or images")
+
+    await session.execute(
+        sa.text("UPDATE days SET moodboard = CAST(:mb AS jsonb), updated_at = NOW() WHERE id = :id"),
+        {"mb": json.dumps(mb), "id": day_row.id},
+    )
+    await activity.log(session, project_id, user, "moodboard.linked",
+                       f"Set the {activity.fmt_day(day_date)} moodboard from Google Drive ({what})")
+    await session.commit()
+    return {"ok": True, "moodboard": _moodboard_out(mb)}
+
+
 def serve_moodboard_page(project_id: str, date_iso: str, page: int, mb: dict | None):
-    if not mb or mb.get("kind") != "pdf" or page < 1 or page > mb.get("pages", 0):
+    if not mb or mb.get("kind") not in ("pdf", "images") or page < 1 or page > mb.get("pages", 0):
         raise HTTPException(status_code=404, detail="Moodboard page not found")
     img = storage.get_bytes(f"moodboards/{project_id}/{date_iso}/page-{page}.jpg")
     return Response(content=img, media_type="image/jpeg",
@@ -794,6 +904,9 @@ def _serve_moodboard(mb: dict | None):
         raise HTTPException(status_code=404, detail="No moodboard for this day")
     if mb.get("kind") == "link":
         return RedirectResponse(url=mb["url"], status_code=302)
+    if mb.get("kind") == "images":
+        img = storage.get_bytes(mb["page_prefix"] + "page-1.jpg")
+        return Response(content=img, media_type="image/jpeg")
     pdf = storage.get_bytes(mb["s3_key"])
     filename = mb.get("filename") or "moodboard.pdf"
     return Response(

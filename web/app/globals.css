@@ -1502,7 +1502,7 @@ html[data-gq-theme="dark"] .gq-masthead__logo { mix-blend-mode: screen; filter: 
   color: var(--g-ink); background: var(--g-input-bg);
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
 }
-input[type="file"].gq-input { padding: 8px 10px; line-height: 30px; }
+input[type="file"].gq-input { padding: 6px 8px; line-height: normal; }
 .gq-input:focus {
   outline: none; border-color: var(--g-ink);
   box-shadow: 0 0 0 3.5px color-mix(in srgb, var(--g-ink) 12%, transparent);
@@ -1521,7 +1521,7 @@ select.gq-input {
 /* file inputs: style the native button as a soft pill */
 .gq-input::file-selector-button {
   background: var(--g-btn-bg); color: var(--g-btn-fg); border: none; border-radius: 999px;
-  padding: 7px 14px; margin-right: 12px; cursor: pointer;
+  height: 34px; padding: 0 16px; margin-right: 12px; cursor: pointer;
   font-family: var(--ui); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
 }
 

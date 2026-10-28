@@ -372,13 +372,7 @@ async def get_receipt(
 # Report — a slide deck for the accounts team
 # ---------------------------------------------------------------------------
 
-@router.get("/{project_id}/expenses/report.pptx")
-async def expense_report(
-    project_id: str,
-    user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_db),
-):
-    await _owner_project(project_id, user, session)
+async def _build_report_deck(project_id: str, session: AsyncSession) -> bytes:
     proj = (await session.execute(
         sa.text('SELECT title FROM projects WHERE id = :pid'), {"pid": project_id},
     )).first()
@@ -398,11 +392,51 @@ async def expense_report(
         d = _row_out(r)
         d["s3_key"] = r.s3_key  # deck embeds receipt images; key never leaves the API
         items.append(d)
-    deck = build_deck(
+    return build_deck(
         project_title=proj.title if proj else "GQ Men of the Year",
         expenses=items,
         shoot_headlines={d.date.isoformat(): d.banner_text for d in day_rows},
     )
+
+
+@router.post("/{project_id}/expenses/report/slides")
+async def expense_report_to_slides(
+    project_id: str,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    """Build the deck and drop it straight into the user's Google Drive as a
+    native Google Slides presentation — returns the link to open."""
+    from datetime import datetime
+
+    from ..services import google_drive as gdrive
+    from ..services.google_calendar import access_token_for
+
+    await _owner_project(project_id, user, session)
+    if not user.google_refresh_token:
+        raise HTTPException(status_code=409, detail="Connect Google first")
+    token = await access_token_for(user.google_refresh_token)
+    if not token:
+        raise HTTPException(status_code=409, detail="Google access expired — reconnect Google")
+
+    deck = await _build_report_deck(project_id, session)
+    name = f"GQ MOTY Expense Report — {datetime.now().strftime('%d %b %Y')}"
+    url = await gdrive.upload_pptx_as_slides(token, name, deck)
+    if not url:
+        raise HTTPException(status_code=502, detail="Google Drive upload failed — try again")
+    await activity.log(session, project_id, user, "expenses.exported",
+                       "Exported the expense report to Google Slides")
+    await session.commit()
+    return {"url": url}
+
+@router.get("/{project_id}/expenses/report.pptx")
+async def expense_report(
+    project_id: str,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+):
+    await _owner_project(project_id, user, session)
+    deck = await _build_report_deck(project_id, session)
     await activity.log(session, project_id, user, "expenses.exported",
                        "Exported the expense report deck")
     await session.commit()

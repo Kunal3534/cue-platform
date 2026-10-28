@@ -182,6 +182,22 @@ export const deleteInvite = (id: string, date: string, inviteId: string) =>
 export const googleLoginUrl = () =>
   `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/auth/google/login`;
 
+export const getPickerConfig = () =>
+  apiFetch<{ access_token: string; api_key: string }>("/auth/google/picker");
+
+export const setMoodboardFromGoogle = (
+  id: string,
+  date: string,
+  files: { id: string; name: string; mime_type: string }[],
+) =>
+  apiFetch<{ ok: boolean }>(`/projects/${id}/editorial/days/${date}/moodboard/google`, {
+    method: "POST",
+    body: JSON.stringify({ files }),
+  });
+
+export const exportReportToSlides = (id: string) =>
+  apiFetch<{ url: string }>(`/projects/${id}/expenses/report/slides`, { method: "POST" });
+
 // Share links
 export const mintDayShareLink = (id: string, date: string) =>
   apiFetch<{ token: string; path: string }>(
