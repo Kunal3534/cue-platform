@@ -187,6 +187,122 @@ async def verify(
 
 
 # ---------------------------------------------------------------------------
+# Google OAuth — "Continue with Google" + offline Calendar access
+# ---------------------------------------------------------------------------
+
+_GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
+_GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
+_GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
+_GOOGLE_SCOPES = "openid email profile https://www.googleapis.com/auth/calendar.events"
+
+
+def _google_redirect_uri(request: Request) -> str:
+    base = (settings.public_api_url or str(request.base_url)).rstrip("/")
+    return f"{base}/auth/google/callback"
+
+
+def _state_token() -> str:
+    from itsdangerous import URLSafeTimedSerializer
+    s = URLSafeTimedSerializer(settings.secret_key, salt="google-oauth-state")
+    return s.dumps({"n": str(uuid.uuid4())})
+
+
+def _check_state(state: str) -> None:
+    from itsdangerous import BadSignature, URLSafeTimedSerializer
+    s = URLSafeTimedSerializer(settings.secret_key, salt="google-oauth-state")
+    try:
+        s.loads(state, max_age=600)
+    except BadSignature:
+        raise HTTPException(status_code=400, detail="Invalid sign-in state — try again")
+
+
+@router.get("/google/login")
+async def google_login(request: Request) -> RedirectResponse:
+    if not settings.google_client_id or not settings.google_client_secret:
+        raise HTTPException(status_code=503,
+                            detail="Google sign-in is not configured (GOOGLE_CLIENT_ID/SECRET)")
+    from urllib.parse import urlencode
+    params = urlencode({
+        "client_id": settings.google_client_id,
+        "redirect_uri": _google_redirect_uri(request),
+        "response_type": "code",
+        "scope": _GOOGLE_SCOPES,
+        # offline + consent → Google returns a refresh token we can keep
+        # using to write shoot events into the user's Calendar
+        "access_type": "offline",
+        "prompt": "consent",
+        "state": _state_token(),
+    })
+    return RedirectResponse(url=f"{_GOOGLE_AUTH_URL}?{params}", status_code=302)
+
+
+@router.get("/google/callback")
+async def google_callback(
+    request: Request,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+    session: AsyncSession = Depends(get_async_db),
+) -> RedirectResponse:
+    if error or not code or not state:
+        return RedirectResponse(
+            url=f"{settings.frontend_origin}/login?error=google", status_code=302)
+    _check_state(state)
+
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        token_resp = await client.post(_GOOGLE_TOKEN_URL, data={
+            "code": code,
+            "client_id": settings.google_client_id,
+            "client_secret": settings.google_client_secret,
+            "redirect_uri": _google_redirect_uri(request),
+            "grant_type": "authorization_code",
+        })
+        if token_resp.status_code != 200:
+            raise HTTPException(status_code=400, detail="Google token exchange failed")
+        tokens = token_resp.json()
+        info_resp = await client.get(
+            _GOOGLE_USERINFO_URL,
+            headers={"Authorization": f"Bearer {tokens['access_token']}"},
+        )
+        if info_resp.status_code != 200:
+            raise HTTPException(status_code=400, detail="Could not read the Google profile")
+        info = info_resp.json()
+
+    email = (info.get("email") or "").lower().strip()
+    if not email or not info.get("email_verified", False):
+        raise HTTPException(status_code=400, detail="Google account has no verified email")
+
+    # Same closed-instance rule as magic links
+    allowed = {e.strip().lower() for e in settings.allowed_emails.split(",") if e.strip()}
+    if allowed and email not in allowed:
+        return RedirectResponse(
+            url=f"{settings.frontend_origin}/login?error=not-allowed", status_code=302)
+
+    user = await _get_or_create_user(email, session)
+    display_name = info.get("name") or user.name
+    refresh = tokens.get("refresh_token")  # present because prompt=consent
+    await session.execute(
+        sa.text("UPDATE users SET name = :nm, google_sub = :sub, "
+                "google_refresh_token = COALESCE(:rt, google_refresh_token), "
+                "google_calendar_connected = (COALESCE(:rt, google_refresh_token) IS NOT NULL) "
+                "WHERE id = :id"),
+        {"nm": display_name, "sub": info.get("sub"), "rt": refresh, "id": user.id},
+    )
+    await session.commit()
+
+    response = RedirectResponse(url=settings.frontend_origin, status_code=302)
+    response.set_cookie(
+        key=_COOKIE_NAME,
+        value=make_session_cookie(user.id),
+        httponly=True,
+        samesite="lax",
+        secure=not bool(settings.dev_auto_login_email),
+        max_age=_COOKIE_MAX_AGE,
+    )
+    return response
+
+
+# ---------------------------------------------------------------------------
 # POST /auth/signout
 # ---------------------------------------------------------------------------
 
@@ -205,6 +321,7 @@ class UserProfile(BaseModel):
     id: str
     email: str
     name: str | None
+    google_calendar_connected: bool = False
     created_at: str
 
 
@@ -214,5 +331,6 @@ async def me(user: User = Depends(current_user)) -> UserProfile:
         id=user.id,
         email=user.email,
         name=user.name,
+        google_calendar_connected=bool(user.google_calendar_connected),
         created_at=user.created_at.isoformat(),
     )

@@ -26,6 +26,11 @@ class Settings(BaseSettings):
     public_api_url: str | None = None
     # Comma-separated emails allowed to sign in. Empty = anyone (dev default).
     allowed_emails: str = ""
+    # Google OAuth ("Sign in with Google" + Calendar sync). Create a Web
+    # OAuth client in Google Cloud Console; authorised redirect URI is
+    # {PUBLIC_API_URL or API base}/auth/google/callback.
+    google_client_id: str | None = None
+    google_client_secret: str | None = None
 
     class Config:
         env_file = ".env"

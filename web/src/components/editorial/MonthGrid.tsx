@@ -121,6 +121,17 @@ export default function MonthGrid({
                   <span className="gq-cell__mini-emoji">{dayMarkers[0].emoji}</span>
                 )}
               </div>
+              {shoot && (
+                <span className="gq-cell__dots" aria-hidden>
+                  {shoot.segments.some((s) => s.ref.startsWith("P")) && (
+                    <i className="gq-dot gq-dot--photo" />
+                  )}
+                  {shoot.segments.some((s) => s.ref.startsWith("F")) && (
+                    <i className="gq-dot gq-dot--film" />
+                  )}
+                  {shoot.moodboard && <i className="gq-dot gq-dot--mood" />}
+                </span>
+              )}
               {shoot ? (
                 <>
                   <div className="gq-cell__talent">

@@ -26,6 +26,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..auth import current_user, is_team_member
+from ..config import settings
 from ..db import get_async_db
 from ..models import User
 from ..services import activity, storage
@@ -158,6 +159,35 @@ async def _renumber_shoot_days(project_id: str, session: AsyncSession) -> None:
         """),
         {"pid": project_id},
     )
+
+
+async def _enqueue_gcal_sync(project_id: str, date_iso: str, deleted: bool = False) -> None:
+    """Mirror this day to connected Google Calendars — always best-effort."""
+    try:
+        from arq import create_pool
+
+        from ..worker import get_redis_settings
+        pool = await create_pool(get_redis_settings())
+        await pool.enqueue_job("sync_day_to_google", project_id, date_iso, deleted)
+    except Exception:
+        pass  # calendar sync must never block a save
+
+
+async def _get_or_mint_day_share_token(
+    project_id: str, date_iso: str, proj_settings: dict | None, session: AsyncSession,
+) -> str:
+    import secrets
+
+    tokens = dict((proj_settings or {}).get("day_share_tokens", {}))
+    token = tokens.get(date_iso)
+    if not token:
+        token = secrets.token_urlsafe(16)
+        tokens[date_iso] = token
+        await session.execute(
+            sa.text("UPDATE projects SET settings = settings || CAST(:p AS jsonb) WHERE id = :pid"),
+            {"p": json.dumps({"day_share_tokens": tokens}), "pid": project_id},
+        )
+    return token
 
 
 def _moodboard_out(raw: dict | None) -> dict | None:
@@ -479,6 +509,7 @@ async def upsert_shoot_day(
     await activity.log(session, project_id, user, "day.saved",
                        f"{verb} the {activity.fmt_day(day_date)} shoot ({who})")
     await session.commit()
+    await _enqueue_gcal_sync(project_id, day_date.isoformat())
 
     days = await build_schedule(project_id, session)
     return next(d for d in days if d["date"] == day_date.isoformat())
@@ -629,7 +660,14 @@ async def move_shoot_day(
     await _clear_view_cache(project_id, session)
     await activity.log(session, project_id, user, "day.moved",
                        f"Moved the shoot from {activity.fmt_day(src)} to {activity.fmt_day(dst)}")
+    # Invites follow the shoot to its new date
+    await session.execute(
+        sa.text("UPDATE shoot_invites SET date = :dst WHERE project_id = :pid AND date = :src"),
+        {"dst": dst, "src": src, "pid": project_id},
+    )
     await session.commit()
+    await _enqueue_gcal_sync(project_id, src.isoformat(), deleted=True)
+    await _enqueue_gcal_sync(project_id, dst.isoformat())
 
     days = await build_schedule(project_id, session)
     return next(d for d in days if d["date"] == dst.isoformat())
@@ -674,6 +712,7 @@ async def delete_shoot_day(
     await activity.log(session, project_id, user, "day.deleted",
                        f"Removed the {activity.fmt_day(day_date)} shoot")
     await session.commit()
+    await _enqueue_gcal_sync(project_id, day_date.isoformat(), deleted=True)
 
 
 # ---------------------------------------------------------------------------
@@ -778,6 +817,166 @@ async def get_moodboard(
         {"pid": project_id, "dt": day_date},
     )).first()
     return _serve_moodboard(row.moodboard if row else None)
+
+
+# ---------------------------------------------------------------------------
+# Shoot invites — add people to a day; they get an email (and a Google
+# Calendar invite when a connected producer's event carries them)
+# ---------------------------------------------------------------------------
+
+class InviteIn(BaseModel):
+    email: str
+    name: str | None = None
+
+
+def _invite_out(r) -> dict:
+    return {"id": r.id, "email": r.email, "name": r.name, "status": r.status,
+            "created_by": r.created_by, "created_at": r.created_at.isoformat()}
+
+
+async def _send_invite_email(email: str, name: str | None, day: dict, share_url: str) -> None:
+    if not settings.resend_api_key:
+        return
+    import httpx
+
+    who = " · ".join(t["name"] for t in day.get("talent", [])) or "the GQ MOTY team"
+    d = date_cls.fromisoformat(day["date"])
+    nice_date = d.strftime("%A, ") + f"{d.day} " + d.strftime("%B %Y")
+    loc = (day.get("location") or {}).get("name")
+    call = day.get("call_time")
+    rows = "".join(
+        f"<tr><td style='padding:4px 14px 4px 0;color:#8A8780;font-size:12px;"
+        f"text-transform:uppercase;letter-spacing:0.12em'>{k}</td>"
+        f"<td style='padding:4px 0;font-size:14px'>{v}</td></tr>"
+        for k, v in (("Shooting", who), ("Location", loc or "TBC"),
+                     ("Call time", call or "TBC")) if v
+    )
+    greeting = f"Hi {name}," if name else "Hi,"
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        await client.post(
+            "https://api.resend.com/emails",
+            headers={"Authorization": f"Bearer {settings.resend_api_key}",
+                     "Content-Type": "application/json"},
+            json={
+                "from": settings.mail_from or "GQ MOTY Calendar <cue@cueit.io>",
+                "to": [email],
+                "subject": f"You're invited — GQ Men of the Year shoot · {nice_date}",
+                "html": (
+                    f"<div style='font-family:Georgia,serif;max-width:520px'>"
+                    f"<p style='letter-spacing:0.2em;font-size:11px;color:#8A6D1F'>"
+                    f"GQ MEN OF THE YEAR</p>"
+                    f"<h2 style='font-weight:600'>{nice_date}</h2>"
+                    f"<p>{greeting} you've been added to this shoot day.</p>"
+                    f"<table style='border-collapse:collapse'>{rows}</table>"
+                    f"<p style='margin-top:20px'><a href='{share_url}' "
+                    f"style='background:#141418;color:#F3F1EC;text-decoration:none;"
+                    f"padding:11px 24px;border-radius:999px;font-size:13px'>"
+                    f"View the day brief</a></p>"
+                    f"<p style='color:#999;font-size:12px'>The brief always shows the "
+                    f"latest times — check it the night before.</p></div>"
+                ),
+            },
+        )
+
+
+@router.get("/{project_id}/editorial/days/{date}/invites")
+async def list_invites(
+    project_id: str,
+    date: str,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    await _owner_project(project_id, user, session)
+    day_date = _parse_date(date)
+    rows = (await session.execute(
+        sa.text("SELECT id, email, name, status, created_by, created_at FROM shoot_invites "
+                "WHERE project_id = :pid AND date = :dt ORDER BY created_at"),
+        {"pid": project_id, "dt": day_date},
+    )).fetchall()
+    return {"invites": [_invite_out(r) for r in rows]}
+
+
+@router.post("/{project_id}/editorial/days/{date}/invites")
+async def create_invite(
+    project_id: str,
+    date: str,
+    body: InviteIn,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    proj = await _owner_project(project_id, user, session)
+    day_date = _parse_date(date)
+    email = body.email.lower().strip()
+    if "@" not in email or "." not in email.split("@")[-1]:
+        raise HTTPException(status_code=422, detail="That doesn't look like an email address")
+
+    days = await build_schedule(project_id, session)
+    day = next((d for d in days if d["date"] == day_date.isoformat()), None)
+    if not day:
+        raise HTTPException(status_code=404, detail="No shoot on this date — save the day first")
+
+    existing = (await session.execute(
+        sa.text("SELECT id FROM shoot_invites WHERE project_id = :pid AND date = :dt AND email = :em"),
+        {"pid": project_id, "dt": day_date, "em": email},
+    )).first()
+    if existing:
+        raise HTTPException(status_code=409, detail="Already invited to this day")
+
+    invite_id = _uid()
+    await session.execute(
+        sa.text("INSERT INTO shoot_invites (id, project_id, date, email, name, status, "
+                "created_by, created_at) VALUES (:id, :pid, :dt, :em, :nm, 'invited', :by, NOW())"),
+        {"id": invite_id, "pid": project_id, "dt": day_date, "em": email,
+         "nm": body.name or None, "by": user.email},
+    )
+    token = await _get_or_mint_day_share_token(
+        project_id, day_date.isoformat(), proj.settings, session)
+    label = body.name or email
+    await activity.log(session, project_id, user, "invite.sent",
+                       f"Invited {label} to the {activity.fmt_day(day_date)} shoot")
+    await session.commit()
+
+    share_url = f"https://gq.cueit.io/share/day/{token}"
+    try:
+        await _send_invite_email(email, body.name, day, share_url)
+    except Exception:
+        pass  # the invite row + calendar invite still stand
+    await _enqueue_gcal_sync(project_id, day_date.isoformat())
+
+    row = (await session.execute(
+        sa.text("SELECT id, email, name, status, created_by, created_at FROM shoot_invites "
+                "WHERE id = :id"), {"id": invite_id},
+    )).first()
+    return _invite_out(row)
+
+
+@router.delete(
+    "/{project_id}/editorial/days/{date}/invites/{invite_id}",
+    status_code=204,
+    response_class=Response,
+    response_model=None,
+)
+async def delete_invite(
+    project_id: str,
+    date: str,
+    invite_id: str,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> None:
+    await _owner_project(project_id, user, session)
+    day_date = _parse_date(date)
+    row = (await session.execute(
+        sa.text("SELECT id, email, name FROM shoot_invites "
+                "WHERE id = :id AND project_id = :pid AND date = :dt"),
+        {"id": invite_id, "pid": project_id, "dt": day_date},
+    )).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Invite not found")
+    await session.execute(sa.text("DELETE FROM shoot_invites WHERE id = :id"), {"id": row.id})
+    await activity.log(session, project_id, user, "invite.removed",
+                       f"Removed {row.name or row.email} from the {activity.fmt_day(day_date)} shoot")
+    await session.commit()
+    await _enqueue_gcal_sync(project_id, day_date.isoformat())
 
 
 # ---------------------------------------------------------------------------

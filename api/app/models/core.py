@@ -32,6 +32,12 @@ class User(Base):
     id: Mapped[str] = mapped_column(sa.String(36), primary_key=True)
     email: Mapped[str] = mapped_column(sa.String(255), nullable=False, unique=True)
     name: Mapped[str | None] = mapped_column(sa.String(255))
+    # Google sign-in + offline Calendar access (migration 007)
+    google_sub: Mapped[str | None] = mapped_column(sa.String(64))
+    google_refresh_token: Mapped[str | None] = mapped_column(sa.Text)
+    google_calendar_connected: Mapped[bool] = mapped_column(
+        sa.Boolean, nullable=False, server_default=sa.false(), default=False
+    )
     created_at: Mapped[datetime] = mapped_column(
         sa.DateTime(timezone=True), server_default=func.now()
     )

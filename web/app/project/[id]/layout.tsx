@@ -6,6 +6,8 @@ import NavBar from "@/components/nav/NavBar";
 import ProjectNav from "@/components/nav/ProjectNav";
 import FlagsDrawer from "@/components/flags/FlagsDrawer";
 import Masthead from "@/components/editorial/Masthead";
+import WorkspaceSidebar from "@/components/editorial/WorkspaceSidebar";
+import UserChip from "@/components/editorial/UserChip";
 import { useProjectStore } from "@/stores/project";
 import { useProjectEvents } from "@/lib/sse/useProjectEvents";
 import { getProject } from "@/lib/api";
@@ -34,14 +36,24 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
     return <div style={{ minHeight: "100vh" }} />;
   }
 
-  // Editorial projects get the minimal magazine chrome, no film machinery.
+  // Editorial projects get the workspace shell: glass sidebar on desktop,
+  // the masthead + pill tabs on phones. No film machinery either way.
   if (project.settings?.mode === "editorial") {
     return (
       <div className="gq-page">
-        <div className="gq-inner">
-          <Masthead projectId={projectId} />
-          <main style={{ paddingBottom: "64px" }}>{children}</main>
-          <div className="gq-foot">Produced on Cue</div>
+        <div className="gq2-wrap">
+          <WorkspaceSidebar projectId={projectId} title={project.title} />
+          <div className="gq2-main gq-inner">
+            <header className="gq2-top">
+              <div className="gq2-top__crumb">November 2026 · Shoot calendar</div>
+              <UserChip />
+            </header>
+            <div className="gq2-mobile-head">
+              <Masthead projectId={projectId} />
+            </div>
+            <main style={{ paddingBottom: "64px" }}>{children}</main>
+            <div className="gq-foot">Produced on Cue</div>
+          </div>
         </div>
       </div>
     );

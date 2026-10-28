@@ -127,6 +127,108 @@ async def run_flag_detector(ctx: dict, project_id: str, scenario_id: str | None 
 
 
 # ---------------------------------------------------------------------------
+# Task: sync_day_to_google — mirror one shoot day to connected Calendars
+# ---------------------------------------------------------------------------
+
+async def sync_day_to_google(ctx: dict, project_id: str, date_iso: str,
+                             deleted: bool = False) -> dict:
+    """Upsert (or remove) this shoot day in every connected team member's
+    Google Calendar. The project owner's copy carries invited guests as
+    attendees, so Google sends them real calendar invites."""
+    import json as _json
+    from datetime import date as _date
+
+    import sqlalchemy as sa
+
+    from .services import google_calendar as gcal
+
+    allowed = {e.strip().lower() for e in settings.allowed_emails.split(",") if e.strip()}
+    day_date = _date.fromisoformat(date_iso)  # asyncpg wants real date objects
+
+    async with async_session_factory() as session:
+        day_row = (await session.execute(
+            sa.text("SELECT d.id, d.kind, d.google_events, p.owner_id, p.settings "
+                    "FROM days d JOIN projects p ON p.id = d.project_id "
+                    "WHERE d.project_id = :pid AND d.date = :dt"),
+            {"pid": project_id, "dt": day_date},
+        )).first()
+        stored: dict = dict((day_row.google_events if day_row else None) or {})
+
+        users = (await session.execute(
+            sa.text("SELECT id, email, google_refresh_token FROM users "
+                    "WHERE google_refresh_token IS NOT NULL"),
+        )).fetchall()
+        team = [u for u in users if not allowed or u.email.lower() in allowed]
+        if not team:
+            return {"skipped": "no connected calendars"}
+
+        invite_rows = (await session.execute(
+            sa.text("SELECT email, name FROM shoot_invites "
+                    "WHERE project_id = :pid AND date = :dt"),
+            {"pid": project_id, "dt": day_date},
+        )).fetchall()
+        attendees = [{"email": r.email, **({"displayName": r.name} if r.name else {})}
+                     for r in invite_rows]
+
+        remove = deleted or not day_row or day_row.kind != "shoot"
+        if remove:
+            for u in team:
+                ev_id = stored.get(u.email)
+                if not ev_id:
+                    continue
+                token = await gcal.access_token_for(u.google_refresh_token)
+                if token:
+                    await gcal.delete_event(token, ev_id)
+            if day_row:
+                await session.execute(
+                    sa.text("UPDATE days SET google_events = NULL WHERE id = :id"),
+                    {"id": day_row.id},
+                )
+                await session.commit()
+            return {"removed": True}
+
+        from .routes.editorial import build_schedule
+        days = await build_schedule(project_id, session)
+        day = next((d for d in days if d["date"] == date_iso), None)
+        if not day:
+            return {"skipped": "day not in schedule"}
+
+        share_tokens = (day_row.settings or {}).get("day_share_tokens", {})
+        share_url = (f"https://gq.cueit.io/share/day/{share_tokens[date_iso]}"
+                     if date_iso in share_tokens else None)
+        body = gcal.build_event_body(day, share_url)
+
+        # Guests ride on the owner's event (one organiser, one invite email) —
+        # falling back to the first connected member if the owner isn't linked.
+        owner_email = next((u.email for u in team if u.id == day_row.owner_id),
+                           team[0].email)
+        results = {}
+        for u in team:
+            token = await gcal.access_token_for(u.google_refresh_token)
+            if not token:
+                results[u.email] = "token refresh failed"
+                continue
+            is_owner = u.email == owner_email
+            ev_id = await gcal.upsert_event(
+                token, body, stored.get(u.email),
+                attendees=attendees if is_owner else None,
+                notify_attendees=is_owner and bool(attendees),
+            )
+            if ev_id:
+                stored[u.email] = ev_id
+                results[u.email] = "ok"
+            else:
+                results[u.email] = "upsert failed"
+
+        await session.execute(
+            sa.text("UPDATE days SET google_events = CAST(:ev AS jsonb) WHERE id = :id"),
+            {"ev": _json.dumps(stored), "id": day_row.id},
+        )
+        await session.commit()
+        return results
+
+
+# ---------------------------------------------------------------------------
 # Task: extract_expense — read a receipt image/PDF into structured fields
 # ---------------------------------------------------------------------------
 
@@ -323,7 +425,7 @@ async def export_bundle(ctx: dict, project_id: str, job_id: str, scenario_id: st
 
 class WorkerSettings:
     functions = [regenerate_views, regenerate_call_sheet, send_call_sheet, export_bundle,
-                 run_flag_detector, extract_expense]
+                 run_flag_detector, extract_expense, sync_day_to_google]
     redis_settings = get_redis_settings()
     max_jobs = 10
     job_timeout = 300  # 5 min

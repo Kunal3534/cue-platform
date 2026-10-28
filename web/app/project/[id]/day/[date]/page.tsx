@@ -16,6 +16,7 @@ import { useIsEditorial } from "@/lib/terminology";
 import DayDetail from "@/components/editorial/DayDetail";
 import DayTodos from "@/components/editorial/DayTodos";
 import DayMarkers from "@/components/editorial/DayMarkers";
+import InviteBlock from "@/components/editorial/InviteBlock";
 
 function dnStripClass(dn: string | null | undefined): string {
   const d = (dn ?? "").toLowerCase();
@@ -132,6 +133,7 @@ function GqDayPage() {
         moodboardPageHref={(page) => moodboardPageUrl(projectId, date, page)}
       />
       <div className="gq-detail">
+        <InviteBlock projectId={projectId} date={date} />
         <DayMarkers projectId={projectId} date={date} />
         <DayTodos projectId={projectId} date={date} />
       </div>

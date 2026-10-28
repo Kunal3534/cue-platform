@@ -162,6 +162,26 @@ export const expenseReportUrl = (id: string) =>
 export const getActivity = (id: string) =>
   apiFetch<{ items: ActivityItem[] }>(`/projects/${id}/activity`);
 
+// Shoot invites (producer-only)
+export const getInvites = (id: string, date: string) =>
+  apiFetch<{ invites: import("./types").ShootInvite[] }>(
+    `/projects/${id}/editorial/days/${date}/invites`,
+  );
+
+export const createInvite = (id: string, date: string, email: string, name?: string | null) =>
+  apiFetch<import("./types").ShootInvite>(`/projects/${id}/editorial/days/${date}/invites`, {
+    method: "POST",
+    body: JSON.stringify({ email, name: name || null }),
+  });
+
+export const deleteInvite = (id: string, date: string, inviteId: string) =>
+  apiFetch<void>(`/projects/${id}/editorial/days/${date}/invites/${inviteId}`, {
+    method: "DELETE",
+  });
+
+export const googleLoginUrl = () =>
+  `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/auth/google/login`;
+
 // Share links
 export const mintDayShareLink = (id: string, date: string) =>
   apiFetch<{ token: string; path: string }>(

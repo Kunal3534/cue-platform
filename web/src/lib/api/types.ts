@@ -23,6 +23,16 @@ export interface UserProfile {
   id: string;
   email: string;
   name: string | null;
+  google_calendar_connected: boolean;
+  created_at: string;
+}
+
+export interface ShootInvite {
+  id: string;
+  email: string;
+  name: string | null;
+  status: string;
+  created_by: string | null;
   created_at: string;
 }
 

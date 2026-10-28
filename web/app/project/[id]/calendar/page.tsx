@@ -1,7 +1,8 @@
 "use client";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   getCalendar,
@@ -14,6 +15,7 @@ import { useProjectStore } from "@/stores/project";
 import { useTerms, useIsEditorial } from "@/lib/terminology";
 import { stripClass, EDITORIAL_PHASES } from "@/lib/segmentKind";
 import MonthGrid from "@/components/editorial/MonthGrid";
+import { fmtTime } from "@/lib/time";
 import PreviewModal from "@/components/preview-modal/PreviewModal";
 import type { PreviewResponse, CalendarDay } from "@/lib/api/types";
 
@@ -130,11 +132,20 @@ function GqCalendarPage() {
   const projectId = params.id as string;
   const router = useRouter();
   const [shareState, setShareState] = useState<"idle" | "copied" | "error">("idle");
+  const [selected, setSelected] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["editorial-schedule", projectId],
     queryFn: () => getEditorialSchedule(projectId),
   });
+
+  // Default the preview rail to the next upcoming shoot
+  useEffect(() => {
+    if (selected || !data?.days.length) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const next = data.days.find((d) => d.date >= today) ?? data.days[data.days.length - 1];
+    setSelected(next.date);
+  }, [data, selected]);
 
   const handleShare = async () => {
     try {
@@ -152,23 +163,74 @@ function GqCalendarPage() {
     return <p style={{ color: "#999", padding: "40px 0" }}>Loading…</p>;
   }
 
+  const selectedDay = data.days.find((d) => d.date === selected) ?? null;
+
   return (
-    <div>
-      <MonthGrid
-        days={data.days}
-        markers={data.markers}
-        onSelect={(day) => router.push(`/project/${projectId}/day/${day.date}`)}
-        onSelectEmpty={(dateStr) => router.push(`/project/${projectId}/day/${dateStr}`)}
-        headerRight={
-          <button type="button" className="gq-share-btn" onClick={handleShare}>
-            {shareState === "copied"
-              ? "Link copied ✓"
-              : shareState === "error"
-                ? "Copy failed"
-                : "Share calendar"}
-          </button>
-        }
-      />
+    <div className="gq2-cal">
+      <div style={{ minWidth: 0 }}>
+        <MonthGrid
+          days={data.days}
+          markers={data.markers}
+          selectedDate={selected}
+          onSelect={(day) => {
+            // Desktop: preview in the rail; phones: straight to the day page
+            if (typeof window !== "undefined" && window.innerWidth >= 900) {
+              setSelected(day.date);
+            } else {
+              router.push(`/project/${projectId}/day/${day.date}`);
+            }
+          }}
+          onSelectEmpty={(dateStr) => router.push(`/project/${projectId}/day/${dateStr}`)}
+          headerRight={
+            <button type="button" className="gq-share-btn" onClick={handleShare}>
+              {shareState === "copied"
+                ? "Link copied ✓"
+                : shareState === "error"
+                  ? "Copy failed"
+                  : "Share calendar"}
+            </button>
+          }
+        />
+      </div>
+      {selectedDay && (
+        <aside className="gq2-rail">
+          <div className="gq2-rail-card">
+            <div className="gq2-rail-card__date">
+              {new Date(`${selectedDay.date}T00:00:00`).toLocaleDateString("en-GB", {
+                weekday: "long", day: "numeric", month: "long",
+              })}
+            </div>
+            {selectedDay.talent.map((t) => (
+              <div key={t.name} className="gq2-rail-card__talent">
+                <strong>{t.name}</strong>
+                {t.role && <div className="gq-kv__sub">{t.role}</div>}
+                {(t.call_time ?? t.hmu_call) && (
+                  <div className="gq-kv__sub">Call {fmtTime(t.call_time ?? t.hmu_call)}</div>
+                )}
+              </div>
+            ))}
+            <div className="gq2-rail-card__rows">
+              {selectedDay.location.name && <div>📍 {selectedDay.location.name}</div>}
+              {selectedDay.call_time && <div>On site {fmtTime(selectedDay.call_time)}</div>}
+              {selectedDay.calls?.lighting && <div>Lighting {fmtTime(selectedDay.calls.lighting)}</div>}
+              {selectedDay.calls?.hmu && <div>HMU {fmtTime(selectedDay.calls.hmu)}</div>}
+              {selectedDay.calls?.crew && <div>Crew {fmtTime(selectedDay.calls.crew)}</div>}
+              {selectedDay.photographer && <div>📷 {selectedDay.photographer}</div>}
+              {selectedDay.wrap_time && <div>Wrap {fmtTime(selectedDay.wrap_time)}</div>}
+            </div>
+            <div style={{ display: "flex", gap: 10, marginTop: 18, flexWrap: "wrap" }}>
+              <Link href={`/project/${projectId}/day/${selectedDay.date}`} className="gq-btn"
+                    style={{ padding: "10px 20px", fontSize: 10 }}>
+                Open day
+              </Link>
+              <Link href={`/project/${projectId}/day/${selectedDay.date}/edit`}
+                    className="gq-btn gq-btn--ghost" style={{ padding: "10px 20px", fontSize: 10 }}>
+                Edit
+              </Link>
+            </div>
+          </div>
+        </aside>
+      )}
     </div>
   );
 }
