@@ -262,6 +262,7 @@ export interface ExpenseInput {
 
 export interface ExpensePatch extends ExpenseInput {
   clear_date?: boolean;
+  approve?: boolean; // sign off a "Check details" row as-is
 }
 
 export interface ActivityItem {

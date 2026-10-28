@@ -247,9 +247,10 @@ async def extract_expense(ctx: dict, expense_id: str) -> dict:
             "amount": amount,
             "currency": (parsed.get("currency") or "INR").upper()[:8],
         }
-        status = "ready" if amount is not None else "needs_review"
-        await finish(status, parsed, fields)
-        return {"status": status, "amount": str(amount) if amount is not None else None}
+        # Always land on needs_review: a producer approves every auto-read
+        # amount before it counts as checked (Approve button in the UI).
+        await finish("needs_review", parsed, fields)
+        return {"status": "needs_review", "amount": str(amount) if amount is not None else None}
 
 
 # ---------------------------------------------------------------------------

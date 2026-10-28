@@ -58,6 +58,7 @@ class ExpensePatch(BaseModel):
     amount: float | None = None
     currency: str | None = None
     notes: str | None = None
+    approve: bool = False  # sign off a "Check details" row as-is
 
 
 def _amount(v: float | None) -> Decimal | None:
@@ -301,13 +302,19 @@ async def update_expense(
         sets.append("currency = :cur")
         params["cur"] = body.currency.upper()[:8]
 
+    changed_fields = bool(params) or body.clear_date
     await session.execute(
         sa.text(f"UPDATE expenses SET {', '.join(sets)} WHERE id = :eid AND project_id = :pid"),
         {**params, "eid": expense_id, "pid": project_id},
     )
     row = await _expense(session, project_id, expense_id)
-    await activity.log(session, project_id, user, "expense.updated",
-                       f"Updated expense “{_label(row)}”")
+    if body.approve and not changed_fields:
+        verb, action = "Approved", "expense.approved"
+    else:
+        verb, action = "Updated", "expense.updated"
+    amt = f" — ₹{float(row.amount):,.2f}" if body.approve and row.amount is not None else ""
+    await activity.log(session, project_id, user, action,
+                       f"{verb} expense “{_label(row)}”{amt}")
     await session.commit()
     return _row_out(row)
 

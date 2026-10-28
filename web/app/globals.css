@@ -1543,3 +1543,7 @@ textarea.gq-input { resize: vertical; min-height: 90px; }
   animation: gq-scan-fade 0.5s ease;
 }
 @keyframes gq-scan-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* Approve action — the one button on a review row that should stand out */
+.gq-exp-row__actions .gq-exp-approve { color: #141418; font-weight: 600; }
+.gq-exp-row__actions .gq-exp-approve:hover { color: #8A6D1F; }

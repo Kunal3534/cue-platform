@@ -354,6 +354,18 @@ export default function ExpensesPage() {
                           .join(" · ")}
                       </div>
                       <div className="gq-exp-row__actions">
+                        {item.status === "needs_review" && item.amount != null && (
+                          <button
+                            type="button"
+                            className="gq-exp-approve"
+                            onClick={async () => {
+                              await updateExpense(projectId, item.id, { approve: true });
+                              await refresh();
+                            }}
+                          >
+                            Approve ✓
+                          </button>
+                        )}
                         {item.has_receipt && (
                           <a href={expenseReceiptUrl(projectId, item.id)} target="_blank" rel="noreferrer">
                             View receipt ↗
