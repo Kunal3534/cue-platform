@@ -483,7 +483,7 @@ class ProjectGraph:
         rows = (await s.execute(
             sa.text("""
                 SELECT v.id, v.shot_number, v.shot_type, v.complexity,
-                       v.plates_required, v.vendor, v.bid_status, v.status,
+                       v.plates_required, v.vendor_name AS vendor, v.bid_status, v.status,
                        s.scene_number
                 FROM vfx_shots v
                 LEFT JOIN scenes s ON s.id = v.scene_id

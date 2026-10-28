@@ -26,18 +26,19 @@ services:
       retries: 10
 
   storage:
-    image: minio/minio
-    command: server /data --console-address ":9001"
+    # minio/minio was withdrawn from Docker Hub; bitnamilegacy is the maintained mirror
+    image: bitnamilegacy/minio:latest
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_DEFAULT_BUCKETS: cue-v1
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - cue_minio:/data
+      - cue_minio:/bitnami/minio/data
     healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:9000/minio/health/live || mc ready local"]
       interval: 5s
       timeout: 5s
       retries: 10
