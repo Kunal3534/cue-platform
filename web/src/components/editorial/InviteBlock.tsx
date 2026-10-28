@@ -50,7 +50,7 @@ export default function InviteBlock({
     <div style={{ marginTop: 44 }}>
       <div className="gq-moodboard__head">
         <span>Who’s coming</span>
-        <span style={{ color: "#BBB", textTransform: "none", letterSpacing: "0.04em" }}>
+        <span style={{ color: "var(--g-muted)", textTransform: "none", letterSpacing: "0.04em" }}>
           invites email the day brief
           {me?.google_calendar_connected ? " + a calendar invite" : ""}
         </span>

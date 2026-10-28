@@ -43,7 +43,7 @@ export default function MyDayNotes({
     <div style={{ marginTop: 44 }}>
       <div className="gq-moodboard__head">
         <span>My notes</span>
-        <span style={{ color: "#BBB", textTransform: "none", letterSpacing: "0.04em" }}>
+        <span style={{ color: "var(--g-muted)", textTransform: "none", letterSpacing: "0.04em" }}>
           only you can see these
         </span>
       </div>

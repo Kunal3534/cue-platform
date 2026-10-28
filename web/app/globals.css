@@ -1171,8 +1171,8 @@ table { border-collapse: collapse; width: 100%; }
   /* palette */
   --g-bg: #EFEDE8;
   --g-ink: #141418;
-  --g-muted: #87847D;
-  --g-faint: #B8B5AE;
+  --g-muted: #5F5D56;
+  --g-faint: #96938B;
   --g-hair: rgba(20, 20, 24, 0.12);
   --g-hair-strong: rgba(20, 20, 24, 0.7);
   --g-tile: rgba(255, 255, 255, 0.42);
@@ -1216,8 +1216,8 @@ table { border-collapse: collapse; width: 100%; }
 html[data-gq-theme="dark"] .gq-page {
   --g-bg: #141318;
   --g-ink: #ECEAE4;
-  --g-muted: #94919A;
-  --g-faint: #5C5A64;
+  --g-muted: #A8A5AF;
+  --g-faint: #767480;
   --g-hair: rgba(236, 234, 228, 0.12);
   --g-hair-strong: rgba(236, 234, 228, 0.6);
   --g-tile: rgba(255, 255, 255, 0.05);
@@ -1250,8 +1250,8 @@ html[data-gq-theme="dark"] .gq-page {
   html:not([data-gq-theme="light"]) .gq-page {
     --g-bg: #141318;
     --g-ink: #ECEAE4;
-    --g-muted: #94919A;
-    --g-faint: #5C5A64;
+    --g-muted: #A8A5AF;
+    --g-faint: #767480;
     --g-hair: rgba(236, 234, 228, 0.12);
     --g-hair-strong: rgba(236, 234, 228, 0.6);
     --g-tile: rgba(255, 255, 255, 0.05);
@@ -2023,33 +2023,22 @@ select.gq-input {
   .gq2-main main { padding-bottom: 110px !important; }
 }
 
-/* ── Day page, desktop: briefing left, working blocks right ──────────── */
+/* ── Day page: everything vertical, full width ───────────────────────── */
 .gq2-day { display: block; }
-@media (min-width: 1000px) {
-  .gq2-day { display: grid; grid-template-columns: minmax(0, 1fr) 368px; column-gap: 48px; align-items: start; }
-  .gq2-day__main .gq-detail { max-width: none; margin: 0; }
-  .gq2-day__side { position: sticky; top: 24px; }
-  .gq2-day__side .gq-detail { max-width: none; margin: 0; }
-  /* each working block is its own glass card, not loose elements */
+.gq2-day__main .gq-detail,
+.gq2-day__side .gq-detail { max-width: none; margin: 0; }
+@media (min-width: 641px) {
+  /* each working block is a full-width glass card under the briefing */
   .gq2-day__side > .gq-detail > div {
-    margin: 0 0 18px !important;
-    padding: 22px;
+    margin: 0 0 20px !important;
+    padding: 26px 28px;
     border-radius: 20px;
     background: var(--g-glass);
     border: 1px solid var(--g-glass-border);
     backdrop-filter: blur(20px) saturate(1.5); -webkit-backdrop-filter: blur(20px) saturate(1.5);
     box-shadow: var(--g-shadow-sm), inset 0 1px 0 var(--g-glass-border);
   }
-  /* card headers: hint sits under the title, nothing crammed sideways */
-  .gq2-day__side .gq-moodboard__head {
-    display: block; border-bottom: none; padding-bottom: 0; margin-bottom: 14px;
-  }
-  .gq2-day__side .gq-moodboard__head > span:last-child {
-    display: block; margin-top: 5px; letter-spacing: 0.03em;
-  }
-  /* rail forms stack full-width */
-  .gq2-day__side .gq2-invite-form { flex-direction: column; }
-  .gq2-day__side .gq2-invite-form .gq-btn { width: 100%; }
+  .gq2-day__side { margin-top: 40px; }
   .gq2-day__side .gq-marker-form { padding: 0; border: none; background: none;
     backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; }
 }

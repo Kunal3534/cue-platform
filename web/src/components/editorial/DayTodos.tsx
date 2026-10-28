@@ -58,7 +58,7 @@ export default function DayTodos({
     <div style={{ marginTop: 44 }}>
       <div className="gq-moodboard__head">
         <span>To-do</span>
-        <span style={{ color: "#BBB", textTransform: "none", letterSpacing: "0.04em" }}>
+        <span style={{ color: "var(--g-muted)", textTransform: "none", letterSpacing: "0.04em" }}>
           only you see this — not on the share link
         </span>
       </div>

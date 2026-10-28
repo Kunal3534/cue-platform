@@ -77,7 +77,7 @@ export default function DayMarkers({
     <div style={{ marginTop: 44 }}>
       <div className="gq-moodboard__head">
         <span>Special days</span>
-        <span style={{ color: "#BBB", textTransform: "none", letterSpacing: "0.04em" }}>
+        <span style={{ color: "var(--g-muted)", textTransform: "none", letterSpacing: "0.04em" }}>
           holidays show on the share link · personal days stay private
         </span>
       </div>
