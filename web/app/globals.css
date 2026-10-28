@@ -1366,7 +1366,10 @@ textarea.gq-input { resize: vertical; min-height: 90px; }
   /* form: one column, 16px inputs so iOS doesn't zoom, full-width buttons */
   .gq-form__grid { grid-template-columns: 1fr; gap: 12px; }
   .gq-input { font-size: 16px; padding: 12px; }
-  .gq-btn { width: 100%; text-align: center; padding: 14px 0; }
+  /* full-width buttons only in the edit form — inline buttons (to-do Add)
+     must stay content-sized or they crush their neighbouring input */
+  .gq-form .gq-btn { width: 100%; text-align: center; padding: 14px 0; }
+  .gq-btn { padding: 12px 18px; }
   .gq-share-btn { padding: 10px 14px; }
 
   /* schedule rows become cards */
