@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import secrets
 import uuid
 from datetime import date, time, timedelta
@@ -23,7 +24,13 @@ import sqlalchemy as sa
 
 from app.db import AsyncSessionLocal
 
-OWNER_EMAIL = "kunal.panjwani@pixis.ai"
+# Owner: the producer in production; in dev the seed follows the auto-login
+# user so the local stack shows the project without extra setup.
+OWNER_EMAIL = (
+    os.environ.get("SEED_OWNER_EMAIL")
+    or os.environ.get("DEV_AUTO_LOGIN_EMAIL")
+    or "shubhra.shukla@condenast.in"
+)
 PROJECT_TITLE = "GQ India — Men of the Year 2026"
 WINDOW = "November 2026"
 
