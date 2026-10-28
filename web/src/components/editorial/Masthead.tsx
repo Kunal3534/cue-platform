@@ -34,7 +34,10 @@ export default function Masthead({
         {/* Official MOTY lockup; multiply blend sinks its paper into ours */}
         <img src="/moty-logo.jpg" alt="GQ Men of the Year" className="gq-masthead__logo" />
         <div className="gq-masthead__sub">{subtitle}</div>
-        <ThemeToggle />
+        {/* On phones the tab bar scrolls, so the switch floats up here instead */}
+        <div className={`gq-theme-float${tabs.length > 0 ? " gq-theme-float--tabbed" : ""}`}>
+          <ThemeToggle />
+        </div>
       </div>
       {tabs.length > 0 && (
         <nav className="gq-tabs">
@@ -47,6 +50,10 @@ export default function Masthead({
               {t.label}
             </Link>
           ))}
+          <span className="gq-tabs__sep" aria-hidden />
+          <span className="gq-tabs__switch">
+            <ThemeToggle />
+          </span>
         </nav>
       )}
     </header>

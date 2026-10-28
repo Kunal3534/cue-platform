@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getMainSchedule, getEditorialSchedule } from "@/lib/api";
 import { useProjectStore } from "@/stores/project";
 import { useIsEditorial } from "@/lib/terminology";
+import { fmtTime } from "@/lib/time";
 import type { MainScheduleDay } from "@/lib/api/types";
 
 function dnClass(dn: string | null | undefined): string {
@@ -116,7 +117,7 @@ function GqSchedulePage() {
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto" }}>
-      <div style={{ borderTop: "1px solid #111" }}>
+      <div style={{ borderTop: "2px solid var(--g-ink)" }}>
         {data.days.map((day) => {
           const d = new Date(`${day.date}T00:00:00`);
           return (
@@ -142,7 +143,7 @@ function GqSchedulePage() {
                 {day.location.area ? ` · ${day.location.area}` : ""}
               </div>
               <div className="gq-sched-row__meta">
-                {day.call_time ? `Call ${day.call_time}` : ""}
+                {day.call_time ? `Call ${fmtTime(day.call_time)}` : ""}
               </div>
             </div>
           );

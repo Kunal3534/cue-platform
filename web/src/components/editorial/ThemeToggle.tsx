@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 
 /**
- * Light/dark switch for the GQ surfaces. The choice lives on
- * <html data-gq-theme> (set pre-hydration by the inline script in the root
- * layout, so there's no flash) and persists per device in localStorage.
- * With no stored choice the OS preference applies via CSS media queries.
+ * Animated day/night switch for the GQ surfaces: a sliding knob whose sun
+ * sets into a crescent moon while stars come out on the track. The choice
+ * lives on <html data-gq-theme> (set pre-hydration by the inline script in
+ * the root layout, so there's no flash) and persists per device.
  */
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
@@ -35,11 +35,19 @@ export default function ThemeToggle() {
   return (
     <button
       type="button"
-      className="gq-theme-toggle"
+      className={`gq-switch${theme === "dark" ? " is-dark" : ""}`}
+      role="switch"
+      aria-checked={theme === "dark"}
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       onClick={toggle}
     >
-      {theme === null ? "" : theme === "dark" ? "☀" : "☾"}
+      <span className="gq-switch__star gq-switch__star--1" aria-hidden>✦</span>
+      <span className="gq-switch__star gq-switch__star--2" aria-hidden>✧</span>
+      <span className="gq-switch__star gq-switch__star--3" aria-hidden>✦</span>
+      <span className="gq-switch__knob" aria-hidden>
+        <span className="gq-switch__sun" />
+        <span className="gq-switch__moon" />
+      </span>
     </button>
   );
 }

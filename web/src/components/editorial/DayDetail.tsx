@@ -1,5 +1,6 @@
 "use client";
 import type { EditorialDay } from "@/lib/api/types";
+import { fmtTime } from "@/lib/time";
 
 function fmtDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00`);
@@ -46,7 +47,7 @@ export default function DayDetail({
                 <div key={t.name} style={{ marginBottom: 6 }}>
                   <strong>{t.name}</strong>
                   {t.role && <div className="gq-kv__sub">{t.role}</div>}
-                  {call && <div className="gq-kv__sub">Call {call}</div>}
+                  {call && <div className="gq-kv__sub">Call {fmtTime(call)}</div>}
                 </div>
               );
             })}
@@ -64,18 +65,18 @@ export default function DayDetail({
         <div className="gq-kv__row">
           <div className="gq-kv__k">Call times</div>
           <div className="gq-kv__v">
-            {day.call_time && <div>On site {day.call_time}</div>}
-            {day.calls?.lighting && <div>Lighting {day.calls.lighting}</div>}
-            {day.calls?.hmu && <div>HMU {day.calls.hmu}</div>}
-            {day.calls?.crew && <div>Crew {day.calls.crew}</div>}
+            {day.call_time && <div>On site {fmtTime(day.call_time)}</div>}
+            {day.calls?.lighting && <div>Lighting {fmtTime(day.calls.lighting)}</div>}
+            {day.calls?.hmu && <div>HMU {fmtTime(day.calls.hmu)}</div>}
+            {day.calls?.crew && <div>Crew {fmtTime(day.calls.crew)}</div>}
             {day.segments
               .filter((s) => s.start)
               .map((s) => (
                 <div key={s.ref}>
-                  {s.start} — {s.title}
+                  {fmtTime(s.start)} — {s.title}
                 </div>
               ))}
-            {day.wrap_time && <div className="gq-kv__sub">Wrap {day.wrap_time}</div>}
+            {day.wrap_time && <div className="gq-kv__sub">Wrap {fmtTime(day.wrap_time)}</div>}
           </div>
         </div>
 

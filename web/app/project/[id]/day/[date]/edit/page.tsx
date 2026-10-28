@@ -194,8 +194,8 @@ export default function EditShootDayPage() {
                      onChange={(e) => setTalentField(i, "role", e.target.value)} />
             </div>
             <div>
-              <label className="gq-label">Talent call (HH:MM)</label>
-              <input className="gq-input" value={t.call_time} placeholder="10:00"
+              <label className="gq-label">Talent call</label>
+              <input className="gq-input" type="time" value={t.call_time}
                      onChange={(e) => setTalentField(i, "call_time", e.target.value)} />
             </div>
             <div>
@@ -239,37 +239,37 @@ export default function EditShootDayPage() {
         </div>
         <div>
           <label className="gq-label">Call time (on site)</label>
-          <input className="gq-input" value={callTime} placeholder="07:00"
+          <input className="gq-input" type="time" value={callTime}
                  onChange={(e) => setCallTime(e.target.value)} />
         </div>
         <div>
           <label className="gq-label">Wrap</label>
-          <input className="gq-input" value={wrapTime} placeholder="19:00"
+          <input className="gq-input" type="time" value={wrapTime}
                  onChange={(e) => setWrapTime(e.target.value)} />
         </div>
         <div>
           <label className="gq-label">Lighting call</label>
-          <input className="gq-input" value={lightingCall} placeholder="07:30"
+          <input className="gq-input" type="time" value={lightingCall}
                  onChange={(e) => setLightingCall(e.target.value)} />
         </div>
         <div>
           <label className="gq-label">HMU call</label>
-          <input className="gq-input" value={hmuCall} placeholder="08:00"
+          <input className="gq-input" type="time" value={hmuCall}
                  onChange={(e) => setHmuCall(e.target.value)} />
         </div>
         <div>
           <label className="gq-label">Crew call</label>
-          <input className="gq-input" value={crewCall} placeholder="08:00"
+          <input className="gq-input" type="time" value={crewCall}
                  onChange={(e) => setCrewCall(e.target.value)} />
         </div>
         <div>
           <label className="gq-label">Photos start</label>
-          <input className="gq-input" value={photoStart} placeholder="09:00"
+          <input className="gq-input" type="time" value={photoStart}
                  onChange={(e) => setPhotoStart(e.target.value)} />
         </div>
         <div>
           <label className="gq-label">Film starts</label>
-          <input className="gq-input" value={filmStart} placeholder="14:30"
+          <input className="gq-input" type="time" value={filmStart}
                  onChange={(e) => setFilmStart(e.target.value)} />
         </div>
       </div>

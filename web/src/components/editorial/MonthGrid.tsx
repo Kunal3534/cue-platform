@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { EditorialDay, EditorialMarker } from "@/lib/api/types";
+import { fmtTime } from "@/lib/time";
 
 const DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MONTHS = [
@@ -61,7 +62,7 @@ export default function MonthGrid({
   ];
 
   const fmtAgendaMeta = (d: EditorialDay) =>
-    [d.location.name, d.call_time ? `Call ${d.call_time}` : null]
+    [d.location.name, d.call_time ? `Call ${fmtTime(d.call_time)}` : null]
       .filter(Boolean)
       .join(" · ");
 
@@ -102,8 +103,8 @@ export default function MonthGrid({
                 holiday ? "gq-cell--holiday" : "",
                 personal ? "gq-cell--personal" : "",
                 !shoot && onSelectEmpty ? "gq-cell--addable" : "",
+                selected ? "gq-cell--selected" : "",
               ].filter(Boolean).join(" ")}
-              style={selected ? { outline: "2px solid #111", outlineOffset: "-2px" } : undefined}
               onClick={
                 clickable
                   ? () => (shoot ? onSelect!(shoot) : onSelectEmpty!(cell.dateStr))
@@ -123,6 +124,9 @@ export default function MonthGrid({
                       <div key={n}>{n}</div>
                     ))}
                   </div>
+                  {shoot.location.name && (
+                    <div className="gq-cell__loc">{shoot.location.name}</div>
+                  )}
                   <span className="gq-cell__tag">Photos + Film</span>
                 </>
               ) : feature ? (
