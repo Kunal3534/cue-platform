@@ -26,6 +26,16 @@ if settings.env == "production" and settings.dev_auto_login_email:
 
 app = FastAPI(title="Cue API", version="0.1.0")
 
+
+@app.middleware("http")
+async def no_store(request, call_next):
+    """Live schedule data must never be served from browser caches — mobile
+    Safari heuristically caches GETs that carry no Cache-Control at all.
+    Handlers that set their own caching (moodboard page images) win."""
+    response = await call_next(request)
+    response.headers.setdefault("Cache-Control", "no-store")
+    return response
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.frontend_origin],
