@@ -236,6 +236,42 @@ async def upload_receipt(
     return _row_out(row)
 
 
+@router.post("/{project_id}/expenses/{expense_id}/reread")
+async def reread_receipt(
+    project_id: str,
+    expense_id: str,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    """Queue a receipt for another reading pass — e.g. after the first one
+    failed, or after the AI key was fixed. No re-upload needed."""
+    await _owner_project(project_id, user, session)
+    row = await _expense(session, project_id, expense_id)
+    if not row.s3_key:
+        raise HTTPException(status_code=422, detail="This expense has no receipt file to read")
+
+    await session.execute(
+        sa.text("UPDATE expenses SET status = 'processing', updated_at = NOW() "
+                "WHERE id = :eid AND project_id = :pid"),
+        {"eid": expense_id, "pid": project_id},
+    )
+    await session.commit()
+    try:
+        from arq import create_pool
+
+        from ..worker import get_redis_settings
+        pool = await create_pool(get_redis_settings())
+        await pool.enqueue_job("extract_expense", expense_id)
+    except Exception:
+        await session.execute(
+            sa.text("UPDATE expenses SET status = 'needs_review', updated_at = NOW() WHERE id = :eid"),
+            {"eid": expense_id},
+        )
+        await session.commit()
+        raise HTTPException(status_code=503, detail="Could not reach the reader — try again in a minute")
+    return {"ok": True}
+
+
 @router.patch("/{project_id}/expenses/{expense_id}")
 async def update_expense(
     project_id: str,

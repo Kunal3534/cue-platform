@@ -1517,3 +1517,29 @@ textarea.gq-input { resize: vertical; min-height: 90px; }
   .gq-act-row { grid-template-columns: 1fr auto; }
   .gq-act-row__what { grid-column: 1 / -1; }
 }
+
+/* ── Receipt scanner — animated reading indicator ─────────────────────── */
+.gq-scan { display: inline-flex; align-items: center; gap: 9px; }
+.gq-scan__doc {
+  position: relative; width: 16px; height: 21px; flex: none;
+  border: 1px solid rgba(20, 20, 24, 0.45); border-radius: 1px;
+  background: #FBFAF7; overflow: hidden;
+  display: flex; flex-direction: column; gap: 3px; padding: 4px 3px;
+}
+.gq-scan__line { height: 1.5px; background: rgba(20, 20, 24, 0.28); border-radius: 1px; }
+.gq-scan__line--short { width: 60%; }
+.gq-scan__beam {
+  position: absolute; left: 0; right: 0; top: 0; height: 7px;
+  background: linear-gradient(to bottom, rgba(176, 141, 46, 0), rgba(176, 141, 46, 0.55));
+  animation: gq-scan-sweep 1.6s ease-in-out infinite;
+}
+@keyframes gq-scan-sweep {
+  0% { transform: translateY(-8px); }
+  55% { transform: translateY(21px); }
+  100% { transform: translateY(-8px); }
+}
+.gq-scan__text {
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8A6D1F;
+  animation: gq-scan-fade 0.5s ease;
+}
+@keyframes gq-scan-fade { from { opacity: 0; } to { opacity: 1; } }

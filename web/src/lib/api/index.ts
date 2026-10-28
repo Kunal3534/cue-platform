@@ -147,6 +147,11 @@ export const updateExpense = (id: string, expenseId: string, body: ExpensePatch)
 export const deleteExpense = (id: string, expenseId: string) =>
   apiFetch<void>(`/projects/${id}/expenses/${expenseId}`, { method: "DELETE" });
 
+export const rereadExpenseReceipt = (id: string, expenseId: string) =>
+  apiFetch<{ ok: boolean }>(`/projects/${id}/expenses/${expenseId}/reread`, {
+    method: "POST",
+  });
+
 export const expenseReceiptUrl = (id: string, expenseId: string) =>
   `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/projects/${id}/expenses/${expenseId}/receipt`;
 

@@ -9,10 +9,12 @@ import {
   uploadExpenseReceipt,
   updateExpense,
   deleteExpense,
+  rereadExpenseReceipt,
   expenseReceiptUrl,
   expenseReportUrl,
 } from "@/lib/api";
 import type { ExpenseItem, ExpensePatch } from "@/lib/api/types";
+import ReceiptScanner from "@/components/editorial/ReceiptScanner";
 
 const CATEGORY_LABELS: Record<string, string> = {
   travel: "Travel",
@@ -35,8 +37,7 @@ function fmtDay(iso: string): string {
 }
 
 function StatusChip({ status }: { status: ExpenseItem["status"] }) {
-  if (status === "processing")
-    return <span className="gq-exp-status gq-exp-status--reading">Reading receipt…</span>;
+  if (status === "processing") return <ReceiptScanner />;
   if (status === "needs_review")
     return <span className="gq-exp-status gq-exp-status--review">Check details</span>;
   return null;
@@ -262,7 +263,11 @@ export default function ExpensesPage() {
           />
         </div>
       </div>
-      {uploading && <p className="gq-exp-note">Uploading…</p>}
+      {uploading && (
+        <p style={{ marginTop: 12 }}>
+          <ReceiptScanner label="Uploading receipts…" />
+        </p>
+      )}
       {uploadError && (
         <p style={{ color: "#C33", fontSize: 12, marginTop: 8 }}>{uploadError}</p>
       )}
@@ -353,6 +358,17 @@ export default function ExpensesPage() {
                           <a href={expenseReceiptUrl(projectId, item.id)} target="_blank" rel="noreferrer">
                             View receipt ↗
                           </a>
+                        )}
+                        {item.has_receipt && item.status === "needs_review" && (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              await rereadExpenseReceipt(projectId, item.id);
+                              await refresh();
+                            }}
+                          >
+                            Read again
+                          </button>
                         )}
                         <button type="button" onClick={() => setEditingId(item.id)}>Edit</button>
                         <button
