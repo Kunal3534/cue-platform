@@ -1,0 +1,28 @@
+# Production build — `next build` + standalone `next start`.
+# (The plain Dockerfile stays the dev image used by docker-compose.)
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package.json ./
+RUN npm install
+
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+# Browser-side requests go same-origin under /api; the Next server proxies
+# them to the API app (see next.config.js rewrites).
+ARG NEXT_PUBLIC_API_URL=/api
+ARG API_PROXY_TARGET
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
+    API_PROXY_TARGET=$API_PROXY_TARGET \
+    NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+EXPOSE 3000
+CMD ["node", "server.js"]

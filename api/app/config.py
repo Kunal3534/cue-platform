@@ -20,6 +20,12 @@ class Settings(BaseSettings):
     anthropic_model: str = "claude-sonnet-4-5"
     magic_link_ttl_seconds: int = 900
     env: str = "development"
+    # Public base URL the browser reaches the API on (e.g. https://gq.cueit.io/api
+    # when the web app proxies). Used to build magic links; falls back to the
+    # request's own base URL when unset.
+    public_api_url: str | None = None
+    # Comma-separated emails allowed to sign in. Empty = anyone (dev default).
+    allowed_emails: str = ""
 
     class Config:
         env_file = ".env"

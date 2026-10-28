@@ -1,0 +1,30 @@
+# Cue API + worker — deploy with:  fly deploy -c fly.api.toml
+app = "cueit-gq-api"
+primary_region = "bom"
+
+[build]
+  dockerfile = "api/Dockerfile"
+
+[deploy]
+  release_command = "alembic upgrade head"
+
+[env]
+  ENV = "production"
+  ANTHROPIC_MODEL = "claude-sonnet-4-6"
+  S3_REGION = "auto"
+
+[processes]
+  app = "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+  worker = "python -m app.worker"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

@@ -1,0 +1,21 @@
+# Cue web (Next.js) — deploy with:  fly deploy -c fly.web.toml
+app = "cueit-gq-web"
+primary_region = "bom"
+
+[build]
+  dockerfile = "web/Dockerfile.prod"
+
+  [build.args]
+    NEXT_PUBLIC_API_URL = "/api"
+    API_PROXY_TARGET = "https://cueit-gq-api.fly.dev"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

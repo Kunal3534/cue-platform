@@ -109,6 +109,12 @@ async def request_link(
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
     email = body.email.lower().strip()
+
+    # Closed instance: only allowlisted producers may sign in
+    allowed = {e.strip().lower() for e in settings.allowed_emails.split(",") if e.strip()}
+    if allowed and email not in allowed:
+        raise HTTPException(status_code=403, detail="This email is not authorised to sign in")
+
     token = _make_token(email)
     expires_at = datetime.now(timezone.utc) + timedelta(seconds=settings.magic_link_ttl_seconds)
 
@@ -126,7 +132,7 @@ async def request_link(
     session.add(ml)
     await session.commit()
 
-    base_url = str(request.base_url).rstrip("/")
+    base_url = (settings.public_api_url or str(request.base_url)).rstrip("/")
     link = f"{base_url}/auth/verify?token={token}"
 
     # Dev mode: return the link in the response instead of emailing
