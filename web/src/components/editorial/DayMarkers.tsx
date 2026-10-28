@@ -82,7 +82,7 @@ export default function DayMarkers({
       {dayMarkers.map((m) => (
         <div key={m.id} className={`gq-marker-chip gq-marker-chip--${m.kind}`}>
           {m.kind === "personal" ? (
-            <span className="gq-marker__coin" aria-hidden>
+            <span className="gq-marker__mono" aria-hidden>
               {(m.who || m.label).charAt(0).toUpperCase()}
             </span>
           ) : (

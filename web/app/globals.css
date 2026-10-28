@@ -1583,12 +1583,18 @@ select.gq-input {
   animation: gq-orn-breathe 4s ease-in-out infinite alternate;
 }
 .gq-marker__orn--lg { font-size: 19px; }
-.gq-marker__coin {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 24px; height: 24px; border-radius: 999px; flex: none;
-  background: var(--g-personal-bg); border: 1px solid var(--g-personal-border);
+.gq-marker__mono {
+  display: inline-block; flex: none;
   color: var(--g-personal-ink);
-  font-family: var(--serif); font-style: italic; font-size: 13px; line-height: 1;
+  font-family: var(--serif); font-style: italic; font-size: 21px; line-height: 1;
+}
+/* personal days: the date circled in ink, like a planner */
+.gq-cell__date { position: relative; display: inline-block; }
+.gq-cell__ring {
+  position: absolute; top: 50%; left: 50%; width: 42px; height: 29px;
+  max-width: none; /* the global svg max-width cap would crush it to the date's width */
+  transform: translate(-50%, -52%) rotate(-5deg);
+  color: var(--g-personal-ink); opacity: 0.85; pointer-events: none;
 }
 @keyframes gq-orn-breathe {
   from { opacity: 0.55; transform: scale(0.94) rotate(0deg); }
@@ -1609,7 +1615,7 @@ select.gq-input {
 }
 .gq-marker-chip--personal { border-color: var(--g-personal-border); background: var(--g-personal-bg); }
 .gq-marker-chip__label { flex: 1; font-family: var(--serif); font-style: italic; font-size: 15px; }
-.gq-marker-chip .gq-marker__coin { width: 28px; height: 28px; font-size: 14px; }
+.gq-marker-chip .gq-marker__mono { font-size: 24px; }
 
 .gq-marker-form {
   margin-top: 12px; padding: 18px; border: 1px solid var(--g-glass-border); border-radius: var(--g-r);
@@ -1772,7 +1778,7 @@ select.gq-input {
   .gq-cell--holiday .gq-marker__label,
   .gq-cell--personal .gq-marker__label { display: none; }
   .gq-cell--holiday .gq-marker__orn { display: block; text-align: center; margin-top: 2px; font-size: 13px; }
-  .gq-cell--personal .gq-marker__coin { margin: 2px auto 0; width: 18px; height: 18px; font-size: 10px; display: flex; }
+  .gq-cell__ring { width: 30px; height: 22px; }
   .gq-marker { margin-top: 2px; }
 
   /* form: one column, 16px inputs so iOS doesn't zoom, full-width buttons */

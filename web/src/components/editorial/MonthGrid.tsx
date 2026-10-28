@@ -116,6 +116,15 @@ export default function MonthGrid({
               }
             >
               <div className="gq-cell__date">
+                {personal && (
+                  <svg className="gq-cell__ring" viewBox="0 0 44 30" aria-hidden>
+                    <path
+                      d="M6 15 C5 7.5 15 3 23 3.5 C33 4 40 8 39.5 15.5 C39 23 29 27 19 26.5 C11 26 5.5 22 6.5 16.5"
+                      fill="none" stroke="currentColor" strokeWidth="1.6"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                )}
                 {cell.num}
                 {shoot && dayMarkers.length > 0 && (
                   <span className="gq-cell__mini-orn" aria-hidden>✦</span>
@@ -146,11 +155,7 @@ export default function MonthGrid({
                 </>
               ) : feature ? (
                 <div className="gq-marker">
-                  {feature.kind === "personal" ? (
-                    <span className="gq-marker__coin" aria-hidden>
-                      {(feature.who || feature.label).charAt(0).toUpperCase()}
-                    </span>
-                  ) : (
+                  {feature.kind !== "personal" && (
                     <span className="gq-marker__orn" aria-hidden>✦</span>
                   )}
                   <span className="gq-marker__label">
@@ -217,7 +222,7 @@ export default function MonthGrid({
                 <div className="gq-agenda__body">
                   <div className="gq-agenda__talent">
                     {m.kind === "personal" ? (
-                      <span className="gq-marker__coin" aria-hidden>
+                      <span className="gq-marker__mono" aria-hidden>
                         {(m.who || m.label).charAt(0).toUpperCase()}
                       </span>
                     ) : (
