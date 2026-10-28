@@ -5,7 +5,7 @@ import type { NextRequest } from "next/server";
 // they're the view-only surface for people who should never see the rest.
 // Presence of the cookie is a routing hint only; the API still verifies
 // the signed session on every request.
-const PUBLIC_PATHS = [/^\/login/, /^\/share\//, /^\/auth\//, /^\/privacy/, /^\/terms/];
+const PUBLIC_PATHS = [/^\/$/, /^\/login/, /^\/share\//, /^\/auth\//, /^\/privacy/, /^\/terms/];
 
 export function middleware(req: NextRequest) {
   // Local dev has no cookie at all — the backend auto-signs-in every request.

@@ -3,11 +3,116 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { listProjects, createEditorialWorkspace } from "@/lib/api";
+import { listProjects, createEditorialWorkspace, getMe } from "@/lib/api";
 import UserChip from "@/components/editorial/UserChip";
 import ThemeToggle from "@/components/editorial/ThemeToggle";
 
-export default function WorkspacesPage() {
+/** Signed out, this is Cue's public homepage (Google's verification crawler
+ *  needs to see what the app is without logging in). Signed in, it's the
+ *  Workspaces screen. */
+export default function HomePage() {
+  const { data: me, isLoading, isError } = useQuery({
+    queryKey: ["me"],
+    queryFn: getMe,
+    retry: false,
+    staleTime: 60_000,
+  });
+
+  if (isLoading) {
+    return <div className="gq-page" style={{ minHeight: "100vh" }} />;
+  }
+  return me && !isError ? <WorkspacesHome /> : <PublicLanding />;
+}
+
+function PublicLanding() {
+  return (
+    <div className="gq-page">
+      <div className="gq-inner" style={{ maxWidth: 760, paddingBottom: 60 }}>
+        <header className="gq2-home-top">
+          <div className="gq2-home-brand">
+            CUE <span>·</span> CUEIT.IO
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <ThemeToggle />
+            <Link href="/login" className="gq-share-btn" style={{ textDecoration: "none" }}>
+              Sign in
+            </Link>
+          </div>
+        </header>
+
+        <div style={{ padding: "40px 0 10px" }}>
+          <img src="/cue-mark.svg" alt="Cue" style={{ width: 84, height: 84, marginBottom: 22 }} />
+          <h1 className="gq2-home-title" style={{ fontSize: 52, lineHeight: 1.05 }}>
+            The production workspace for editorial shoots
+          </h1>
+          <p style={{ fontSize: 16.5, lineHeight: 1.75, maxWidth: 560, marginTop: 18 }}>
+            Cue is where a magazine shoot runs: the calendar, the day briefs,
+            the team and the money — in one place, built for producers.
+          </p>
+        </div>
+
+        <div className="gq2-ws-grid" style={{ marginTop: 34 }}>
+          <div className="gq2-ws-card">
+            <div className="gq2-ws-card__eyebrow">Calendar &amp; briefs</div>
+            <div className="gq2-ws-card__title">Every shoot day, briefed</div>
+            <div className="gq2-ws-card__meta">
+              Talent, call times, locations, moodboards — shareable with anyone
+              via a read-only link, synced to Google Calendar.
+            </div>
+          </div>
+          <div className="gq2-ws-card">
+            <div className="gq2-ws-card__eyebrow">Team &amp; invites</div>
+            <div className="gq2-ws-card__title">The right access for everyone</div>
+            <div className="gq2-ws-card__meta">
+              Producers edit, contributors view, guests get emailed day briefs
+              and calendar invites.
+            </div>
+          </div>
+          <div className="gq2-ws-card">
+            <div className="gq2-ws-card__eyebrow">Expenses</div>
+            <div className="gq2-ws-card__title">Receipts read themselves</div>
+            <div className="gq2-ws-card__meta">
+              Photograph a receipt and Cue extracts the spend, classifies it,
+              and exports a Google Slides report for accounts.
+            </div>
+          </div>
+          <div className="gq2-ws-card">
+            <div className="gq2-ws-card__eyebrow">Invitation only</div>
+            <div className="gq2-ws-card__title">Closed by design</div>
+            <div className="gq2-ws-card__meta">
+              Workspaces are private to their production teams. If you’ve been
+              invited, sign in with Google or your email.
+            </div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 40 }}>
+          <Link href="/login" className="gq-btn" style={{ textDecoration: "none" }}>
+            Sign in to your workspace
+          </Link>
+        </div>
+
+        <p style={{ marginTop: 44, fontSize: 12.5, color: "var(--g-muted)" }}>
+          <Link href="/privacy" style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>
+            Privacy Policy
+          </Link>
+          {" · "}
+          <Link href="/terms" style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>
+            Terms of Service
+          </Link>
+          {" · "}
+          <a href="mailto:cue@cueit.io" style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>
+            cue@cueit.io
+          </a>
+        </p>
+
+        <div className="gq-foot">Produced on Cue</div>
+      </div>
+    </div>
+  );
+}
+
+function WorkspacesHome() {
   const router = useRouter();
   const [creating, setCreating] = useState(false);
   const [newTitle, setNewTitle] = useState("");
@@ -27,9 +132,7 @@ export default function WorkspacesPage() {
       setBusy(false);
     }
   };
-  // Client-side on purpose: the API is reached same-origin under /api with
-  // the session cookie. (A server component here can do neither — that bug
-  // once showed everyone an empty list.)
+
   const { data: projects, isLoading, isError, error } = useQuery({
     queryKey: ["projects"],
     queryFn: listProjects,
@@ -51,7 +154,7 @@ export default function WorkspacesPage() {
 
         <h1 className="gq2-home-title">Workspaces</h1>
         <p className="gq-exp-note" style={{ maxWidth: 480 }}>
-          Every production you’re part of lives in its own workspace — calendar,
+          Every production you&rsquo;re part of lives in its own workspace — calendar,
           briefings, expenses and the team around it.
         </p>
 
@@ -60,7 +163,7 @@ export default function WorkspacesPage() {
         ) : isError ? (
           <div className="gq2-ws-card" style={{ marginTop: 36, textAlign: "center" }}>
             <p style={{ color: "#999" }}>
-              Couldn’t load workspaces
+              Couldn&rsquo;t load workspaces
               {error instanceof Error ? ` — ${error.message}` : ""}.
             </p>
             <Link href="/login" className="gq-btn" style={{ marginTop: 16 }}>
