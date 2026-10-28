@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 /**
  * GQ-flavoured masthead + the two-tab nav for editorial projects.
@@ -33,6 +34,7 @@ export default function Masthead({
         {/* Official MOTY lockup; multiply blend sinks its paper into ours */}
         <img src="/moty-logo.jpg" alt="GQ Men of the Year" className="gq-masthead__logo" />
         <div className="gq-masthead__sub">{subtitle}</div>
+        <ThemeToggle />
       </div>
       {tabs.length > 0 && (
         <nav className="gq-tabs">

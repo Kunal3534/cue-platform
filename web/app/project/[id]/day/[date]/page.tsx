@@ -92,11 +92,11 @@ function GqDayPage() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-        <Link href={`/project/${projectId}/calendar`} style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#999" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
+        <Link href={`/project/${projectId}/calendar`} style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#999", whiteSpace: "nowrap" }}>
           ← Calendar
         </Link>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
           <button
             type="button"
             className="gq-btn gq-btn--ghost"

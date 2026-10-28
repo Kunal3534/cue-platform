@@ -56,7 +56,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   ].join(" ");
 
   return (
-    <html lang="en" className={fontVars}>
+    <html lang="en" className={fontVars} suppressHydrationWarning>
+      <head>
+        {/* Apply the stored GQ theme before paint so dark mode never flashes */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{var t=localStorage.getItem("gq-theme");if(t==="light"||t==="dark")document.documentElement.dataset.gqTheme=t}catch(e){}',
+          }}
+        />
+      </head>
       <body className="min-h-screen">
         <Providers>{children}</Providers>
       </body>
