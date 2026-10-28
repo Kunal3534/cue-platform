@@ -2021,11 +2021,32 @@ select.gq-input {
 /* ── Day page, desktop: briefing left, working blocks right ──────────── */
 .gq2-day { display: block; }
 @media (min-width: 1000px) {
-  .gq2-day { display: grid; grid-template-columns: minmax(0, 1fr) 360px; column-gap: 40px; align-items: start; }
+  .gq2-day { display: grid; grid-template-columns: minmax(0, 1fr) 380px; column-gap: 44px; align-items: start; }
   .gq2-day__main .gq-detail { max-width: none; margin: 0; }
   .gq2-day__side { position: sticky; top: 24px; }
   .gq2-day__side .gq-detail { max-width: none; margin: 0; }
-  .gq2-day__side > div > div { margin-top: 0 !important; margin-bottom: 38px; }
+  /* each working block is its own glass card, not loose elements */
+  .gq2-day__side > .gq-detail > div {
+    margin: 0 0 18px !important;
+    padding: 22px;
+    border-radius: 20px;
+    background: var(--g-glass);
+    border: 1px solid var(--g-glass-border);
+    backdrop-filter: blur(20px) saturate(1.5); -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    box-shadow: var(--g-shadow-sm), inset 0 1px 0 var(--g-glass-border);
+  }
+  /* card headers: hint sits under the title, nothing crammed sideways */
+  .gq2-day__side .gq-moodboard__head {
+    display: block; border-bottom: none; padding-bottom: 0; margin-bottom: 14px;
+  }
+  .gq2-day__side .gq-moodboard__head > span:last-child {
+    display: block; margin-top: 5px; letter-spacing: 0.03em;
+  }
+  /* rail forms stack full-width */
+  .gq2-day__side .gq2-invite-form { flex-direction: column; }
+  .gq2-day__side .gq2-invite-form .gq-btn { width: 100%; }
+  .gq2-day__side .gq-marker-form { padding: 0; border: none; background: none;
+    backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; }
 }
 
 /* ── New-workspace inline form on the home grid ──────────────────────── */

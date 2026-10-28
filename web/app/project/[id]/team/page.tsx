@@ -74,20 +74,22 @@ export default function TeamPage() {
               {m.name && <span className="gq-kv__sub"> {m.email}</span>}
             </span>
             <span className={`gq-exp-status ${m.role === "producer" ? "gq-exp-status--review" : "gq-exp-status--reading"}`}>
-              {m.role}
+              {m.builtin ? "core producer" : m.role}
             </span>
-            <button
-              type="button"
-              className="gq-todo__del"
-              aria-label="Remove member"
-              onClick={async () => {
-                if (!window.confirm(`Remove ${m.name || m.email} from the workspace?`)) return;
-                await removeMember(projectId, m.id);
-                await qc.invalidateQueries({ queryKey: ["members", projectId] });
-              }}
-            >
-              ×
-            </button>
+            {!m.builtin && (
+              <button
+                type="button"
+                className="gq-todo__del"
+                aria-label="Remove member"
+                onClick={async () => {
+                  if (!window.confirm(`Remove ${m.name || m.email} from the workspace?`)) return;
+                  await removeMember(projectId, m.id);
+                  await qc.invalidateQueries({ queryKey: ["members", projectId] });
+                }}
+              >
+                ×
+              </button>
+            )}
           </div>
         ))}
       </div>

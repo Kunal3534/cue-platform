@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     allowed_emails: str = ""
     # Super admins: full access everywhere, never listed on any Team page.
     super_admin_emails: str = "kunal.panjwani@pixis.ai"
+    # Where invitation emails point people (the app itself).
+    app_base_url: str = "https://gq.cueit.io"
     # Google OAuth ("Sign in with Google" + Calendar sync). Create a Web
     # OAuth client in Google Cloud Console; authorised redirect URI is
     # {PUBLIC_API_URL or API base}/auth/google/callback.

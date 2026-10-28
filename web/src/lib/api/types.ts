@@ -35,6 +35,8 @@ export interface WorkspaceMember {
   role: "producer" | "contributor";
   added_by: string | null;
   created_at: string;
+  /** Core producers from the instance allowlist — shown, not removable. */
+  builtin?: boolean;
 }
 
 export interface ShootInvite {
