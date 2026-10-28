@@ -1,15 +1,8 @@
+"use client";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import NavBar from "@/components/nav/NavBar";
 import { listProjects } from "@/lib/api";
-import type { ProjectSummary } from "@/lib/api/types";
-
-async function getProjects(): Promise<ProjectSummary[]> {
-  try {
-    return await listProjects();
-  } catch {
-    return [];
-  }
-}
 
 function initials(title: string): string {
   return title
@@ -19,8 +12,15 @@ function initials(title: string): string {
     .join("");
 }
 
-export default async function ProjectsPage() {
-  const projects = await getProjects();
+export default function ProjectsPage() {
+  // Client-side on purpose: the API is reached same-origin under /api with
+  // the session cookie. (A server component here can do neither — that bug
+  // once showed everyone an empty list.)
+  const { data: projects, isLoading, isError, error } = useQuery({
+    queryKey: ["projects"],
+    queryFn: listProjects,
+    retry: 1,
+  });
 
   return (
     <>
@@ -38,7 +38,20 @@ export default async function ProjectsPage() {
           </Link>
         </header>
 
-        {projects.length === 0 ? (
+        {isLoading ? (
+          <p className="voice" style={{ fontSize: "16px" }}>Loading projects…</p>
+        ) : isError ? (
+          <div className="empty">
+            <span className="empty__mark">CUE</span>
+            <p className="voice" style={{ fontSize: "16px", marginTop: 0 }}>
+              Couldn’t load projects
+              {error instanceof Error ? ` — ${error.message}` : ""}.
+            </p>
+            <Link href="/login" className="btn btn--day" style={{ marginTop: "24px" }}>
+              Sign in again →
+            </Link>
+          </div>
+        ) : !projects || projects.length === 0 ? (
           <div className="empty">
             <span className="empty__mark">CUE</span>
             <p className="voice" style={{ fontSize: "16px", marginTop: 0 }}>
