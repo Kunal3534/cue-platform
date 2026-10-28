@@ -1722,6 +1722,11 @@ select.gq-input {
 @keyframes gq-scan-fade { from { opacity: 0; } to { opacity: 1; } }
 
 /* ── Mobile ───────────────────────────────────────────────────────── */
+@media (max-width: 899px) {
+  .gq-tabs { display: none; }
+  .gq-theme-float--tabbed { display: block; left: 14px; right: auto; }
+}
+
 @media (max-width: 640px) {
   .gq-inner { padding: 0 14px; }
   .gq-masthead { padding: 22px 0 12px; }
@@ -2021,7 +2026,7 @@ select.gq-input {
 /* ── Day page, desktop: briefing left, working blocks right ──────────── */
 .gq2-day { display: block; }
 @media (min-width: 1000px) {
-  .gq2-day { display: grid; grid-template-columns: minmax(0, 1fr) 380px; column-gap: 44px; align-items: start; }
+  .gq2-day { display: grid; grid-template-columns: minmax(0, 1fr) 368px; column-gap: 48px; align-items: start; }
   .gq2-day__main .gq-detail { max-width: none; margin: 0; }
   .gq2-day__side { position: sticky; top: 24px; }
   .gq2-day__side .gq-detail { max-width: none; margin: 0; }
@@ -2051,3 +2056,13 @@ select.gq-input {
 
 /* ── New-workspace inline form on the home grid ──────────────────────── */
 .gq2-ws-form { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+
+/* ── Centered app shell (sidebar retired on user feedback) ───────────── */
+.gq-inner--wide { max-width: 1240px; }
+.gq2-user-float { position: absolute; top: 22px; right: 26px; z-index: 45; }
+.gq-inner { position: relative; }
+
+@media (max-width: 899px) {
+  /* phones navigate from the bottom bar; top pills are desktop-only */
+  .gq2-user-float { top: 12px; right: 14px; }
+}

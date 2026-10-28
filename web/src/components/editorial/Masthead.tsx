@@ -10,29 +10,44 @@ import ThemeToggle from "./ThemeToggle";
 export default function Masthead({
   projectId,
   subtitle = "November 2026 · Shoot Calendar",
+  role = "producer",
 }: {
   projectId?: string;
   subtitle?: string;
+  role?: string | null;
 }) {
   const pathname = usePathname();
   const base = projectId ? `/project/${projectId}` : null;
+  const producer = role !== "contributor";
 
-  // Expenses + Activity are producer surfaces; tabs only ever render in the
-  // authenticated app (share pages mount Masthead without a projectId).
+  // Producer surfaces stay out of contributor tabs; tabs only ever render in
+  // the authenticated app (share pages mount Masthead without a projectId).
   const tabs = base
     ? [
         { label: "Calendar", href: `${base}/calendar` },
         { label: "Schedule", href: `${base}/schedule` },
-        { label: "Expenses", href: `${base}/expenses` },
-        { label: "Activity", href: `${base}/activity` },
+        ...(producer
+          ? [
+              { label: "Expenses", href: `${base}/expenses` },
+              { label: "Activity", href: `${base}/activity` },
+              { label: "Team", href: `${base}/team` },
+            ]
+          : []),
       ]
     : [];
 
   return (
     <header>
       <div className="gq-masthead">
-        {/* Official MOTY lockup; multiply blend sinks its paper into ours */}
-        <img src="/moty-logo.jpg" alt="GQ Men of the Year" className="gq-masthead__logo" />
+        {/* Official MOTY lockup; multiply blend sinks its paper into ours.
+            Inside a workspace it links back to the workspaces list. */}
+        {projectId ? (
+          <Link href="/">
+            <img src="/moty-logo.jpg" alt="GQ Men of the Year" className="gq-masthead__logo" />
+          </Link>
+        ) : (
+          <img src="/moty-logo.jpg" alt="GQ Men of the Year" className="gq-masthead__logo" />
+        )}
         <div className="gq-masthead__sub">{subtitle}</div>
         {/* On phones the tab bar scrolls, so the switch floats up here instead */}
         <div className={`gq-theme-float${tabs.length > 0 ? " gq-theme-float--tabbed" : ""}`}>

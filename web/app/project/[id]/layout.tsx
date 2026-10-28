@@ -6,7 +6,6 @@ import NavBar from "@/components/nav/NavBar";
 import ProjectNav from "@/components/nav/ProjectNav";
 import FlagsDrawer from "@/components/flags/FlagsDrawer";
 import Masthead from "@/components/editorial/Masthead";
-import WorkspaceSidebar from "@/components/editorial/WorkspaceSidebar";
 import UserChip from "@/components/editorial/UserChip";
 import MobileTabBar from "@/components/editorial/MobileTabBar";
 import { useProjectStore } from "@/stores/project";
@@ -37,25 +36,18 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
     return <div style={{ minHeight: "100vh" }} />;
   }
 
-  // Editorial projects get the workspace shell: glass sidebar on desktop,
-  // the masthead + pill tabs on phones. No film machinery either way.
+  // Editorial projects: centered masthead + top tabs on desktop (the user
+  // chip floats top-right), bottom tab bar on phones. No film machinery.
   if (project.settings?.mode === "editorial") {
     return (
       <div className="gq-page">
-        <div className="gq2-wrap">
-          <WorkspaceSidebar projectId={projectId} title={project.title} role={project.my_role} />
-          <div className="gq2-main gq-inner">
-            <header className="gq2-top">
-              <div className="gq2-top__crumb">November 2026 · Shoot calendar</div>
-              <UserChip />
-            </header>
-            <div className="gq2-mobile-head">
-              {/* brand only — phone navigation lives in the bottom tab bar */}
-              <Masthead />
-            </div>
-            <main style={{ paddingBottom: "64px" }}>{children}</main>
-            <div className="gq-foot">Produced on Cue</div>
+        <div className="gq-inner gq-inner--wide">
+          <div className="gq2-user-float">
+            <UserChip />
           </div>
+          <Masthead projectId={projectId} role={project.my_role} />
+          <main style={{ paddingBottom: "64px" }}>{children}</main>
+          <div className="gq-foot">Produced on Cue</div>
         </div>
         <MobileTabBar projectId={projectId} role={project.my_role} />
       </div>
