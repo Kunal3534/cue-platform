@@ -5,7 +5,7 @@ import type { NextRequest } from "next/server";
 // they're the view-only surface for people who should never see the rest.
 // Presence of the cookie is a routing hint only; the API still verifies
 // the signed session on every request.
-const PUBLIC_PATHS = [/^\/$/, /^\/login/, /^\/share\//, /^\/auth\//, /^\/privacy/, /^\/terms/];
+const PUBLIC_PATHS = [/^\/$/, /^\/welcome/, /^\/login/, /^\/share\//, /^\/auth\//, /^\/privacy/, /^\/terms/];
 
 export function middleware(req: NextRequest) {
   // Local dev has no cookie at all — the backend auto-signs-in every request.
@@ -14,6 +14,11 @@ export function middleware(req: NextRequest) {
   }
   const { pathname } = req.nextUrl;
   if (PUBLIC_PATHS.some((p) => p.test(pathname))) {
+    // Signed-out visitors to the root get the server-rendered public page,
+    // so crawlers (Google's OAuth verification included) see real content.
+    if (pathname === "/" && !req.cookies.get("cue_session")) {
+      return NextResponse.rewrite(new URL("/welcome", req.url));
+    }
     return NextResponse.next();
   }
   if (!req.cookies.has("cue_session")) {
