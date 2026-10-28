@@ -974,7 +974,8 @@ async def _send_invite_email(email: str, name: str | None, day: dict, share_url:
         ) if v])
         + emailer.button("View the day brief", share_url)
         + f"<p style='margin:24px 0 0;font-size:13px;color:{emailer.MUTED};line-height:1.7'>"
-        f"The brief always shows the latest times — check it the night before.</p>"
+        f"The brief always shows the latest times, so check it the night before. "
+        f"We&rsquo;re super glad to have you on this shoot!</p>"
     )
     html = emailer.frame(
         eyebrow="CUE · SHOOT INVITATION",
@@ -982,7 +983,7 @@ async def _send_invite_email(email: str, name: str | None, day: dict, share_url:
         sub=None,
         body_html=body,
     )
-    await emailer.send(email, f"You're invited — GQ Men of the Year shoot · {nice_date}", html)
+    await emailer.send(email, f"You're invited: GQ Men of the Year shoot · {nice_date}", html)
 
 
 @router.get("/{project_id}/editorial/days/{date}/invites")
@@ -1222,10 +1223,14 @@ async def get_activity(
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
     await _owner_project(project_id, user, session, min_role="producer")
+    # Super admins work invisibly: their entries never surface here
+    supers = [e.strip().lower() for e in settings.super_admin_emails.split(",") if e.strip()]
     rows = (await session.execute(
         sa.text("SELECT id, user_email, action, summary, created_at FROM activity_log "
-                "WHERE project_id = :pid ORDER BY created_at DESC LIMIT 150"),
-        {"pid": project_id},
+                "WHERE project_id = :pid AND (user_email IS NULL "
+                "OR LOWER(user_email) != ALL(:supers)) "
+                "ORDER BY created_at DESC LIMIT 150"),
+        {"pid": project_id, "supers": supers},
     )).fetchall()
     return {
         "items": [

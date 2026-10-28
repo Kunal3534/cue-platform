@@ -68,30 +68,23 @@ async def _get_or_create_user(email: str, session: AsyncSession) -> User:
 
 
 async def _send_magic_link_email(email: str, link: str) -> None:
-    """POST to Resend API. Silently skips if no API key configured."""
-    if not settings.resend_api_key:
-        return
-    mail_from = settings.mail_from or "noreply@cue.app"
-    async with httpx.AsyncClient() as client:
-        await client.post(
-            "https://api.resend.com/emails",
-            headers={
-                "Authorization": f"Bearer {settings.resend_api_key}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "from": mail_from,
-                "to": [email],
-                "subject": "Sign in to Cue",
-                "html": (
-                    f"<p>Click the link below to sign in to Cue. "
-                    f"It expires in {settings.magic_link_ttl_seconds // 60} minutes.</p>"
-                    f'<p><a href="{link}">Sign in to Cue</a></p>'
-                    f"<p style='color:#888;font-size:12px;'>{link}</p>"
-                ),
-            },
-            timeout=10.0,
-        )
+    from ..services import emailer
+
+    minutes = settings.magic_link_ttl_seconds // 60
+    body = (
+        f"<p style='margin:0 0 4px'>Tap the button and you&rsquo;re in. "
+        f"The link expires in {minutes} minutes.</p>"
+        + emailer.button("Sign in to Cue", link)
+        + f"<p style='margin:24px 0 0;font-size:11px;color:{emailer.MUTED};"
+        f"line-height:1.6;word-break:break-all'>{link}</p>"
+    )
+    html = emailer.frame(
+        eyebrow="CUE · SIGN IN",
+        headline="Your sign-in link",
+        sub=None,
+        body_html=body,
+    )
+    await emailer.send(email, "Sign in to Cue", html)
 
 
 # ---------------------------------------------------------------------------
