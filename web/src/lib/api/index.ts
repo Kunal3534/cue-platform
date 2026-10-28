@@ -179,6 +179,25 @@ export const deleteInvite = (id: string, date: string, inviteId: string) =>
     method: "DELETE",
   });
 
+// Workspace members (team access, app-managed)
+export const getMembers = (id: string) =>
+  apiFetch<{ members: import("./types").WorkspaceMember[] }>(`/projects/${id}/members`);
+
+export const addMember = (id: string, email: string, name?: string | null) =>
+  apiFetch<import("./types").WorkspaceMember>(`/projects/${id}/members`, {
+    method: "POST",
+    body: JSON.stringify({ email, name: name || null }),
+  });
+
+export const removeMember = (id: string, memberId: string) =>
+  apiFetch<void>(`/projects/${id}/members/${memberId}`, { method: "DELETE" });
+
+export const createEditorialWorkspace = (title: string) =>
+  apiFetch<{ id: string; title: string }>("/projects/editorial", {
+    method: "POST",
+    body: JSON.stringify({ title }),
+  });
+
 export const googleLoginUrl = () =>
   `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/auth/google/login`;
 

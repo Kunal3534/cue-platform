@@ -129,8 +129,11 @@ def _parse_date(raw: str) -> date_cls:
 
 async def _owner_project(project_id: str, user: User, session: AsyncSession):
     row = (await session.execute(
-        sa.text("SELECT id, settings FROM projects WHERE id = :pid AND (owner_id = :uid OR :team = TRUE)"),
-        {"pid": project_id, "uid": user.id, "team": is_team_member(user)},
+        sa.text("SELECT id, settings FROM projects WHERE id = :pid AND (owner_id = :uid OR :team = TRUE "
+                "OR EXISTS (SELECT 1 FROM workspace_members wm "
+                "WHERE wm.project_id = projects.id AND wm.email = :uemail))"),
+        {"pid": project_id, "uid": user.id, "team": is_team_member(user),
+         "uemail": user.email.lower()},
     )).first()
     if not row:
         raise HTTPException(status_code=404, detail="Project not found")

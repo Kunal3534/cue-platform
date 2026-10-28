@@ -21,6 +21,21 @@ from .db import get_async_db
 from .models import User
 
 
+async def may_sign_in(email: str, session) -> bool:
+    """Who gets through the door: the env allowlist (producers), anyone a
+    producer has added as a workspace member, or everyone when the allowlist
+    is empty (dev)."""
+    import sqlalchemy as sa
+    allowed = {e.strip().lower() for e in settings.allowed_emails.split(",") if e.strip()}
+    if not allowed or email.lower() in allowed:
+        return True
+    row = (await session.execute(
+        sa.text("SELECT 1 FROM workspace_members WHERE email = :em LIMIT 1"),
+        {"em": email.lower()},
+    )).first()
+    return bool(row)
+
+
 def is_team_member(user: User) -> bool:
     """Allowlisted producers act as one team: every listed email can see and
     edit every project on this instance. With an empty allowlist (dev), only

@@ -1,11 +1,32 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { listProjects } from "@/lib/api";
+import { listProjects, createEditorialWorkspace } from "@/lib/api";
 import UserChip from "@/components/editorial/UserChip";
 import ThemeToggle from "@/components/editorial/ThemeToggle";
 
 export default function WorkspacesPage() {
+  const router = useRouter();
+  const [creating, setCreating] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+
+  const createWorkspace = async () => {
+    const title = newTitle.trim();
+    if (!title) return;
+    setBusy(true);
+    setCreateError(null);
+    try {
+      const ws = await createEditorialWorkspace(title);
+      router.push(`/project/${ws.id}/calendar`);
+    } catch (e) {
+      setCreateError(e instanceof Error ? e.message : "Could not create the workspace");
+      setBusy(false);
+    }
+  };
   // Client-side on purpose: the API is reached same-origin under /api with
   // the session cookie. (A server component here can do neither — that bug
   // once showed everyone an empty list.)
@@ -63,13 +84,49 @@ export default function WorkspacesPage() {
                 <span className="gq2-ws-card__open">Open workspace →</span>
               </Link>
             ))}
-            <Link href="/projects/new" className="gq2-ws-card gq2-ws-card--new">
-              <div className="gq2-ws-card__plus">+</div>
-              <div className="gq2-ws-card__title" style={{ fontSize: 18 }}>
-                New workspace
+            {creating ? (
+              <div className="gq2-ws-card gq2-ws-card--new" style={{ textAlign: "left" }}>
+                <div className="gq2-ws-card__eyebrow">New workspace</div>
+                <div className="gq2-ws-form">
+                  <input
+                    className="gq-input"
+                    value={newTitle}
+                    placeholder="e.g. Vogue — Wedding Issue 2027"
+                    autoFocus
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && createWorkspace()}
+                  />
+                  {createError && (
+                    <p style={{ color: "#C33", fontSize: 12, margin: 0 }}>{createError}</p>
+                  )}
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <button type="button" className="gq-btn" onClick={createWorkspace}
+                            disabled={busy} style={{ padding: "10px 22px", fontSize: 10 }}>
+                      {busy ? "Creating…" : "Create"}
+                    </button>
+                    <button type="button" className="gq-btn gq-btn--ghost"
+                            onClick={() => setCreating(false)}
+                            style={{ padding: "10px 22px", fontSize: 10 }}>
+                      Cancel
+                    </button>
+                  </div>
+                  <Link href="/projects/new" className="gq-kv__sub"
+                        style={{ fontSize: 11, textDecoration: "underline", textUnderlineOffset: 3 }}>
+                    or start a film project from a master breakdown
+                  </Link>
+                </div>
               </div>
-              <div className="gq2-ws-card__meta">Start from a film master breakdown</div>
-            </Link>
+            ) : (
+              <button type="button" className="gq2-ws-card gq2-ws-card--new"
+                      onClick={() => setCreating(true)}
+                      style={{ cursor: "pointer", font: "inherit", color: "inherit" }}>
+                <div className="gq2-ws-card__plus">+</div>
+                <div className="gq2-ws-card__title" style={{ fontSize: 18 }}>
+                  New workspace
+                </div>
+                <div className="gq2-ws-card__meta">A fresh calendar for another production</div>
+              </button>
+            )}
           </section>
         )}
 

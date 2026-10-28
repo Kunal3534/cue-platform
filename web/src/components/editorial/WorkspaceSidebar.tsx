@@ -33,6 +33,13 @@ const ICONS: Record<string, React.ReactNode> = {
       <path d="M12 7.5V12l3 2.2" />
     </svg>
   ),
+  team: (
+    <svg width="17" height="17" viewBox="0 0 24 24" {...STROKE}>
+      <circle cx="9" cy="8.5" r="3.4" />
+      <path d="M2.8 20a6.2 6.2 0 0 1 12.4 0" />
+      <path d="M16 5.6a3.4 3.4 0 0 1 0 5.8M17.6 14.2a6.2 6.2 0 0 1 3.6 5.8" />
+    </svg>
+  ),
 };
 
 /** Desktop workspace sidebar — the glass panel on the left of the shell. */
@@ -50,6 +57,7 @@ export default function WorkspaceSidebar({
     { key: "schedule", label: "Schedule", href: `${base}/schedule` },
     { key: "expenses", label: "Expenses", href: `${base}/expenses` },
     { key: "activity", label: "Activity", href: `${base}/activity` },
+    { key: "team", label: "Team", href: `${base}/team` },
   ];
 
   return (

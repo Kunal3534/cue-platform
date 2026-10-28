@@ -1399,7 +1399,7 @@ html[data-gq-theme="dark"] .gq-masthead__logo { mix-blend-mode: screen; filter: 
 .gq-grid-head div { padding: 4px 10px 6px; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--g-muted); }
 .gq-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
 .gq-cell {
-  min-height: 104px; padding: 10px 10px 12px;
+  min-height: 148px; padding: 10px 10px 12px;
   background: var(--g-tile);
   border: 1px solid transparent;
   border-radius: var(--g-r-sm);
@@ -1795,7 +1795,8 @@ select.gq-input {
 @media (min-width: 900px) {
   .gq2-wrap {
     display: grid; grid-template-columns: 256px minmax(0, 1fr);
-    max-width: 1460px; margin: 0 auto; padding: 18px 26px 0;
+    /* full-bleed: the sidebar lives at the window's left edge */
+    padding: 16px 28px 0 16px;
     column-gap: 30px; align-items: start;
   }
   .gq2-mobile-head { display: none; }
@@ -1837,7 +1838,7 @@ select.gq-input {
   .gq2-side__item.is-active {
     color: var(--g-btn-fg); background: var(--g-btn-bg); box-shadow: var(--g-shadow-sm);
   }
-  .gq2-side__foot { margin-top: auto; display: flex; justify-content: center; padding-top: 18px; }
+  .gq2-side__foot { margin-top: auto; display: flex; justify-content: flex-start; padding: 18px 4px 2px; }
 
   .gq2-top {
     display: flex; justify-content: space-between; align-items: center;
@@ -1965,3 +1966,67 @@ select.gq-input {
   .gq2-user__chip { padding: 4px; }
   .gq-cell__dots { justify-content: center; }
 }
+
+/* ── Sign-in page, same language as everything else ──────────────────── */
+.gq2-login { max-width: 460px; margin: 0 auto; padding: 0 18px 40px; }
+.gq2-login-card {
+  margin-top: 26px; padding: 30px 28px;
+  border-radius: 22px;
+  background: var(--g-glass); border: 1px solid var(--g-glass-border);
+  backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  box-shadow: var(--g-shadow), inset 0 1px 0 var(--g-glass-border);
+}
+.gq2-login-card__eyebrow {
+  font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
+  color: var(--g-muted); margin-bottom: 20px; text-align: center;
+}
+.gq2-login-div {
+  display: flex; align-items: center; gap: 12px; margin: 20px 0;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--g-faint);
+}
+.gq2-login-div::before, .gq2-login-div::after {
+  content: ""; flex: 1; height: 1px; background: var(--g-hair);
+}
+.gq2-login-err { color: #C33; font-size: 12.5px; margin: 0 0 14px; text-align: center; }
+
+/* ── Phone navigation: fixed glass tab bar at the bottom ─────────────── */
+.gq2-tabbar { display: none; }
+@media (max-width: 899px) {
+  .gq2-tabbar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 70;
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 9px 6px calc(9px + env(safe-area-inset-bottom));
+    background: var(--g-glass);
+    backdrop-filter: blur(24px) saturate(1.7); -webkit-backdrop-filter: blur(24px) saturate(1.7);
+    border-top: 1px solid var(--g-glass-border);
+    box-shadow: 0 -8px 28px rgba(20, 20, 24, 0.12);
+  }
+  .gq2-tabbar__item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    min-width: 56px; padding: 4px 6px; border-radius: 12px;
+    color: var(--g-muted); transition: color 0.18s ease;
+  }
+  .gq2-tabbar__item span {
+    font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .gq2-tabbar__item.is-active { color: var(--g-ink); }
+  .gq2-tabbar__item.is-active::after {
+    content: ""; width: 4px; height: 4px; border-radius: 50%;
+    background: var(--g-gold); margin-top: 1px;
+  }
+  /* content never hides behind the bar */
+  .gq2-main main { padding-bottom: 110px !important; }
+}
+
+/* ── Day page, desktop: briefing left, working blocks right ──────────── */
+.gq2-day { display: block; }
+@media (min-width: 1000px) {
+  .gq2-day { display: grid; grid-template-columns: minmax(0, 1fr) 360px; column-gap: 40px; align-items: start; }
+  .gq2-day__main .gq-detail { max-width: none; margin: 0; }
+  .gq2-day__side { position: sticky; top: 24px; }
+  .gq2-day__side .gq-detail { max-width: none; margin: 0; }
+  .gq2-day__side > div > div { margin-top: 0 !important; margin-bottom: 38px; }
+}
+
+/* ── New-workspace inline form on the home grid ──────────────────────── */
+.gq2-ws-form { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }

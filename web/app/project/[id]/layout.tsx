@@ -8,6 +8,7 @@ import FlagsDrawer from "@/components/flags/FlagsDrawer";
 import Masthead from "@/components/editorial/Masthead";
 import WorkspaceSidebar from "@/components/editorial/WorkspaceSidebar";
 import UserChip from "@/components/editorial/UserChip";
+import MobileTabBar from "@/components/editorial/MobileTabBar";
 import { useProjectStore } from "@/stores/project";
 import { useProjectEvents } from "@/lib/sse/useProjectEvents";
 import { getProject } from "@/lib/api";
@@ -49,12 +50,14 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
               <UserChip />
             </header>
             <div className="gq2-mobile-head">
-              <Masthead projectId={projectId} />
+              {/* brand only — phone navigation lives in the bottom tab bar */}
+              <Masthead />
             </div>
             <main style={{ paddingBottom: "64px" }}>{children}</main>
             <div className="gq-foot">Produced on Cue</div>
           </div>
         </div>
+        <MobileTabBar projectId={projectId} />
       </div>
     );
   }

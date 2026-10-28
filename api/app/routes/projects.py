@@ -61,7 +61,13 @@ async def _get_project_or_404(
     result = await session.execute(
         sa.select(Project).where(
             Project.id == project_id,
-            sa.or_(Project.owner_id == user.id, sa.literal(is_team_member(user))),
+            sa.or_(
+                Project.owner_id == user.id,
+                sa.literal(is_team_member(user)),
+                sa.text("EXISTS (SELECT 1 FROM workspace_members wm "
+                        "WHERE wm.project_id = projects.id AND wm.email = :uemail)"
+                        ).bindparams(uemail=user.email.lower()),
+            ),
         )
     )
     p = result.scalar_one_or_none()
@@ -88,11 +94,12 @@ async def list_projects(
                 COUNT(d.id) AS total_days
             FROM projects p
             LEFT JOIN days d ON d.project_id = p.id
-            WHERE (p.owner_id = :uid OR :team = TRUE)
+            WHERE (p.owner_id = :uid OR :team = TRUE
+                   OR EXISTS (SELECT 1 FROM workspace_members wm WHERE wm.project_id = p.id AND wm.email = :uemail))
             GROUP BY p.id
             ORDER BY p.updated_at DESC
         """),
-        {"uid": user.id, "team": is_team_member(user)},
+        {"uid": user.id, "team": is_team_member(user), "uemail": user.email.lower()},
     )).fetchall()
 
     return [
@@ -206,9 +213,11 @@ async def get_project(
             "SELECT p.id, p.title, p.\"window\", p.status, p.start_date, p.end_date, "
             "p.live_scenario_id, p.settings, p.created_at, p.updated_at "
             "FROM projects p "
-            "WHERE p.id = :pid AND (p.owner_id = :uid OR :team = TRUE)"
+            "WHERE p.id = :pid AND (p.owner_id = :uid OR :team = TRUE "
+            "OR EXISTS (SELECT 1 FROM workspace_members wm WHERE wm.project_id = p.id AND wm.email = :uemail))"
         ),
-        {"pid": project_id, "uid": user.id, "team": is_team_member(user)},
+        {"pid": project_id, "uid": user.id, "team": is_team_member(user),
+         "uemail": user.email.lower()},
     )).first()
     if not p_row:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -261,3 +270,134 @@ async def delete_project(
     await session.delete(p)
     await session.commit()
     return Response(status_code=204)
+
+
+# ---------------------------------------------------------------------------
+# Editorial workspaces — create without a film master
+# ---------------------------------------------------------------------------
+
+class EditorialWorkspaceIn(BaseModel):
+    title: str
+
+
+@router.post("/editorial", status_code=201)
+async def create_editorial_workspace(
+    body: EditorialWorkspaceIn,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    title = body.title.strip()
+    if not title:
+        raise HTTPException(status_code=422, detail="Give the workspace a name")
+    project_id = str(uuid.uuid4())
+    await session.execute(
+        sa.text("INSERT INTO projects (id, owner_id, title, source_file, source_filename, "
+                "status, settings, created_at, updated_at) "
+                "VALUES (:id, :uid, :title, :src, 'editorial', 'pre', CAST(:st AS jsonb), NOW(), NOW())"),
+        {"id": project_id, "uid": user.id, "title": title, "src": b"",
+         "st": '{"mode": "editorial"}'},
+    )
+    await session.commit()
+    return {"id": project_id, "title": title}
+
+
+
+
+async def _assert_workspace_access(project_id: str, user: User, session: AsyncSession) -> None:
+    row = (await session.execute(
+        sa.text("SELECT 1 FROM projects p WHERE p.id = :pid AND (p.owner_id = :uid OR :team = TRUE "
+                "OR EXISTS (SELECT 1 FROM workspace_members wm "
+                "WHERE wm.project_id = p.id AND wm.email = :uemail))"),
+        {"pid": project_id, "uid": user.id, "team": is_team_member(user),
+         "uemail": user.email.lower()},
+    )).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+# ---------------------------------------------------------------------------
+# Workspace members — app-managed team access
+# ---------------------------------------------------------------------------
+
+class MemberIn(BaseModel):
+    email: str
+    name: str | None = None
+
+
+def _member_out(r) -> dict:
+    return {"id": r.id, "email": r.email, "name": r.name,
+            "added_by": r.added_by, "created_at": r.created_at.isoformat()}
+
+
+@router.get("/{project_id}/members")
+async def list_members(
+    project_id: str,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    await _assert_workspace_access(project_id, user, session)
+    rows = (await session.execute(
+        sa.text("SELECT id, email, name, added_by, created_at FROM workspace_members "
+                "WHERE project_id = :pid ORDER BY created_at"),
+        {"pid": project_id},
+    )).fetchall()
+    return {"members": [_member_out(r) for r in rows]}
+
+
+@router.post("/{project_id}/members")
+async def add_member(
+    project_id: str,
+    body: MemberIn,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    from ..services import activity
+
+    await _assert_workspace_access(project_id, user, session)
+    email = body.email.lower().strip()
+    if "@" not in email or "." not in email.split("@")[-1]:
+        raise HTTPException(status_code=422, detail="That doesn't look like an email address")
+    existing = (await session.execute(
+        sa.text("SELECT id FROM workspace_members WHERE project_id = :pid AND email = :em"),
+        {"pid": project_id, "em": email},
+    )).first()
+    if existing:
+        raise HTTPException(status_code=409, detail="Already a member of this workspace")
+    member_id = str(uuid.uuid4())
+    await session.execute(
+        sa.text("INSERT INTO workspace_members (id, project_id, email, name, added_by, created_at) "
+                "VALUES (:id, :pid, :em, :nm, :by, NOW())"),
+        {"id": member_id, "pid": project_id, "em": email,
+         "nm": body.name or None, "by": user.email},
+    )
+    await activity.log(session, project_id, user, "member.added",
+                       f"Added {body.name or email} to the workspace")
+    await session.commit()
+    row = (await session.execute(
+        sa.text("SELECT id, email, name, added_by, created_at FROM workspace_members WHERE id = :id"),
+        {"id": member_id},
+    )).first()
+    return _member_out(row)
+
+
+@router.delete("/{project_id}/members/{member_id}", status_code=204,
+               response_class=Response, response_model=None)
+async def remove_member(
+    project_id: str,
+    member_id: str,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> None:
+    from ..services import activity
+
+    await _assert_workspace_access(project_id, user, session)
+    row = (await session.execute(
+        sa.text("SELECT id, email, name FROM workspace_members "
+                "WHERE id = :id AND project_id = :pid"),
+        {"id": member_id, "pid": project_id},
+    )).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Member not found")
+    await session.execute(sa.text("DELETE FROM workspace_members WHERE id = :id"), {"id": row.id})
+    await activity.log(session, project_id, user, "member.removed",
+                       f"Removed {row.name or row.email} from the workspace")
+    await session.commit()

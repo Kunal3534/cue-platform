@@ -27,6 +27,14 @@ export interface UserProfile {
   created_at: string;
 }
 
+export interface WorkspaceMember {
+  id: string;
+  email: string;
+  name: string | null;
+  added_by: string | null;
+  created_at: string;
+}
+
 export interface ShootInvite {
   id: string;
   email: string;

@@ -110,9 +110,9 @@ async def request_link(
 ) -> dict:
     email = body.email.lower().strip()
 
-    # Closed instance: only allowlisted producers may sign in
-    allowed = {e.strip().lower() for e in settings.allowed_emails.split(",") if e.strip()}
-    if allowed and email not in allowed:
+    # Closed instance: producers (env allowlist) + added workspace members
+    from ..auth import may_sign_in
+    if not await may_sign_in(email, session):
         raise HTTPException(status_code=403, detail="This email is not authorised to sign in")
 
     token = _make_token(email)
@@ -276,8 +276,8 @@ async def google_callback(
         raise HTTPException(status_code=400, detail="Google account has no verified email")
 
     # Same closed-instance rule as magic links
-    allowed = {e.strip().lower() for e in settings.allowed_emails.split(",") if e.strip()}
-    if allowed and email not in allowed:
+    from ..auth import may_sign_in
+    if not await may_sign_in(email, session):
         return RedirectResponse(
             url=f"{settings.frontend_origin}/login?error=not-allowed", status_code=302)
 

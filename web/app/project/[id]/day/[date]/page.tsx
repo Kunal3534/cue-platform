@@ -127,15 +127,21 @@ function GqDayPage() {
           </button>
         </div>
       </div>
-      <DayDetail
-        day={day}
-        moodboardHref={day.moodboard ? moodboardUrl(projectId, date) : null}
-        moodboardPageHref={(page) => moodboardPageUrl(projectId, date, page)}
-      />
-      <div className="gq-detail">
-        <InviteBlock projectId={projectId} date={date} />
-        <DayMarkers projectId={projectId} date={date} />
-        <DayTodos projectId={projectId} date={date} />
+      <div className="gq2-day">
+        <div className="gq2-day__main">
+          <DayDetail
+            day={day}
+            moodboardHref={day.moodboard ? moodboardUrl(projectId, date) : null}
+            moodboardPageHref={(page) => moodboardPageUrl(projectId, date, page)}
+          />
+        </div>
+        <aside className="gq2-day__side">
+          <div className="gq-detail">
+            <InviteBlock projectId={projectId} date={date} />
+            <DayMarkers projectId={projectId} date={date} />
+            <DayTodos projectId={projectId} date={date} />
+          </div>
+        </aside>
       </div>
     </div>
   );

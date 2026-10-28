@@ -31,8 +31,11 @@ async def mint_share_link(
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
     row = (await session.execute(
-        sa.text("SELECT settings FROM projects WHERE id = :pid AND (owner_id = :uid OR :team = TRUE)"),
-        {"pid": project_id, "uid": user.id, "team": is_team_member(user)},
+        sa.text("SELECT settings FROM projects WHERE id = :pid AND (owner_id = :uid OR :team = TRUE "
+                "OR EXISTS (SELECT 1 FROM workspace_members wm "
+                "WHERE wm.project_id = projects.id AND wm.email = :uemail))"),
+        {"pid": project_id, "uid": user.id, "team": is_team_member(user),
+         "uemail": user.email.lower()},
     )).first()
     if not row:
         raise HTTPException(status_code=404, detail="Project not found")
