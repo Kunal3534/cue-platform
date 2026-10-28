@@ -154,20 +154,20 @@ function GqCalendarPage() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-        <button type="button" className="gq-share-btn" onClick={handleShare}>
-          {shareState === "copied"
-            ? "Link copied ✓"
-            : shareState === "error"
-              ? "Copy failed"
-              : "Share calendar"}
-        </button>
-      </div>
       <MonthGrid
         days={data.days}
         markers={data.markers}
         onSelect={(day) => router.push(`/project/${projectId}/day/${day.date}`)}
         onSelectEmpty={(dateStr) => router.push(`/project/${projectId}/day/${dateStr}`)}
+        headerRight={
+          <button type="button" className="gq-share-btn" onClick={handleShare}>
+            {shareState === "copied"
+              ? "Link copied ✓"
+              : shareState === "error"
+                ? "Copy failed"
+                : "Share calendar"}
+          </button>
+        }
       />
     </div>
   );

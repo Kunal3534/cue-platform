@@ -25,6 +25,7 @@ export default function MonthGrid({
   onSelect,
   onSelectEmpty,
   selectedDate,
+  headerRight,
 }: {
   days: EditorialDay[];
   markers?: EditorialMarker[];
@@ -32,6 +33,8 @@ export default function MonthGrid({
   /** Producer-only: makes empty dates clickable to add a shoot. */
   onSelectEmpty?: (dateStr: string) => void;
   selectedDate?: string | null;
+  /** Rendered at the right end of the month row (e.g. the share button). */
+  headerRight?: React.ReactNode;
 }) {
   const anchor = days[0] ? new Date(`${days[0].date}T00:00:00`) : new Date();
   const [view, setView] = useState({
@@ -78,6 +81,7 @@ export default function MonthGrid({
         <button type="button" className="gq-month-nav" aria-label="Next month" onClick={() => step(1)}>
           ›
         </button>
+        {headerRight && <div className="gq-month-row__right">{headerRight}</div>}
       </div>
       <div className="gq-grid-head">
         {DOW.map((d) => (
