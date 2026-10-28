@@ -165,8 +165,9 @@ function GqCalendarPage() {
       </div>
       <MonthGrid
         days={data.days}
+        markers={data.markers}
         onSelect={(day) => router.push(`/project/${projectId}/day/${day.date}`)}
-        onSelectEmpty={(dateStr) => router.push(`/project/${projectId}/day/${dateStr}/edit`)}
+        onSelectEmpty={(dateStr) => router.push(`/project/${projectId}/day/${dateStr}`)}
       />
     </div>
   );

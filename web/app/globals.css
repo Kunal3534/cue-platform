@@ -1387,3 +1387,74 @@ textarea.gq-input { resize: vertical; min-height: 90px; }
 @media (max-width: 640px) {
   .gq-month-nav { width: 40px; height: 40px; }
 }
+
+/* ------------------------------------------------------------------ */
+/* Special days — festive but on-brand                                 */
+/* ------------------------------------------------------------------ */
+.gq-cell--holiday {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(214, 171, 62, 0.18) 0, transparent 34%),
+    radial-gradient(circle at 82% 70%, rgba(214, 171, 62, 0.14) 0, transparent 30%),
+    rgba(230, 196, 110, 0.12);
+  border: 1px dashed rgba(166, 124, 28, 0.55);
+  margin: -1px;
+}
+.gq-cell--personal {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(212, 118, 146, 0.16) 0, transparent 32%),
+    rgba(222, 141, 165, 0.1);
+  border: 1px dashed rgba(186, 92, 120, 0.5);
+  margin: -1px;
+}
+.gq-marker { margin-top: 8px; }
+.gq-marker__emoji {
+  display: inline-block; font-size: 22px; line-height: 1;
+  transform: rotate(-8deg);
+  filter: drop-shadow(1px 2px 0 rgba(20, 20, 24, 0.15));
+}
+.gq-marker__label {
+  display: block; margin-top: 6px;
+  font-family: var(--serif); font-style: italic;
+  font-size: 12.5px; line-height: 1.35; color: #4A4032;
+}
+.gq-cell--personal .gq-marker__label { color: #6E3A4C; }
+.gq-cell__mini-emoji { margin-left: 6px; font-size: 13px; }
+
+.gq-marker-chip {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; margin-bottom: 8px;
+  border: 1px dashed rgba(166, 124, 28, 0.55);
+  background: rgba(230, 196, 110, 0.12);
+}
+.gq-marker-chip--personal {
+  border-color: rgba(186, 92, 120, 0.5);
+  background: rgba(222, 141, 165, 0.1);
+}
+.gq-marker-chip__label {
+  flex: 1; font-family: var(--serif); font-style: italic; font-size: 15px;
+}
+.gq-marker-chip .gq-marker__emoji { font-size: 24px; }
+
+.gq-marker-form { margin-top: 12px; padding: 16px; border: 1px solid rgba(20, 20, 24, 0.14); }
+.gq-emoji-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.gq-emoji-pick {
+  background: none; border: 1px solid rgba(20, 20, 24, 0.12); cursor: pointer;
+  font-size: 18px; padding: 4px 8px;
+}
+.gq-emoji-pick:hover { background: rgba(20, 20, 24, 0.05); }
+
+.gq-agenda__card--holiday { background: rgba(230, 196, 110, 0.12); }
+.gq-agenda__card--personal { background: rgba(222, 141, 165, 0.1); }
+.gq-agenda__card--holiday .gq-agenda__talent,
+.gq-agenda__card--personal .gq-agenda__talent {
+  font-family: var(--serif); font-style: italic; font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  /* compact cells: the emoji itself is the marker */
+  .gq-cell--holiday .gq-marker__label,
+  .gq-cell--personal .gq-marker__label { display: none; }
+  .gq-cell--holiday .gq-marker__emoji,
+  .gq-cell--personal .gq-marker__emoji { font-size: 15px; display: block; text-align: center; margin-top: 2px; }
+  .gq-marker { margin-top: 2px; }
+}

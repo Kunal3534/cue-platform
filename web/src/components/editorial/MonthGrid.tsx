@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import type { EditorialDay } from "@/lib/api/types";
+import type { EditorialDay, EditorialMarker } from "@/lib/api/types";
 
 const DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MONTHS = [
@@ -20,11 +20,13 @@ function firstNames(day: EditorialDay): string[] {
  */
 export default function MonthGrid({
   days,
+  markers = [],
   onSelect,
   onSelectEmpty,
   selectedDate,
 }: {
   days: EditorialDay[];
+  markers?: EditorialMarker[];
   onSelect?: (day: EditorialDay) => void;
   /** Producer-only: makes empty dates clickable to add a shoot. */
   onSelectEmpty?: (dateStr: string) => void;
@@ -43,6 +45,10 @@ export default function MonthGrid({
   };
 
   const byDate = new Map(days.map((d) => [d.date, d]));
+  const markersByDate = new Map<string, EditorialMarker[]>();
+  for (const m of markers) {
+    markersByDate.set(m.date, [...(markersByDate.get(m.date) ?? []), m]);
+  }
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const startDow = (new Date(year, month, 1).getDay() + 6) % 7; // Mon=0
 
@@ -81,12 +87,22 @@ export default function MonthGrid({
         {cells.map((cell, i) => {
           if (!cell) return <div key={`pad-${i}`} className="gq-cell gq-cell--out" />;
           const shoot = byDate.get(cell.dateStr);
+          const dayMarkers = markersByDate.get(cell.dateStr) ?? [];
+          const holiday = !shoot && dayMarkers.find((m) => m.kind === "holiday");
+          const personal = !shoot && !holiday && dayMarkers.find((m) => m.kind === "personal");
+          const feature = holiday || personal;
           const selected = selectedDate === cell.dateStr;
           const clickable = shoot ? !!onSelect : !!onSelectEmpty;
           return (
             <div
               key={cell.dateStr}
-              className={`gq-cell${shoot ? " gq-cell--shoot" : ""}${!shoot && onSelectEmpty ? " gq-cell--addable" : ""}`}
+              className={[
+                "gq-cell",
+                shoot ? "gq-cell--shoot" : "",
+                holiday ? "gq-cell--holiday" : "",
+                personal ? "gq-cell--personal" : "",
+                !shoot && onSelectEmpty ? "gq-cell--addable" : "",
+              ].filter(Boolean).join(" ")}
               style={selected ? { outline: "2px solid #111", outlineOffset: "-2px" } : undefined}
               onClick={
                 clickable
@@ -94,7 +110,12 @@ export default function MonthGrid({
                   : undefined
               }
             >
-              <div className="gq-cell__date">{cell.num}</div>
+              <div className="gq-cell__date">
+                {cell.num}
+                {shoot && dayMarkers.length > 0 && (
+                  <span className="gq-cell__mini-emoji">{dayMarkers[0].emoji}</span>
+                )}
+              </div>
               {shoot ? (
                 <>
                   <div className="gq-cell__talent">
@@ -104,24 +125,33 @@ export default function MonthGrid({
                   </div>
                   <span className="gq-cell__tag">Photos + Film</span>
                 </>
+              ) : feature ? (
+                <div className="gq-marker">
+                  <span className="gq-marker__emoji">{feature.emoji}</span>
+                  <span className="gq-marker__label">
+                    {feature.label}
+                    {feature.kind === "personal" && feature.who ? ` — ${feature.who}` : ""}
+                  </span>
+                </div>
               ) : (
-                onSelectEmpty && <div className="gq-cell__plus">+ Add shoot</div>
+                onSelectEmpty && <div className="gq-cell__plus">+ Add</div>
               )}
             </div>
           );
         })}
       </div>
 
-      {/* Mobile agenda — the grid shrinks to dots, this carries the detail */}
+      {/* Mobile agenda — the grid shrinks to dots, this carries the detail.
+          Shoots and special days interleave chronologically. */}
       <div className="gq-agenda">
-        {days.map((d) => {
-          const date = new Date(`${d.date}T00:00:00`);
-          return (
-            <div
-              key={d.date}
-              className="gq-agenda__card"
-              onClick={onSelect ? () => onSelect(d) : undefined}
-            >
+        {[
+          ...days.map((d) => ({ sort: d.date, shoot: d, marker: null as EditorialMarker | null })),
+          ...markers.map((m) => ({ sort: m.date, shoot: null as EditorialDay | null, marker: m })),
+        ]
+          .sort((a, b) => a.sort.localeCompare(b.sort))
+          .map((entry) => {
+            const date = new Date(`${entry.sort}T00:00:00`);
+            const dateBlock = (
               <div className="gq-agenda__date">
                 <div className="gq-agenda__num">{date.getDate()}</div>
                 <div className="gq-agenda__dow">
@@ -129,18 +159,47 @@ export default function MonthGrid({
                   {date.toLocaleDateString("en-GB", { weekday: "short" })}
                 </div>
               </div>
-              <div className="gq-agenda__body">
-                <div className="gq-agenda__talent">
-                  {d.talent.map((t) => t.name).join(" · ") || d.headline || "Shoot"}
+            );
+            if (entry.shoot) {
+              const d = entry.shoot;
+              return (
+                <div
+                  key={`s-${d.date}`}
+                  className="gq-agenda__card"
+                  onClick={onSelect ? () => onSelect(d) : undefined}
+                >
+                  {dateBlock}
+                  <div className="gq-agenda__body">
+                    <div className="gq-agenda__talent">
+                      {d.talent.map((t) => t.name).join(" · ") || d.headline || "Shoot"}
+                    </div>
+                    <div className="gq-agenda__meta">
+                      Photos + Film{fmtAgendaMeta(d) ? ` · ${fmtAgendaMeta(d)}` : ""}
+                    </div>
+                  </div>
+                  <div className="gq-agenda__arrow">›</div>
                 </div>
-                <div className="gq-agenda__meta">
-                  Photos + Film{fmtAgendaMeta(d) ? ` · ${fmtAgendaMeta(d)}` : ""}
+              );
+            }
+            const m = entry.marker!;
+            return (
+              <div
+                key={`m-${m.id}`}
+                className={`gq-agenda__card gq-agenda__card--${m.kind}`}
+                onClick={onSelectEmpty ? () => onSelectEmpty(m.date) : undefined}
+              >
+                {dateBlock}
+                <div className="gq-agenda__body">
+                  <div className="gq-agenda__talent">
+                    <span className="gq-marker__emoji">{m.emoji}</span> {m.label}
+                  </div>
+                  {m.kind === "personal" && m.who && (
+                    <div className="gq-agenda__meta">{m.who}’s day</div>
+                  )}
                 </div>
               </div>
-              <div className="gq-agenda__arrow">›</div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </div>
   );

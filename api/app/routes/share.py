@@ -80,6 +80,12 @@ async def get_shared_calendar(
     if mode == "editorial":
         from .editorial import build_schedule
         payload["schedule"] = await build_schedule(row.id, session)
+        # Full holidays explain calendar gaps to viewers; personal days
+        # (birthdays, individual leave) never leave the producer app.
+        payload["markers"] = [
+            m for m in (row.settings or {}).get("markers", [])
+            if m.get("kind") == "holiday"
+        ]
     return payload
 
 

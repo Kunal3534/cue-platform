@@ -18,6 +18,7 @@ import type {
   SharedCalendarResponse,
   EditorialScheduleResponse,
   EditorialDay,
+  EditorialMarker,
   ShootDayInput,
   TodoItem,
 } from "./types";
@@ -99,6 +100,12 @@ export const sharedMoodboardUrl = (token: string, date: string) =>
 
 export const sharedMoodboardPageUrl = (token: string, date: string, page: number) =>
   `${sharedMoodboardUrl(token, date)}/pages/${page}`;
+
+export const saveMarkers = (id: string, markers: EditorialMarker[]) =>
+  apiFetch<{ markers: EditorialMarker[] }>(`/projects/${id}/markers`, {
+    method: "PUT",
+    body: JSON.stringify({ markers }),
+  });
 
 export const getTodos = (id: string) =>
   apiFetch<{ todos: TodoItem[] }>(`/projects/${id}/todos`);

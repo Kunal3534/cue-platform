@@ -51,6 +51,7 @@ export default function SharedCalendarPage() {
         <div style={{ marginTop: 32 }}>
           <MonthGrid
             days={data.schedule}
+            markers={data.markers ?? []}
             selectedDate={selected?.date ?? null}
             onSelect={(day) => setSelected(selected?.date === day.date ? null : day)}
           />

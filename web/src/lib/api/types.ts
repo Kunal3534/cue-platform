@@ -139,6 +139,7 @@ export interface SharedCalendarResponse {
   mode: "film" | "editorial";
   calendar: CalendarResponse;
   schedule?: EditorialDay[];
+  markers?: EditorialMarker[];
 }
 
 // Editorial (magazine-shoot) schedule — one payload drives calendar,
@@ -177,8 +178,18 @@ export interface EditorialDay {
   moodboard: EditorialMoodboard | null;
 }
 
+export interface EditorialMarker {
+  id: string;
+  date: string;
+  label: string;
+  emoji: string;
+  kind: "holiday" | "personal";
+  who?: string | null;
+}
+
 export interface EditorialScheduleResponse {
   days: EditorialDay[];
+  markers: EditorialMarker[];
 }
 
 export interface ShootDayInput {

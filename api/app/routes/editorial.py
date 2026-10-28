@@ -73,6 +73,21 @@ class TodoItem(BaseModel):
     date: str | None = None  # ISO date — todos are tied to a shoot day
 
 
+class MarkerItem(BaseModel):
+    """A decorated non-shoot event on the calendar: a festival holiday for
+    everyone, or a personal day (birthday, leave) for one person."""
+    id: str
+    date: str  # ISO date
+    label: str
+    emoji: str = "🎉"
+    kind: str = "holiday"  # "holiday" (everyone, shown on share) | "personal" (producers only)
+    who: str | None = None  # for personal days: whose day it is
+
+
+class MarkersIn(BaseModel):
+    markers: list[MarkerItem]
+
+
 class TodosIn(BaseModel):
     todos: list[TodoItem]
 
@@ -268,8 +283,11 @@ async def get_editorial_schedule(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
-    return {"days": await build_schedule(project_id, session)}
+    proj = await _owner_project(project_id, user, session)
+    return {
+        "days": await build_schedule(project_id, session),
+        "markers": (proj.settings or {}).get("markers", []),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -699,6 +717,23 @@ async def get_todos(
 ) -> dict:
     row = await _owner_project(project_id, user, session)
     return {"todos": (row.settings or {}).get("todos", [])}
+
+
+@router.put("/{project_id}/markers")
+async def save_markers(
+    project_id: str,
+    body: MarkersIn,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    await _owner_project(project_id, user, session)
+    markers = [m.model_dump() for m in body.markers]
+    await session.execute(
+        sa.text("UPDATE projects SET settings = settings || CAST(:patch AS jsonb) WHERE id = :pid"),
+        {"patch": json.dumps({"markers": markers}), "pid": project_id},
+    )
+    await session.commit()
+    return {"markers": markers}
 
 
 @router.put("/{project_id}/todos")

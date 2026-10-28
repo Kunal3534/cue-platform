@@ -13,6 +13,7 @@ import { useProjectStore } from "@/stores/project";
 import { useIsEditorial } from "@/lib/terminology";
 import DayDetail from "@/components/editorial/DayDetail";
 import DayTodos from "@/components/editorial/DayTodos";
+import DayMarkers from "@/components/editorial/DayMarkers";
 
 function dnStripClass(dn: string | null | undefined): string {
   const d = (dn ?? "").toLowerCase();
@@ -53,15 +54,23 @@ function GqDayPage() {
 
   if (!day) {
     return (
-      <div style={{ padding: "40px 0", textAlign: "center" }}>
-        <p style={{ color: "#999" }}>No shoot on this date.</p>
-        <Link
-          href={`/project/${projectId}/day/${date}/edit`}
-          className="gq-btn"
-          style={{ display: "inline-block", marginTop: 16 }}
-        >
-          Add a shoot here
-        </Link>
+      <div style={{ maxWidth: 720, margin: "0 auto" }}>
+        <div style={{ marginBottom: 24 }}>
+          <Link href={`/project/${projectId}/calendar`} style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#999" }}>
+            ← Calendar
+          </Link>
+        </div>
+        <div style={{ padding: "16px 0 8px", textAlign: "center" }}>
+          <p style={{ color: "#999" }}>No shoot on this date.</p>
+          <Link
+            href={`/project/${projectId}/day/${date}/edit`}
+            className="gq-btn"
+            style={{ display: "inline-block", marginTop: 16 }}
+          >
+            Add a shoot here
+          </Link>
+        </div>
+        <DayMarkers projectId={projectId} date={date} />
       </div>
     );
   }
@@ -96,6 +105,7 @@ function GqDayPage() {
         moodboardPageHref={(page) => moodboardPageUrl(projectId, date, page)}
       />
       <div className="gq-detail">
+        <DayMarkers projectId={projectId} date={date} />
         <DayTodos projectId={projectId} date={date} />
       </div>
     </div>
