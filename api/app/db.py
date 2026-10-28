@@ -1,3 +1,5 @@
+import re
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -51,7 +53,20 @@ def get_db():
 # Async engine — used by v1 routes and services.
 # ---------------------------------------------------------------------------
 _async_url = _normalize(settings.database_url, "asyncpg")
-async_engine = create_async_engine(_async_url, pool_pre_ping=True)
+
+# asyncpg doesn't honour libpq-style sslmode params; it defaults to trying
+# TLS, which plain-TCP proxies (e.g. Fly's flycast) reset instead of
+# declining. Strip the param from the URL and pass ssl explicitly.
+_async_connect_args: dict = {}
+_ssl_match = re.search(r"[?&]sslmode=([^&]+)", _async_url)
+if _ssl_match:
+    _async_url = re.sub(r"[?&]sslmode=[^&]+", "", _async_url).rstrip("?&")
+    if _ssl_match.group(1) in ("disable", "allow", "prefer"):
+        _async_connect_args["ssl"] = False
+
+async_engine = create_async_engine(
+    _async_url, pool_pre_ping=True, connect_args=_async_connect_args
+)
 AsyncSessionLocal = async_sessionmaker(async_engine, expire_on_commit=False, class_=AsyncSession)
 
 
