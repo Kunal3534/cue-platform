@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,13 +10,9 @@ const schema = z.object({ email: z.string().email("Invalid email") });
 type Fields = z.infer<typeof schema>;
 
 export default function LoginPage() {
-  // Dev mode: no login needed — bounce straight to home.
-  useEffect(() => {
-    window.location.replace("/");
-  }, []);
-
   const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
+  const [sendError, setSendError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -24,14 +20,21 @@ export default function LoginPage() {
   } = useForm<Fields>({ resolver: zodResolver(schema) });
 
   const onSubmit = async (data: Fields) => {
-    const res = await requestMagicLink(data.email);
-    // Dev mode: backend returns the magic link directly — auto-follow it.
-    if (res.dev_link) {
-      window.location.href = res.dev_link;
-      return;
+    setSendError(null);
+    try {
+      const res = await requestMagicLink(data.email);
+      // Dev mode: backend returns the magic link directly — auto-follow it.
+      if (res.dev_link) {
+        window.location.href = res.dev_link;
+        return;
+      }
+      setEmail(data.email);
+      setSent(true);
+    } catch (e) {
+      setSendError(
+        e instanceof Error ? e.message : "Could not send the link — try again",
+      );
     }
-    setEmail(data.email);
-    setSent(true);
   };
 
   return (
@@ -89,6 +92,11 @@ export default function LoginPage() {
             {errors.email && (
               <p className="mono-xs" style={{ color: "var(--cue-red)", marginBottom: "12px" }}>
                 {errors.email.message}
+              </p>
+            )}
+            {sendError && (
+              <p className="mono-xs" style={{ color: "var(--cue-red)", marginBottom: "12px" }}>
+                {sendError}
               </p>
             )}
             <button
