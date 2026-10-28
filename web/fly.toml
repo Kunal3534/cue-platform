@@ -1,9 +1,9 @@
-# Cue web (Next.js) — deploy with:  fly deploy -c fly.web.toml
+# Cue web (Next.js) — deploy with:  fly deploy ./web
 app = "cueit-gq-web"
 primary_region = "sin"
 
 [build]
-  dockerfile = "web/Dockerfile.prod"
+  dockerfile = "Dockerfile.prod"
 
   [build.args]
     NEXT_PUBLIC_API_URL = "/api"

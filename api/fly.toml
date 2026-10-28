@@ -1,9 +1,9 @@
-# Cue API + worker — deploy with:  fly deploy -c fly.api.toml
+# Cue API + worker — deploy with:  fly deploy ./api
 app = "cueit-gq-api"
 primary_region = "sin"
 
 [build]
-  dockerfile = "api/Dockerfile"
+  dockerfile = "Dockerfile"
 
 [deploy]
   release_command = "alembic upgrade head"
