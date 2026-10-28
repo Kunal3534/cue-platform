@@ -1298,8 +1298,10 @@ textarea.gq-input { resize: vertical; min-height: 90px; }
 }
 .gq-masthead__logo {
   display: block; margin: 0 auto;
-  width: 220px; max-width: 70vw; height: auto;
+  width: 168px; max-width: 60vw; height: auto;
   mix-blend-mode: multiply;
+  /* push the artwork's paper to white so multiply dissolves its edges */
+  filter: brightness(1.12);
 }
 /* let the texture breathe through surfaces that were flat white */
 .gq-cell { background: transparent; }
@@ -1308,3 +1310,10 @@ textarea.gq-input { resize: vertical; min-height: 90px; }
 .gq-sched-row:hover { background: rgba(20, 20, 24, 0.04); }
 .gq-input { background: rgba(255, 255, 255, 0.55); }
 .gq-moodboard__frame { background: rgba(20, 20, 24, 0.03); }
+/* hairlines tuned for the paper background (old #ECECEC disappears on it) */
+.gq-grid { border-left-color: rgba(20, 20, 24, 0.14); }
+.gq-cell { border-right-color: rgba(20, 20, 24, 0.14); border-bottom-color: rgba(20, 20, 24, 0.14); }
+.gq-tabs { border-bottom-color: rgba(20, 20, 24, 0.14); }
+.gq-kv__row, .gq-sched-row, .gq-todo { border-bottom-color: rgba(20, 20, 24, 0.14); }
+.gq-input { border-color: rgba(20, 20, 24, 0.2); }
+.gq-moodboard__page, .gq-moodboard__frame { border-color: rgba(20, 20, 24, 0.14); }
