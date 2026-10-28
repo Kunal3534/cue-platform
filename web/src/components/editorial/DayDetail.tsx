@@ -40,12 +40,16 @@ export default function DayDetail({
         <div className="gq-kv__row">
           <div className="gq-kv__k">Talent</div>
           <div className="gq-kv__v">
-            {day.talent.map((t) => (
-              <div key={t.name} style={{ marginBottom: 6 }}>
-                <strong>{t.name}</strong>
-                {t.role && <div className="gq-kv__sub">{t.role}</div>}
-              </div>
-            ))}
+            {day.talent.map((t) => {
+              const call = t.call_time ?? t.hmu_call;
+              return (
+                <div key={t.name} style={{ marginBottom: 6 }}>
+                  <strong>{t.name}</strong>
+                  {t.role && <div className="gq-kv__sub">{t.role}</div>}
+                  {call && <div className="gq-kv__sub">Call {call}</div>}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -61,6 +65,9 @@ export default function DayDetail({
           <div className="gq-kv__k">Call times</div>
           <div className="gq-kv__v">
             {day.call_time && <div>On site {day.call_time}</div>}
+            {day.calls?.lighting && <div>Lighting {day.calls.lighting}</div>}
+            {day.calls?.hmu && <div>HMU {day.calls.hmu}</div>}
+            {day.calls?.crew && <div>Crew {day.calls.crew}</div>}
             {day.segments
               .filter((s) => s.start)
               .map((s) => (
@@ -83,12 +90,12 @@ export default function DayDetail({
         <div className="gq-kv__row">
           <div className="gq-kv__k">HMU</div>
           <div className="gq-kv__v">
-            {day.talent.some((t) => t.hmu_call || t.hmu_lead)
+            {day.talent.some((t) => t.hmu_lead)
               ? day.talent.map(
                   (t) =>
-                    (t.hmu_call || t.hmu_lead) && (
+                    t.hmu_lead && (
                       <div key={t.name}>
-                        {t.hmu_call} — {t.hmu_lead}
+                        {t.hmu_lead}
                         {day.talent.length > 1 && (
                           <span className="gq-kv__sub"> ({t.name})</span>
                         )}

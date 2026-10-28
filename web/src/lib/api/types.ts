@@ -147,8 +147,16 @@ export interface SharedCalendarResponse {
 export interface EditorialTalent {
   name: string;
   role: string | null;
-  hmu_call: string | null;
-  hmu_lead: string | null;
+  call_time: string | null; // this talent's own call
+  hmu_call: string | null; // legacy alias of call_time
+  hmu_lead: string | null; // HMU artist
+}
+
+/** Department call times shown in the day's call-times section. */
+export interface EditorialCalls {
+  lighting?: string | null;
+  hmu?: string | null;
+  crew?: string | null;
 }
 
 export interface EditorialSegment {
@@ -172,6 +180,7 @@ export interface EditorialDay {
   wrap_time: string | null;
   photographer: string | null;
   video: string | null;
+  calls?: EditorialCalls;
   talent: EditorialTalent[];
   segments: EditorialSegment[];
   notes: string | null;
@@ -193,11 +202,19 @@ export interface EditorialScheduleResponse {
 }
 
 export interface ShootDayInput {
-  talent: { name: string; role?: string | null; hmu_call?: string | null; hmu_lead?: string | null }[];
+  talent: {
+    name: string;
+    role?: string | null;
+    call_time?: string | null;
+    hmu_lead?: string | null;
+  }[];
   location_name?: string | null;
   location_area?: string | null;
   call_time?: string | null;
   wrap_time?: string | null;
+  lighting_call?: string | null;
+  hmu_call?: string | null;
+  crew_call?: string | null;
   photo_start?: string | null;
   film_start?: string | null;
   photographer?: string | null;
@@ -205,6 +222,54 @@ export interface ShootDayInput {
   headline?: string | null;
   notes?: string | null;
   moodboard_link?: string | null;
+}
+
+// Producer-only expenses — receipts auto-read into structured fields.
+export interface ExpenseItem {
+  id: string;
+  date: string | null; // shoot day this is tagged to; null = general
+  vendor: string | null;
+  description: string | null;
+  category: string | null;
+  amount: number | null;
+  currency: string;
+  source: "manual" | "receipt";
+  has_receipt: boolean;
+  filename: string | null;
+  content_type: string | null;
+  status: "processing" | "ready" | "needs_review";
+  extracted: Record<string, unknown> | null;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+}
+
+export interface ExpensesResponse {
+  items: ExpenseItem[];
+  totals: { by_date: Record<string, number>; grand: number };
+  categories: string[];
+}
+
+export interface ExpenseInput {
+  date?: string | null;
+  vendor?: string | null;
+  description?: string | null;
+  category?: string | null;
+  amount?: number | null;
+  currency?: string;
+  notes?: string | null;
+}
+
+export interface ExpensePatch extends ExpenseInput {
+  clear_date?: boolean;
+}
+
+export interface ActivityItem {
+  id: string;
+  user_email: string | null;
+  action: string;
+  summary: string;
+  created_at: string;
 }
 
 export interface TodoItem {

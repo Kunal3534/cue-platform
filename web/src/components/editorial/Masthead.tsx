@@ -16,10 +16,14 @@ export default function Masthead({
   const pathname = usePathname();
   const base = projectId ? `/project/${projectId}` : null;
 
+  // Expenses + Activity are producer surfaces; tabs only ever render in the
+  // authenticated app (share pages mount Masthead without a projectId).
   const tabs = base
     ? [
         { label: "Calendar", href: `${base}/calendar` },
         { label: "Schedule", href: `${base}/schedule` },
+        { label: "Expenses", href: `${base}/expenses` },
+        { label: "Activity", href: `${base}/activity` },
       ]
     : [];
 

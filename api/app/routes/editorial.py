@@ -28,7 +28,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..auth import current_user, is_team_member
 from ..db import get_async_db
 from ..models import User
-from ..services import storage
+from ..services import activity, storage
 
 router = APIRouter(prefix="/projects", tags=["editorial"])
 
@@ -42,8 +42,13 @@ MOODBOARD_MAX_BYTES = 25 * 1024 * 1024
 class TalentIn(BaseModel):
     name: str
     role: str | None = None
-    hmu_call: str | None = None  # "HH:MM"
-    hmu_lead: str | None = None
+    call_time: str | None = None  # this talent's own call, "HH:MM"
+    hmu_call: str | None = None  # legacy name for call_time — older clients still send it
+    hmu_lead: str | None = None  # HMU artist for this talent
+
+    @property
+    def effective_call(self) -> str | None:
+        return self.call_time or self.hmu_call
 
 
 class ShootDayIn(BaseModel):
@@ -52,6 +57,10 @@ class ShootDayIn(BaseModel):
     location_area: str | None = None
     call_time: str | None = None
     wrap_time: str | None = None
+    # Department calls shown in the day's call-times section
+    lighting_call: str | None = None
+    hmu_call: str | None = None
+    crew_call: str | None = None
     photo_start: str | None = None
     film_start: str | None = None
     photographer: str | None = None
@@ -250,10 +259,12 @@ async def build_schedule(project_id: str, session: AsyncSession) -> list[dict]:
     talent_by_day: dict[str, list[dict]] = {}
     for r in talent_rows:
         h = hmu_by_day_char.get((r.day_id, r.id))
+        call = h.hmu_call_time.strftime("%H:%M") if h and h.hmu_call_time else None
         talent_by_day.setdefault(r.day_id, []).append({
             "name": r.display_name,
             "role": r.role_label,
-            "hmu_call": h.hmu_call_time.strftime("%H:%M") if h and h.hmu_call_time else None,
+            "call_time": call,  # this talent's own call
+            "hmu_call": call,  # legacy alias — older clients read this key
             "hmu_lead": h.artist_lead if h else None,
         })
 
@@ -268,6 +279,7 @@ async def build_schedule(project_id: str, session: AsyncSession) -> list[dict]:
             "wrap_time": d.shift_end.strftime("%H:%M") if d.shift_end else None,
             "photographer": (d.crew or {}).get("photographer"),
             "video": (d.crew or {}).get("video"),
+            "calls": (d.crew or {}).get("calls") or {},
             "talent": talent_by_day.get(d.id, []),
             "segments": segs_by_day.get(d.id, []),
             "notes": d.notes,
@@ -332,13 +344,25 @@ async def upsert_shoot_day(
     headline = body.headline or (
         f"Shoot — {' · '.join(first_names)}" if first_names else "Shoot"
     )
-    crew = {"photographer": body.photographer or None, "video": body.video or None}
+    # Validate department calls up front (stored as strings in JSONB)
+    for raw in (body.lighting_call, body.hmu_call, body.crew_call):
+        _t(raw)
+    crew = {
+        "photographer": body.photographer or None,
+        "video": body.video or None,
+        "calls": {
+            "lighting": (body.lighting_call or "").strip() or None,
+            "hmu": (body.hmu_call or "").strip() or None,
+            "crew": (body.crew_call or "").strip() or None,
+        },
+    }
 
     # Day: find-or-create by date, then promote to a shoot day
     day_row = (await session.execute(
-        sa.text("SELECT id, moodboard FROM days WHERE project_id = :pid AND date = :dt"),
+        sa.text("SELECT id, kind, moodboard FROM days WHERE project_id = :pid AND date = :dt"),
         {"pid": project_id, "dt": day_date},
     )).first()
+    was_shoot = bool(day_row and day_row.kind == "shoot")
     if day_row:
         day_id = day_row.id
     else:
@@ -435,21 +459,25 @@ async def upsert_shoot_day(
                 {"id": _uid(), "sid": scene_id, "cid": cid},
             )
 
-    # Rebuild HMU sessions for the day
+    # Rebuild per-talent call/HMU rows for the day
     await session.execute(sa.text("DELETE FROM hmu_sessions WHERE day_id = :did"), {"did": day_id})
     for t, cid in zip([t for t in body.talent if t.name.strip()], char_ids):
-        if t.hmu_call or t.hmu_lead:
+        if t.effective_call or t.hmu_lead:
             await session.execute(
                 sa.text("INSERT INTO hmu_sessions (id, project_id, character_id, day_id, look_id, "
                         "category, hmu_call_time, artist_lead, mold_sessions, created_at, updated_at) "
                         "VALUES (:id, :pid, :cid, :did, 'L1', 'straight', :ct, :ld, "
                         "CAST('[]' AS jsonb), NOW(), NOW())"),
                 {"id": _uid(), "pid": project_id, "cid": cid, "did": day_id,
-                 "ct": _t(t.hmu_call), "ld": t.hmu_lead or None},
+                 "ct": _t(t.effective_call), "ld": t.hmu_lead or None},
             )
 
     await _renumber_shoot_days(project_id, session)
     await _clear_view_cache(project_id, session)
+    verb = "Edited" if was_shoot else "Added"
+    who = " · ".join(first_names) or "no talent yet"
+    await activity.log(session, project_id, user, "day.saved",
+                       f"{verb} the {activity.fmt_day(day_date)} shoot ({who})")
     await session.commit()
 
     days = await build_schedule(project_id, session)
@@ -599,6 +627,8 @@ async def move_shoot_day(
 
     await _renumber_shoot_days(project_id, session)
     await _clear_view_cache(project_id, session)
+    await activity.log(session, project_id, user, "day.moved",
+                       f"Moved the shoot from {activity.fmt_day(src)} to {activity.fmt_day(dst)}")
     await session.commit()
 
     days = await build_schedule(project_id, session)
@@ -641,6 +671,8 @@ async def delete_shoot_day(
     )
     await _renumber_shoot_days(project_id, session)
     await _clear_view_cache(project_id, session)
+    await activity.log(session, project_id, user, "day.deleted",
+                       f"Removed the {activity.fmt_day(day_date)} shoot")
     await session.commit()
 
 
@@ -683,6 +715,9 @@ async def upload_moodboard(
         {"mb": json.dumps({"kind": "pdf", "s3_key": key, "filename": file.filename, "pages": pages}),
          "id": day_row.id},
     )
+    await activity.log(session, project_id, user, "moodboard.uploaded",
+                       f"Uploaded a moodboard for {activity.fmt_day(day_date)}"
+                       + (f" ({file.filename})" if file.filename else ""))
     await session.commit()
     return {"ok": True, "kind": "pdf", "filename": file.filename, "pages": pages}
 
@@ -766,12 +801,23 @@ async def save_markers(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
+    proj = await _owner_project(project_id, user, session)
     markers = [m.model_dump() for m in body.markers]
     await session.execute(
         sa.text("UPDATE projects SET settings = settings || CAST(:patch AS jsonb) WHERE id = :pid"),
         {"patch": json.dumps({"markers": markers}), "pid": project_id},
     )
+    old = {m.get("id"): m for m in (proj.settings or {}).get("markers", [])}
+    new = {m["id"]: m for m in markers}
+    lines = [
+        f"Added special day “{m['label']}” on {activity.fmt_day(m['date'])}"
+        for i, m in new.items() if i not in old
+    ] + [
+        f"Removed special day “{m['label']}” ({activity.fmt_day(m['date'])})"
+        for i, m in old.items() if i not in new
+    ]
+    await activity.log(session, project_id, user, "markers.updated",
+                       "; ".join(lines) or "Updated special days")
     await session.commit()
     return {"markers": markers}
 
@@ -783,10 +829,61 @@ async def save_todos(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
+    proj = await _owner_project(project_id, user, session)
+    todos = [t.model_dump() for t in body.todos]
     await session.execute(
         sa.text("UPDATE projects SET settings = settings || CAST(:patch AS jsonb) WHERE id = :pid"),
-        {"patch": json.dumps({"todos": [t.model_dump() for t in body.todos]}), "pid": project_id},
+        {"patch": json.dumps({"todos": todos}), "pid": project_id},
     )
+    await activity.log(session, project_id, user, "todos.updated",
+                       _todo_change_summary((proj.settings or {}).get("todos", []), todos))
     await session.commit()
-    return {"todos": [t.model_dump() for t in body.todos]}
+    return {"todos": todos}
+
+
+def _todo_change_summary(old_list: list[dict], new_list: list[dict]) -> str:
+    def clip(text: str) -> str:
+        return text if len(text) <= 48 else text[:45] + "…"
+
+    def day(t: dict) -> str:
+        return f" ({activity.fmt_day(t['date'])})" if t.get("date") else ""
+
+    old = {t.get("id"): t for t in old_list}
+    new = {t["id"]: t for t in new_list}
+    lines = [f"Added to-do “{clip(t['text'])}”{day(t)}" for i, t in new.items() if i not in old]
+    lines += [f"Deleted to-do “{clip(t['text'])}”{day(t)}" for i, t in old.items() if i not in new]
+    for i, t in new.items():
+        if i in old and bool(old[i].get("done")) != bool(t.get("done")):
+            verb = "Ticked off" if t.get("done") else "Reopened"
+            lines.append(f"{verb} “{clip(t['text'])}”{day(t)}")
+    return "; ".join(lines) or "Updated to-dos"
+
+
+# ---------------------------------------------------------------------------
+# Activity log — who changed what (producers only)
+# ---------------------------------------------------------------------------
+
+@router.get("/{project_id}/activity")
+async def get_activity(
+    project_id: str,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    await _owner_project(project_id, user, session)
+    rows = (await session.execute(
+        sa.text("SELECT id, user_email, action, summary, created_at FROM activity_log "
+                "WHERE project_id = :pid ORDER BY created_at DESC LIMIT 150"),
+        {"pid": project_id},
+    )).fetchall()
+    return {
+        "items": [
+            {
+                "id": r.id,
+                "user_email": r.user_email,
+                "action": r.action,
+                "summary": r.summary,
+                "created_at": r.created_at.isoformat(),
+            }
+            for r in rows
+        ]
+    }

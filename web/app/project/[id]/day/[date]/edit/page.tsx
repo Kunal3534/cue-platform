@@ -13,11 +13,11 @@ import {
 interface TalentRow {
   name: string;
   role: string;
-  hmu_call: string;
-  hmu_lead: string;
+  call_time: string; // this talent's own call
+  hmu_lead: string; // HMU artist
 }
 
-const EMPTY_TALENT: TalentRow = { name: "", role: "", hmu_call: "", hmu_lead: "" };
+const EMPTY_TALENT: TalentRow = { name: "", role: "", call_time: "", hmu_lead: "" };
 
 function fmtDate(iso: string): string {
   return new Date(`${iso}T00:00:00`).toLocaleDateString("en-GB", {
@@ -47,6 +47,9 @@ export default function EditShootDayPage() {
   const [locationArea, setLocationArea] = useState("");
   const [callTime, setCallTime] = useState("");
   const [wrapTime, setWrapTime] = useState("");
+  const [lightingCall, setLightingCall] = useState("");
+  const [hmuCall, setHmuCall] = useState("");
+  const [crewCall, setCrewCall] = useState("");
   const [photoStart, setPhotoStart] = useState("");
   const [filmStart, setFilmStart] = useState("");
   const [photographer, setPhotographer] = useState("");
@@ -66,7 +69,7 @@ export default function EditShootDayPage() {
           ? existing.talent.map((t) => ({
               name: t.name,
               role: t.role ?? "",
-              hmu_call: t.hmu_call ?? "",
+              call_time: t.call_time ?? t.hmu_call ?? "",
               hmu_lead: t.hmu_lead ?? "",
             }))
           : [{ ...EMPTY_TALENT }],
@@ -75,6 +78,9 @@ export default function EditShootDayPage() {
       setLocationArea(existing.location.area ?? "");
       setCallTime(existing.call_time ?? "");
       setWrapTime(existing.wrap_time ?? "");
+      setLightingCall(existing.calls?.lighting ?? "");
+      setHmuCall(existing.calls?.hmu ?? "");
+      setCrewCall(existing.calls?.crew ?? "");
       setPhotographer(existing.photographer ?? "");
       setVideo(existing.video ?? "");
       setNotes(existing.notes ?? "");
@@ -105,13 +111,16 @@ export default function EditShootDayPage() {
           .map((t) => ({
             name: t.name.trim(),
             role: t.role.trim() || null,
-            hmu_call: t.hmu_call.trim() || null,
+            call_time: t.call_time.trim() || null,
             hmu_lead: t.hmu_lead.trim() || null,
           })),
         location_name: locationName.trim() || null,
         location_area: locationArea.trim() || null,
         call_time: callTime.trim() || null,
         wrap_time: wrapTime.trim() || null,
+        lighting_call: lightingCall.trim() || null,
+        hmu_call: hmuCall.trim() || null,
+        crew_call: crewCall.trim() || null,
         photo_start: photoStart.trim() || null,
         film_start: filmStart.trim() || null,
         photographer: photographer.trim() || null,
@@ -185,9 +194,9 @@ export default function EditShootDayPage() {
                      onChange={(e) => setTalentField(i, "role", e.target.value)} />
             </div>
             <div>
-              <label className="gq-label">HMU call (HH:MM)</label>
-              <input className="gq-input" value={t.hmu_call} placeholder="07:30"
-                     onChange={(e) => setTalentField(i, "hmu_call", e.target.value)} />
+              <label className="gq-label">Talent call (HH:MM)</label>
+              <input className="gq-input" value={t.call_time} placeholder="10:00"
+                     onChange={(e) => setTalentField(i, "call_time", e.target.value)} />
             </div>
             <div>
               <label className="gq-label">HMU artist</label>
@@ -237,6 +246,21 @@ export default function EditShootDayPage() {
           <label className="gq-label">Wrap</label>
           <input className="gq-input" value={wrapTime} placeholder="19:00"
                  onChange={(e) => setWrapTime(e.target.value)} />
+        </div>
+        <div>
+          <label className="gq-label">Lighting call</label>
+          <input className="gq-input" value={lightingCall} placeholder="07:30"
+                 onChange={(e) => setLightingCall(e.target.value)} />
+        </div>
+        <div>
+          <label className="gq-label">HMU call</label>
+          <input className="gq-input" value={hmuCall} placeholder="08:00"
+                 onChange={(e) => setHmuCall(e.target.value)} />
+        </div>
+        <div>
+          <label className="gq-label">Crew call</label>
+          <input className="gq-input" value={crewCall} placeholder="08:00"
+                 onChange={(e) => setCrewCall(e.target.value)} />
         </div>
         <div>
           <label className="gq-label">Photos start</label>

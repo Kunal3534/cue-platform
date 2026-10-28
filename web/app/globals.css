@@ -1458,3 +1458,62 @@ textarea.gq-input { resize: vertical; min-height: 90px; }
   .gq-cell--personal .gq-marker__emoji { font-size: 15px; display: block; text-align: center; margin-top: 2px; }
   .gq-marker { margin-top: 2px; }
 }
+
+/* ── Expenses (producer-only) ─────────────────────────────────────────── */
+.gq-exp-note { font-size: 12.5px; color: #8A8780; margin-top: 10px; line-height: 1.6; }
+
+.gq-exp-totals {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  margin-top: 26px; padding: 18px 20px;
+  border: 1px solid rgba(20, 20, 24, 0.14);
+}
+.gq-exp-grand { display: flex; flex-direction: column; gap: 4px; }
+.gq-exp-grand__label { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: #8A8780; }
+.gq-exp-grand__num { font-family: var(--serif); font-size: 30px; }
+
+.gq-exp-group {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: #141418;
+  padding-bottom: 10px; border-bottom: 1px solid rgba(20, 20, 24, 0.3);
+}
+.gq-exp-group__total { font-size: 13px; letter-spacing: 0.04em; color: #8A8780; text-transform: none; }
+
+.gq-exp-row {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 18px;
+  padding: 14px 2px; border-bottom: 1px solid rgba(20, 20, 24, 0.14);
+}
+.gq-exp-row__main { min-width: 0; }
+.gq-exp-row__vendor { font-size: 14.5px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.gq-exp-row__sub { font-size: 12px; color: #8A8780; margin-top: 3px; line-height: 1.5; }
+.gq-exp-row__amt { font-size: 15px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.gq-exp-row__actions { display: flex; gap: 16px; margin-top: 8px; }
+.gq-exp-row__actions a, .gq-exp-row__actions button {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #8A8780;
+}
+.gq-exp-row__actions a:hover, .gq-exp-row__actions button:hover { color: #141418; }
+
+.gq-exp-status {
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 2px; white-space: nowrap;
+}
+.gq-exp-status--reading { background: rgba(20, 20, 24, 0.07); color: #55524B; }
+.gq-exp-status--review { background: rgba(176, 141, 46, 0.14); color: #8A6D1F; }
+
+.gq-exp-edit { margin: 10px 0 18px; padding: 16px; border: 1px solid rgba(20, 20, 24, 0.14); }
+
+/* ── Activity log ─────────────────────────────────────────────────────── */
+.gq-act-row {
+  display: grid; grid-template-columns: 130px 1fr auto; gap: 14px; align-items: baseline;
+  padding: 13px 2px; border-bottom: 1px solid rgba(20, 20, 24, 0.14);
+}
+.gq-act-row__who { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; }
+.gq-act-row__what { font-size: 13.5px; line-height: 1.55; }
+.gq-act-row__when { font-size: 11px; color: #8A8780; white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .gq-exp-totals { flex-direction: column; align-items: stretch; text-align: center; }
+  .gq-act-row { grid-template-columns: 1fr auto; }
+  .gq-act-row__what { grid-column: 1 / -1; }
+}

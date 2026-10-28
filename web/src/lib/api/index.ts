@@ -21,6 +21,11 @@ import type {
   EditorialMarker,
   ShootDayInput,
   TodoItem,
+  ExpensesResponse,
+  ExpenseItem,
+  ExpenseInput,
+  ExpensePatch,
+  ActivityItem,
 } from "./types";
 
 // Auth
@@ -115,6 +120,42 @@ export const saveTodos = (id: string, todos: TodoItem[]) =>
     method: "PUT",
     body: JSON.stringify({ todos }),
   });
+
+// Expenses (producer-only — never on share links)
+export const getExpenses = (id: string) =>
+  apiFetch<ExpensesResponse>(`/projects/${id}/expenses`);
+
+export const createExpense = (id: string, body: ExpenseInput) =>
+  apiFetch<ExpenseItem>(`/projects/${id}/expenses`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+
+export const uploadExpenseReceipt = (id: string, file: File, date?: string | null) => {
+  const form = new FormData();
+  form.append("file", file);
+  if (date) form.append("date", date);
+  return apiUpload<ExpenseItem>(`/projects/${id}/expenses/upload`, form);
+};
+
+export const updateExpense = (id: string, expenseId: string, body: ExpensePatch) =>
+  apiFetch<ExpenseItem>(`/projects/${id}/expenses/${expenseId}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+
+export const deleteExpense = (id: string, expenseId: string) =>
+  apiFetch<void>(`/projects/${id}/expenses/${expenseId}`, { method: "DELETE" });
+
+export const expenseReceiptUrl = (id: string, expenseId: string) =>
+  `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/projects/${id}/expenses/${expenseId}/receipt`;
+
+export const expenseReportUrl = (id: string) =>
+  `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/projects/${id}/expenses/report.pptx`;
+
+// Activity log (producer-only)
+export const getActivity = (id: string) =>
+  apiFetch<{ items: ActivityItem[] }>(`/projects/${id}/activity`);
 
 // Share links
 export const mintDayShareLink = (id: string, date: string) =>

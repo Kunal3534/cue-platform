@@ -127,6 +127,132 @@ async def run_flag_detector(ctx: dict, project_id: str, scenario_id: str | None 
 
 
 # ---------------------------------------------------------------------------
+# Task: extract_expense — read a receipt image/PDF into structured fields
+# ---------------------------------------------------------------------------
+
+EXPENSE_CATEGORIES = {"travel", "food", "location", "equipment", "styling",
+                      "hmu", "production", "misc"}
+
+_EXPENSE_PROMPT = """You are reading a receipt, bill, invoice or payment screenshot
+from a magazine photo-shoot production in India. Extract what was spent.
+
+Reply with ONLY a JSON object, no prose and no code fences:
+{
+  "vendor": "who was paid (store/service name), or null",
+  "receipt_date": "YYYY-MM-DD or null",
+  "currency": "ISO code, e.g. INR",
+  "total_amount": 1234.50,
+  "category": "one of: travel, food, location, equipment, styling, hmu, production, misc",
+  "description": "one short line saying what this was for",
+  "line_items": [{"description": "...", "amount": 123.0}]
+}
+Use null for anything you cannot read. total_amount is the final amount paid
+(after taxes/tips). If several payments appear, total_amount is their sum."""
+
+
+def _receipt_images(data: bytes, content_type: str | None) -> list[bytes]:
+    """Receipt file → one or more JPEGs sized for the model."""
+    from PIL import Image
+
+    def shrink(img) -> bytes:
+        img = img.convert("RGB")
+        img.thumbnail((1600, 1600))
+        buf = io.BytesIO()
+        img.save(buf, "JPEG", quality=85)
+        return buf.getvalue()
+
+    if (content_type or "").endswith("pdf") or data[:5] == b"%PDF-":
+        import pypdfium2 as pdfium
+        doc = pdfium.PdfDocument(data)
+        pages = [shrink(doc[i].render(scale=2.0).to_pil()) for i in range(min(len(doc), 3))]
+        doc.close()
+        return pages
+    return [shrink(Image.open(io.BytesIO(data)))]
+
+
+async def extract_expense(ctx: dict, expense_id: str) -> dict:
+    """Fill in an uploaded expense's fields by reading its receipt."""
+    import base64
+    import json as _json
+
+    import sqlalchemy as sa
+
+    async with async_session_factory() as session:
+        row = (await session.execute(
+            sa.text("SELECT id, s3_key, content_type, status FROM expenses WHERE id = :id"),
+            {"id": expense_id},
+        )).first()
+        if not row or row.status != "processing" or not row.s3_key:
+            return {"skipped": True}
+
+        async def finish(status: str, extracted: dict, fields: dict | None = None) -> None:
+            sets = ["status = :st", "extracted = CAST(:ex AS jsonb)", "updated_at = NOW()"]
+            params: dict = {"st": status, "ex": _json.dumps(extracted), "id": expense_id}
+            for col, val in (fields or {}).items():
+                sets.append(f"{col} = :{col}")
+                params[col] = val
+            # Only land results if nobody edited the row while we were reading
+            await session.execute(
+                sa.text(f"UPDATE expenses SET {', '.join(sets)} "
+                        "WHERE id = :id AND status = 'processing'"),
+                params,
+            )
+            await session.commit()
+
+        if not settings.anthropic_api_key:
+            await finish("needs_review", {"error": "no_api_key"})
+            return {"status": "needs_review", "reason": "no_api_key"}
+
+        try:
+            images = _receipt_images(storage.get_bytes(row.s3_key), row.content_type)
+        except Exception as exc:
+            await finish("needs_review", {"error": f"unreadable file: {exc}"})
+            return {"status": "needs_review"}
+
+        try:
+            import anthropic
+            client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+            content: list[dict] = [
+                {"type": "image",
+                 "source": {"type": "base64", "media_type": "image/jpeg",
+                            "data": base64.b64encode(img).decode()}}
+                for img in images
+            ]
+            content.append({"type": "text", "text": _EXPENSE_PROMPT})
+            msg = await client.messages.create(
+                model=settings.anthropic_model,
+                max_tokens=1500,
+                messages=[{"role": "user", "content": content}],
+            )
+            text = "".join(b.text for b in msg.content if b.type == "text").strip()
+            if text.startswith("```"):
+                text = text.strip("`").removeprefix("json").strip()
+            parsed = _json.loads(text[text.index("{"): text.rindex("}") + 1])
+        except Exception as exc:
+            await finish("needs_review", {"error": f"extraction failed: {exc}"})
+            return {"status": "needs_review"}
+
+        from decimal import Decimal, InvalidOperation
+        amount = None
+        try:
+            if parsed.get("total_amount") is not None:
+                amount = Decimal(str(parsed["total_amount"])).quantize(Decimal("0.01"))
+        except (InvalidOperation, ValueError):
+            amount = None
+        category = parsed.get("category")
+        fields = {
+            "vendor": (parsed.get("vendor") or None),
+            "description": (parsed.get("description") or None),
+            "category": category if category in EXPENSE_CATEGORIES else "misc",
+            "amount": amount,
+            "currency": (parsed.get("currency") or "INR").upper()[:8],
+        }
+        status = "ready" if amount is not None else "needs_review"
+        await finish(status, parsed, fields)
+        return {"status": status, "amount": str(amount) if amount is not None else None}
+
+
+# ---------------------------------------------------------------------------
 # Task: send_call_sheet
 # ---------------------------------------------------------------------------
 
@@ -195,7 +321,8 @@ async def export_bundle(ctx: dict, project_id: str, job_id: str, scenario_id: st
 # ---------------------------------------------------------------------------
 
 class WorkerSettings:
-    functions = [regenerate_views, regenerate_call_sheet, send_call_sheet, export_bundle, run_flag_detector]
+    functions = [regenerate_views, regenerate_call_sheet, send_call_sheet, export_bundle,
+                 run_flag_detector, extract_expense]
     redis_settings = get_redis_settings()
     max_jobs = 10
     job_timeout = 300  # 5 min
