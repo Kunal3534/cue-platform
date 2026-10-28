@@ -339,50 +339,30 @@ def _member_out(r) -> dict:
 async def _send_welcome_email(email: str, name: str | None, role: str,
                               workspace: str, added_by: str) -> None:
     """Branded invitation: you're in, here's where to sign in."""
-    from ..config import settings as _settings
-    if not _settings.resend_api_key:
-        return
-    import httpx
+    from ..services import emailer
 
-    base = _settings.app_base_url.rstrip("/")
     greeting = f"Hi {name}," if name else "Hi,"
     role_line = ("You can see the full shoot calendar and day briefs, keep your own "
                  "private notes, and sync shoot days to your Google Calendar."
                  if role == "contributor" else
                  "You have full producer access — the calendar, day briefs, expenses "
                  "and the team.")
-    html = f"""
-<div style="background:#EFEDE8;padding:40px 16px;font-family:Georgia,'Times New Roman',serif;color:#141418">
-  <div style="max-width:520px;margin:0 auto;background:rgba(255,255,255,0.72);
-              border:1px solid rgba(255,255,255,0.8);border-radius:22px;padding:36px 34px">
-    <p style="letter-spacing:0.24em;font-size:11px;color:#8A6D1F;margin:0 0 6px">CUE</p>
-    <h1 style="font-size:26px;font-weight:600;margin:0 0 4px">You're on the team.</h1>
-    <p style="font-size:14px;color:#87847D;margin:0 0 22px">
-      {added_by} added you to <strong style="color:#141418">{workspace}</strong>.</p>
-    <p style="font-size:15px;line-height:1.7;margin:0 0 10px">{greeting}</p>
-    <p style="font-size:15px;line-height:1.7;margin:0 0 22px">{role_line}</p>
-    <p style="margin:0 0 26px">
-      <a href="{base}/login"
-         style="display:inline-block;background:#141418;color:#F3F1EC;text-decoration:none;
-                padding:13px 30px;border-radius:999px;font-size:13px;letter-spacing:0.08em">
-        Sign in to Cue</a></p>
-    <p style="font-size:13px;line-height:1.7;color:#87847D;margin:0">
-      Use this email address — <strong>Continue with Google</strong> is the quickest way,
-      or we'll send you a sign-in link. We're glad to have you on the shoot.</p>
-  </div>
-  <p style="text-align:center;font-size:10px;letter-spacing:0.2em;color:#B8B5AE;margin:26px 0 0">
-    PRODUCED ON CUE · {base.replace("https://", "").upper()}</p>
-</div>"""
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        await client.post(
-            "https://api.resend.com/emails",
-            headers={"Authorization": f"Bearer {_settings.resend_api_key}",
-                     "Content-Type": "application/json"},
-            json={"from": _settings.mail_from or "Cue <cue@cueit.io>",
-                  "to": [email],
-                  "subject": f"You've been added to {workspace} on Cue",
-                  "html": html},
-        )
+    body = (
+        f"<p style='margin:0 0 12px'>{greeting}</p>"
+        f"<p style='margin:0 0 4px'>{role_line}</p>"
+        + emailer.button("Sign in to Cue", f"{emailer._base()}/login")
+        + f"<p style='margin:24px 0 0;font-size:13px;color:{emailer.MUTED};line-height:1.7'>"
+        f"Use this email address — <strong>Continue with Google</strong> is the quickest "
+        f"way, or we&rsquo;ll send you a sign-in link. Glad to have you on the shoot.</p>"
+    )
+    html = emailer.frame(
+        eyebrow="CUE · WORKSPACE INVITATION",
+        headline="You&rsquo;re on the team.",
+        sub=f"{added_by} added you to <strong style='color:{emailer.INK}'>{workspace}</strong>.",
+        body_html=body,
+    )
+    await emailer.send(email, f"You've been added to {workspace} on Cue", html)
+
 
 @router.get("/{project_id}/members")
 async def list_members(

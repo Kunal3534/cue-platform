@@ -958,48 +958,31 @@ def _invite_out(r) -> dict:
 
 
 async def _send_invite_email(email: str, name: str | None, day: dict, share_url: str) -> None:
-    if not settings.resend_api_key:
-        return
-    import httpx
+    from ..services import emailer
 
     who = " · ".join(t["name"] for t in day.get("talent", [])) or "the GQ MOTY team"
     d = date_cls.fromisoformat(day["date"])
     nice_date = d.strftime("%A, ") + f"{d.day} " + d.strftime("%B %Y")
     loc = (day.get("location") or {}).get("name")
-    call = day.get("call_time")
-    rows = "".join(
-        f"<tr><td style='padding:4px 14px 4px 0;color:#8A8780;font-size:12px;"
-        f"text-transform:uppercase;letter-spacing:0.12em'>{k}</td>"
-        f"<td style='padding:4px 0;font-size:14px'>{v}</td></tr>"
-        for k, v in (("Shooting", who), ("Location", loc or "TBC"),
-                     ("Call time", call or "TBC")) if v
-    )
     greeting = f"Hi {name}," if name else "Hi,"
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        await client.post(
-            "https://api.resend.com/emails",
-            headers={"Authorization": f"Bearer {settings.resend_api_key}",
-                     "Content-Type": "application/json"},
-            json={
-                "from": settings.mail_from or "GQ MOTY Calendar <cue@cueit.io>",
-                "to": [email],
-                "subject": f"You're invited — GQ Men of the Year shoot · {nice_date}",
-                "html": (
-                    f"<div style='font-family:Georgia,serif;max-width:520px'>"
-                    f"<p style='letter-spacing:0.2em;font-size:11px;color:#8A6D1F'>"
-                    f"GQ MEN OF THE YEAR</p>"
-                    f"<h2 style='font-weight:600'>{nice_date}</h2>"
-                    f"<p>{greeting} you've been added to this shoot day.</p>"
-                    f"<table style='border-collapse:collapse'>{rows}</table>"
-                    f"<p style='margin-top:20px'><a href='{share_url}' "
-                    f"style='background:#141418;color:#F3F1EC;text-decoration:none;"
-                    f"padding:11px 24px;border-radius:999px;font-size:13px'>"
-                    f"View the day brief</a></p>"
-                    f"<p style='color:#999;font-size:12px'>The brief always shows the "
-                    f"latest times — check it the night before.</p></div>"
-                ),
-            },
-        )
+    body = (
+        f"<p style='margin:0 0 4px'>{greeting} you&rsquo;ve been added to this shoot day.</p>"
+        + emailer.kv_rows([(k, v) for k, v in (
+            ("Shooting", who),
+            ("Location", loc or "TBC"),
+            ("Call time", day.get("call_time") or "TBC"),
+        ) if v])
+        + emailer.button("View the day brief", share_url)
+        + f"<p style='margin:24px 0 0;font-size:13px;color:{emailer.MUTED};line-height:1.7'>"
+        f"The brief always shows the latest times — check it the night before.</p>"
+    )
+    html = emailer.frame(
+        eyebrow="CUE · SHOOT INVITATION",
+        headline=nice_date,
+        sub=None,
+        body_html=body,
+    )
+    await emailer.send(email, f"You're invited — GQ Men of the Year shoot · {nice_date}", html)
 
 
 @router.get("/{project_id}/editorial/days/{date}/invites")
