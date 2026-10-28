@@ -122,7 +122,7 @@ export default function DayMarkers({
               </div>
             </div>
             <div>
-              <label className="gq-label">Who's off?</label>
+              <label className="gq-label">Who’s off?</label>
               <select
                 className="gq-input"
                 value={kind}
