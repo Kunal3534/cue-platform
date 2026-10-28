@@ -342,34 +342,35 @@ async def _send_welcome_email(email: str, name: str | None, role: str,
     from ..services import emailer
 
     greeting = f"Hi {name}," if name else "Hi,"
-    glad = ("We&rsquo;re super glad to see you on Cue, the clearest and calmest way "
-            "to run a shoot from call time to wrap!")
-    role_line = ("You can see the full shoot calendar and day briefs, keep your own "
-                 "private notes, and sync shoot days to your Google Calendar."
+    role_line = ("You&rsquo;ll see each shoot day as it takes shape: the briefs, the "
+                 "call times, your own private notes, and, if you want it, every day "
+                 "placed neatly in your Google Calendar."
                  if role == "contributor" else
-                 "You have full producer access: the calendar, day briefs, expenses "
-                 "and the team.")
+                 "As a producer, the room is yours: the calendar, the day briefs, "
+                 "the expenses and the team.")
     body = (
         f"<p style='margin:14px 0 10px'>{greeting}</p>"
-        f"<p style='margin:0 0 4px'>{glad}</p>"
+        f"<p style='margin:0 0 4px'>{added_by} has added you to "
+        f"<strong>{workspace}</strong>. Which means the calendar, the call times and "
+        f"the quiet machinery of the shoot now live one sign-in away.</p>"
         + emailer.kv_rows([
             ("Workspace", workspace),
             ("Your role", "Producer" if role == "producer" else "Contributor"),
             ("Added by", added_by),
         ])
-        + f"<p style='margin:16px 0 0;font-size:14px;line-height:1.7'>{role_line}</p>"
+        + f"<p style='margin:16px 0 0;font-size:14.5px;line-height:1.7'>{role_line}</p>"
         + emailer.button("Sign in to Cue", f"{emailer._base()}/login")
         + f"<p style='margin:22px 0 0;font-size:12.5px;color:{emailer.MUTED};line-height:1.7'>"
-        f"Use this email address to sign in. <strong>Continue with Google</strong> is the "
-        f"quickest way, or we&rsquo;ll send you a sign-in link.</p>"
+        f"Sign in with this address. Google is fastest; an emailed link works just "
+        f"as well. We&rsquo;ll see you on set.</p>"
     )
     html = emailer.frame(
         eyebrow="CUE · WORKSPACE INVITATION",
-        headline="You&rsquo;re on the team.",
+        headline="Welcome to the production.",
         sub=None,
         body_html=body,
     )
-    await emailer.send(email, f"You've been added to {workspace} on Cue", html)
+    await emailer.send(email, f"Welcome to {workspace}", html)
 
 
 @router.get("/{project_id}/members")

@@ -966,16 +966,17 @@ async def _send_invite_email(email: str, name: str | None, day: dict, share_url:
     loc = (day.get("location") or {}).get("name")
     greeting = f"Hi {name}," if name else "Hi,"
     body = (
-        f"<p style='margin:0 0 4px'>{greeting} you&rsquo;ve been added to this shoot day.</p>"
+        f"<p style='margin:14px 0 4px'>{greeting} consider this your invitation. "
+        f"The day, in brief:</p>"
         + emailer.kv_rows([(k, v) for k, v in (
             ("Shooting", who),
             ("Location", loc or "TBC"),
             ("Call time", day.get("call_time") or "TBC"),
         ) if v])
         + emailer.button("View the day brief", share_url)
-        + f"<p style='margin:24px 0 0;font-size:13px;color:{emailer.MUTED};line-height:1.7'>"
-        f"The brief always shows the latest times, so check it the night before. "
-        f"We&rsquo;re super glad to have you on this shoot!</p>"
+        + f"<p style='margin:22px 0 0;font-size:12.5px;color:{emailer.MUTED};line-height:1.7'>"
+        f"Times move; the brief keeps up. Give it a glance the night before, "
+        f"and we&rsquo;ll see you on set.</p>"
     )
     html = emailer.frame(
         eyebrow="CUE · SHOOT INVITATION",
