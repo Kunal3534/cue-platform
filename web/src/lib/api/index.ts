@@ -117,6 +117,23 @@ export const saveTodos = (id: string, todos: TodoItem[]) =>
   });
 
 // Share links
+export const mintDayShareLink = (id: string, date: string) =>
+  apiFetch<{ token: string; path: string }>(
+    `/projects/${id}/editorial/days/${date}/share`,
+    { method: "POST" },
+  );
+
+export const getSharedDay = (token: string) =>
+  apiFetch<{ title: string; window: string | null; day: EditorialDay }>(
+    `/share/day/${encodeURIComponent(token)}`,
+  );
+
+export const sharedDayMoodboardUrl = (token: string) =>
+  `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/share/day/${token}/moodboard`;
+
+export const sharedDayMoodboardPageUrl = (token: string, page: number) =>
+  `${sharedDayMoodboardUrl(token)}/pages/${page}`;
+
 export const mintShareLink = (id: string) =>
   apiFetch<{ token: string; path: string }>(`/projects/${id}/share`, {
     method: "POST",

@@ -456,6 +456,40 @@ async def upsert_shoot_day(
     return next(d for d in days if d["date"] == day_date.isoformat())
 
 
+@router.post("/{project_id}/editorial/days/{date}/share")
+async def mint_day_share_link(
+    project_id: str,
+    date: str,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    """Get-or-mint a view-only link for one day's briefing. Unlike the
+    calendar link, it exposes nothing beyond this single date."""
+    import secrets
+
+    proj = await _owner_project(project_id, user, session)
+    day_date = _parse_date(date)
+
+    day = (await session.execute(
+        sa.text("SELECT kind FROM days WHERE project_id = :pid AND date = :dt"),
+        {"pid": project_id, "dt": day_date},
+    )).first()
+    if not day or day.kind != "shoot":
+        raise HTTPException(status_code=404, detail="No shoot on this date")
+
+    tokens = dict((proj.settings or {}).get("day_share_tokens", {}))
+    token = tokens.get(day_date.isoformat())
+    if not token:
+        token = secrets.token_urlsafe(16)
+        tokens[day_date.isoformat()] = token
+        await session.execute(
+            sa.text("UPDATE projects SET settings = settings || CAST(:p AS jsonb) WHERE id = :pid"),
+            {"p": json.dumps({"day_share_tokens": tokens}), "pid": project_id},
+        )
+        await session.commit()
+    return {"token": token, "path": f"/share/day/{token}"}
+
+
 @router.post("/{project_id}/editorial/days/{date}/move")
 async def move_shoot_day(
     project_id: str,
@@ -545,16 +579,22 @@ async def move_shoot_day(
         except Exception:
             pass  # worst case the moodboard needs re-uploading; never block the move
 
-    # This day's todos follow it
+    # This day's todos and its share link follow it
+    settings_patch: dict = {}
     todos = (proj.settings or {}).get("todos", [])
     if any(t.get("date") == src.isoformat() for t in todos):
-        moved = [
+        settings_patch["todos"] = [
             {**t, "date": dst.isoformat()} if t.get("date") == src.isoformat() else t
             for t in todos
         ]
+    day_tokens = dict((proj.settings or {}).get("day_share_tokens", {}))
+    if src.isoformat() in day_tokens:
+        day_tokens[dst.isoformat()] = day_tokens.pop(src.isoformat())
+        settings_patch["day_share_tokens"] = day_tokens
+    if settings_patch:
         await session.execute(
             sa.text("UPDATE projects SET settings = settings || CAST(:p AS jsonb) WHERE id = :pid"),
-            {"p": json.dumps({"todos": moved}), "pid": project_id},
+            {"p": json.dumps(settings_patch), "pid": project_id},
         )
 
     await _renumber_shoot_days(project_id, session)

@@ -2,12 +2,14 @@
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { useState } from "react";
 import {
   getMainSchedule,
   getEditorialSchedule,
   deleteShootDay,
   moodboardUrl,
   moodboardPageUrl,
+  mintDayShareLink,
 } from "@/lib/api";
 import { useProjectStore } from "@/stores/project";
 import { useIsEditorial } from "@/lib/terminology";
@@ -40,6 +42,19 @@ function GqDayPage() {
   });
 
   const day = data?.days.find((d) => d.date === date);
+  const [shareState, setShareState] = useState<"idle" | "copied" | "error">("idle");
+
+  const handleShareDay = async () => {
+    try {
+      const { token } = await mintDayShareLink(projectId, date);
+      await navigator.clipboard.writeText(`${window.location.origin}/share/day/${token}`);
+      setShareState("copied");
+      setTimeout(() => setShareState("idle"), 2500);
+    } catch {
+      setShareState("error");
+      setTimeout(() => setShareState("idle"), 2500);
+    }
+  };
 
   const handleDelete = async () => {
     if (!window.confirm("Remove this shoot day? The date stays on the calendar as an empty day.")) return;
@@ -81,7 +96,19 @@ function GqDayPage() {
         <Link href={`/project/${projectId}/calendar`} style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#999" }}>
           ← Calendar
         </Link>
-        <div style={{ display: "flex", gap: 10 }}>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <button
+            type="button"
+            className="gq-btn gq-btn--ghost"
+            style={{ padding: "8px 18px", fontSize: 10 }}
+            onClick={handleShareDay}
+          >
+            {shareState === "copied"
+              ? "Link copied ✓"
+              : shareState === "error"
+                ? "Copy failed"
+                : "Share this day"}
+          </button>
           <Link
             href={`/project/${projectId}/day/${date}/edit`}
             className="gq-btn gq-btn--ghost"
