@@ -33,14 +33,20 @@ export default function DayMarkers({
   const [error, setError] = useState(false);
 
   if (!data) return null;
-  const all = data.markers ?? [];
-  const dayMarkers = all.filter((m) => m.date === date);
+  const dayMarkers = (data.markers ?? []).filter((m) => m.date === date);
 
-  const persist = async (next: EditorialMarker[]) => {
+  // Mutations rebase on a fresh fetch — a stale cached list must never
+  // overwrite what the other producer just saved.
+  const persist = async (update: (fresh: EditorialMarker[]) => EditorialMarker[]) => {
     setSaving(true);
     setError(false);
     try {
-      await saveMarkers(projectId, next);
+      const fresh = await qc.fetchQuery({
+        queryKey: ["editorial-schedule", projectId],
+        queryFn: () => getEditorialSchedule(projectId),
+        staleTime: 0,
+      });
+      await saveMarkers(projectId, update(fresh.markers ?? []));
       await qc.invalidateQueries({ queryKey: ["editorial-schedule", projectId] });
       setAdding(false);
       setLabel("");
@@ -54,8 +60,8 @@ export default function DayMarkers({
 
   const addMarker = () => {
     if (!label.trim()) return;
-    void persist([
-      ...all,
+    void persist((fresh) => [
+      ...fresh,
       {
         id: crypto.randomUUID(),
         date,
@@ -87,7 +93,7 @@ export default function DayMarkers({
             type="button"
             className="gq-todo__del"
             aria-label="Remove"
-            onClick={() => void persist(all.filter((x) => x.id !== m.id))}
+            onClick={() => void persist((fresh) => fresh.filter((x) => x.id !== m.id))}
           >
             ×
           </button>

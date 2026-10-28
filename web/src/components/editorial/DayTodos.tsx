@@ -28,14 +28,19 @@ export default function DayTodos({
 
   if (!data) return null;
 
-  const all = data.todos;
-  const dayTodos = all.filter((t) => t.date === date);
+  const dayTodos = data.todos.filter((t) => t.date === date);
 
-  const persist = async (nextForDay: TodoItem[]) => {
+  // Rebase every save on a fresh fetch so a stale cache can't overwrite
+  // the other producer's items.
+  const persist = async (update: (fresh: TodoItem[]) => TodoItem[]) => {
     setSaveError(false);
-    const others = all.filter((t) => t.date !== date);
     try {
-      await saveTodos(projectId, [...others, ...nextForDay]);
+      const fresh = await qc.fetchQuery({
+        queryKey: ["todos", projectId],
+        queryFn: () => getTodos(projectId),
+        staleTime: 0,
+      });
+      await saveTodos(projectId, update(fresh.todos));
       await qc.invalidateQueries({ queryKey: ["todos", projectId] });
     } catch {
       setSaveError(true);
@@ -46,7 +51,7 @@ export default function DayTodos({
     const text = draft.trim();
     if (!text) return;
     setDraft("");
-    void persist([...dayTodos, { id: crypto.randomUUID(), text, done: false, date }]);
+    void persist((fresh) => [...fresh, { id: crypto.randomUUID(), text, done: false, date }]);
   };
 
   return (
@@ -79,7 +84,9 @@ export default function DayTodos({
               className="gq-check"
               checked={t.done}
               onChange={() =>
-                void persist(dayTodos.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)))
+                void persist((fresh) =>
+                  fresh.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)),
+                )
               }
             />
             <span className={`gq-todo__text${t.done ? " is-done" : ""}`}>{t.text}</span>
@@ -87,7 +94,7 @@ export default function DayTodos({
               type="button"
               className="gq-todo__del"
               aria-label="Delete"
-              onClick={() => void persist(dayTodos.filter((x) => x.id !== t.id))}
+              onClick={() => void persist((fresh) => fresh.filter((x) => x.id !== t.id))}
             >
               ×
             </button>
