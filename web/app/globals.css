@@ -1317,3 +1317,58 @@ textarea.gq-input { resize: vertical; min-height: 90px; }
 .gq-kv__row, .gq-sched-row, .gq-todo { border-bottom-color: rgba(20, 20, 24, 0.14); }
 .gq-input { border-color: rgba(20, 20, 24, 0.2); }
 .gq-moodboard__page, .gq-moodboard__frame { border-color: rgba(20, 20, 24, 0.14); }
+
+/* ------------------------------------------------------------------ */
+/* Mobile: agenda-first calendar, stacked briefings, thumb-sized form */
+/* ------------------------------------------------------------------ */
+.gq-agenda { display: none; }
+.gq-agenda__card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 4px; border-bottom: 1px solid rgba(20, 20, 24, 0.14);
+  cursor: pointer;
+}
+.gq-agenda__card:active { background: rgba(20, 20, 24, 0.05); }
+.gq-agenda__date { flex: none; width: 56px; text-align: center; }
+.gq-agenda__num { font-family: var(--strip); font-weight: 800; font-size: 26px; line-height: 1; }
+.gq-agenda__dow { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: #777; margin-top: 2px; }
+.gq-agenda__body { flex: 1; min-width: 0; }
+.gq-agenda__talent { font-size: 14px; font-weight: 650; line-height: 1.4; }
+.gq-agenda__meta { font-size: 11px; color: #777; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gq-agenda__arrow { flex: none; color: #BBB; font-size: 18px; }
+
+@media (max-width: 640px) {
+  .gq-inner { padding: 0 14px; }
+  .gq-masthead { padding: 22px 0 12px; }
+  .gq-masthead__logo { width: 128px; }
+  .gq-masthead__sub { font-size: 9px; letter-spacing: 0.26em; }
+  .gq-tabs { gap: 26px; margin-bottom: 20px; }
+  .gq-tab { font-size: 10px; padding-bottom: 10px; }
+  .gq-month { font-size: 17px; margin-bottom: 10px; }
+
+  /* month grid shrinks to date + dot; the agenda below carries the detail */
+  .gq-grid-head div { padding: 5px 2px; font-size: 8px; letter-spacing: 0.08em; text-align: center; }
+  .gq-cell { min-height: 44px; padding: 5px 4px; }
+  .gq-cell__date { font-size: 13px; text-align: center; }
+  .gq-cell__talent, .gq-cell__tag, .gq-cell__plus { display: none; }
+  .gq-cell--shoot::after {
+    content: ""; display: block; width: 6px; height: 6px;
+    background: #111; border-radius: 50%; margin: 5px auto 0;
+  }
+  .gq-agenda { display: block; margin-top: 22px; border-top: 2px solid #111; }
+
+  /* day briefing stacks */
+  .gq-detail__date { font-size: 24px; }
+  .gq-detail__headline { font-size: 11px; letter-spacing: 0.16em; }
+  .gq-kv__row { flex-direction: column; gap: 5px; padding: 12px 2px; }
+  .gq-kv__k { width: auto; }
+  .gq-moodboard__frame { height: 320px; }
+
+  /* form: one column, 16px inputs so iOS doesn't zoom, full-width buttons */
+  .gq-form__grid { grid-template-columns: 1fr; gap: 12px; }
+  .gq-input { font-size: 16px; padding: 12px; }
+  .gq-btn { width: 100%; text-align: center; padding: 14px 0; }
+  .gq-share-btn { padding: 10px 14px; }
+
+  /* schedule rows become cards */
+  .gq-sched-row { grid-template-columns: 1fr; gap: 4px; padding: 16px 2px; }
+}

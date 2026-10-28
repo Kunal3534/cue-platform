@@ -43,6 +43,11 @@ export default function MonthGrid({
     })),
   ];
 
+  const fmtAgendaMeta = (d: EditorialDay) =>
+    [d.location.name, d.call_time ? `Call ${d.call_time}` : null]
+      .filter(Boolean)
+      .join(" · ");
+
   return (
     <div>
       <h2 className="gq-month">
@@ -83,6 +88,36 @@ export default function MonthGrid({
               ) : (
                 onSelectEmpty && <div className="gq-cell__plus">+ Add shoot</div>
               )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Mobile agenda — the grid shrinks to dots, this carries the detail */}
+      <div className="gq-agenda">
+        {days.map((d) => {
+          const date = new Date(`${d.date}T00:00:00`);
+          return (
+            <div
+              key={d.date}
+              className="gq-agenda__card"
+              onClick={onSelect ? () => onSelect(d) : undefined}
+            >
+              <div className="gq-agenda__date">
+                <div className="gq-agenda__num">{date.getDate()}</div>
+                <div className="gq-agenda__dow">
+                  {date.toLocaleDateString("en-GB", { weekday: "short" })}
+                </div>
+              </div>
+              <div className="gq-agenda__body">
+                <div className="gq-agenda__talent">
+                  {d.talent.map((t) => t.name).join(" · ") || d.headline || "Shoot"}
+                </div>
+                <div className="gq-agenda__meta">
+                  Photos + Film{fmtAgendaMeta(d) ? ` · ${fmtAgendaMeta(d)}` : ""}
+                </div>
+              </div>
+              <div className="gq-agenda__arrow">›</div>
             </div>
           );
         })}

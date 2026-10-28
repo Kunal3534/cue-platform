@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getSharedCalendar, sharedMoodboardUrl, sharedMoodboardPageUrl } from "@/lib/api";
@@ -12,6 +12,14 @@ export default function SharedCalendarPage() {
   const params = useParams();
   const token = params.token as string;
   const [selected, setSelected] = useState<EditorialDay | null>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
+
+  // On a phone the tapped day's briefing opens below the fold — bring it up.
+  useEffect(() => {
+    if (selected) {
+      detailRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selected]);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["share", token],
@@ -48,7 +56,7 @@ export default function SharedCalendarPage() {
           />
         </div>
         {selected && (
-          <div style={{ marginTop: 48 }}>
+          <div ref={detailRef} style={{ marginTop: 48, scrollMarginTop: 16 }}>
             <DayDetail
               day={selected}
               moodboardHref={selected.moodboard ? sharedMoodboardUrl(token, selected.date) : null}
