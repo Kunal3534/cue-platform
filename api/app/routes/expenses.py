@@ -39,8 +39,12 @@ CATEGORIES = [
 ]
 
 
+PAY_TYPES = {"cash_advance", "contributor_payment"}
+
+
 class ExpenseIn(BaseModel):
     date: str | None = None  # shoot day this belongs to (ISO), null = general
+    pay_type: str | None = None  # cash_advance | contributor_payment
     vendor: str | None = None
     description: str | None = None
     category: str | None = None
@@ -52,6 +56,7 @@ class ExpenseIn(BaseModel):
 class ExpensePatch(BaseModel):
     date: str | None = None
     clear_date: bool = False  # explicit — None above means "leave as is"
+    pay_type: str | None = None
     vendor: str | None = None
     description: str | None = None
     category: str | None = None
@@ -88,6 +93,7 @@ def _row_out(r) -> dict:
         "category": r.category,
         "amount": float(r.amount) if r.amount is not None else None,
         "currency": r.currency,
+        "pay_type": r.pay_type,
         "source": r.source,
         "has_receipt": bool(r.s3_key),
         "filename": r.filename,
@@ -100,7 +106,7 @@ def _row_out(r) -> dict:
     }
 
 
-_SELECT = ("SELECT id, date, vendor, description, category, amount, currency, source, "
+_SELECT = ("SELECT id, date, vendor, description, category, amount, currency, pay_type, source, "
            "s3_key, filename, content_type, status, extracted, notes, created_by, created_at "
            "FROM expenses")
 
@@ -131,20 +137,24 @@ async def list_expenses(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     rows = (await session.execute(
         sa.text(f"{_SELECT} WHERE project_id = :pid ORDER BY date NULLS LAST, created_at DESC"),
         {"pid": project_id},
     )).fetchall()
     items = [_row_out(r) for r in rows]
     by_date: dict[str, float] = {}
+    by_pay_type: dict[str, float] = {}
     grand = 0.0
     for it in items:
         if it["amount"] is not None:
             key = it["date"] or "general"
             by_date[key] = round(by_date.get(key, 0.0) + it["amount"], 2)
+            pt = it["pay_type"] or "unclassified"
+            by_pay_type[pt] = round(by_pay_type.get(pt, 0.0) + it["amount"], 2)
             grand = round(grand + it["amount"], 2)
-    return {"items": items, "totals": {"by_date": by_date, "grand": grand},
+    return {"items": items,
+            "totals": {"by_date": by_date, "by_pay_type": by_pay_type, "grand": grand},
             "categories": CATEGORIES}
 
 
@@ -155,18 +165,19 @@ async def create_expense(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     eid = str(uuid.uuid4())
     await session.execute(
         sa.text("INSERT INTO expenses (id, project_id, date, vendor, description, category, "
-                "amount, currency, source, status, notes, created_by, created_at, updated_at) "
-                "VALUES (:id, :pid, :dt, :vn, :ds, :cat, :am, :cur, 'manual', 'ready', :nt, "
+                "amount, currency, pay_type, source, status, notes, created_by, created_at, updated_at) "
+                "VALUES (:id, :pid, :dt, :vn, :ds, :cat, :am, :cur, :pt, 'manual', 'ready', :nt, "
                 ":by, NOW(), NOW())"),
         {"id": eid, "pid": project_id, "dt": _date_or_none(body.date),
          "vn": body.vendor or None, "ds": body.description or None,
          "cat": body.category or None, "am": _amount(body.amount),
-         "cur": (body.currency or "INR").upper()[:8], "nt": body.notes or None,
-         "by": user.email},
+         "cur": (body.currency or "INR").upper()[:8],
+         "pt": body.pay_type if body.pay_type in PAY_TYPES else None,
+         "nt": body.notes or None, "by": user.email},
     )
     row = await _expense(session, project_id, eid)
     when = f" ({activity.fmt_day(row.date)})" if row.date else ""
@@ -184,7 +195,7 @@ async def upload_receipt(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     shoot_date = _date_or_none(date)
 
     ctype = (file.content_type or "").lower()
@@ -246,7 +257,7 @@ async def reread_receipt(
 ) -> dict:
     """Queue a receipt for another reading pass — e.g. after the first one
     failed, or after the AI key was fixed. No re-upload needed."""
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     row = await _expense(session, project_id, expense_id)
     if not row.s3_key:
         raise HTTPException(status_code=422, detail="This expense has no receipt file to read")
@@ -281,7 +292,7 @@ async def update_expense(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     await _expense(session, project_id, expense_id)
 
     sets, params = ["updated_at = NOW()", "status = 'ready'"], {}
@@ -298,6 +309,11 @@ async def update_expense(
     if body.amount is not None:
         sets.append("amount = :am")
         params["am"] = _amount(body.amount)
+    if body.pay_type is not None:
+        if body.pay_type not in PAY_TYPES:
+            raise HTTPException(status_code=422, detail="pay_type must be cash_advance or contributor_payment")
+        sets.append("pay_type = :pt")
+        params["pt"] = body.pay_type
     if body.currency is not None:
         sets.append("currency = :cur")
         params["cur"] = body.currency.upper()[:8]
@@ -331,7 +347,7 @@ async def delete_expense(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> None:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     row = await _expense(session, project_id, expense_id)
     if row.s3_key:
         try:
@@ -354,7 +370,7 @@ async def get_receipt(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ):
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     row = await _expense(session, project_id, expense_id)
     if not row.s3_key:
         raise HTTPException(status_code=404, detail="No receipt file on this expense")
@@ -412,7 +428,7 @@ async def expense_report_to_slides(
     from ..services import google_drive as gdrive
     from ..services.google_calendar import access_token_for
 
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     if not user.google_refresh_token:
         raise HTTPException(status_code=409, detail="Connect Google first")
     token = await access_token_for(user.google_refresh_token)
@@ -435,7 +451,7 @@ async def expense_report(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ):
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     deck = await _build_report_deck(project_id, session)
     await activity.log(session, project_id, user, "expenses.exported",
                        "Exported the expense report deck")

@@ -183,10 +183,24 @@ export const deleteInvite = (id: string, date: string, inviteId: string) =>
 export const getMembers = (id: string) =>
   apiFetch<{ members: import("./types").WorkspaceMember[] }>(`/projects/${id}/members`);
 
-export const addMember = (id: string, email: string, name?: string | null) =>
+export const addMember = (
+  id: string,
+  email: string,
+  name?: string | null,
+  role: "producer" | "contributor" = "contributor",
+) =>
   apiFetch<import("./types").WorkspaceMember>(`/projects/${id}/members`, {
     method: "POST",
-    body: JSON.stringify({ email, name: name || null }),
+    body: JSON.stringify({ email, name: name || null, role }),
+  });
+
+export const getMyNote = (id: string, date: string) =>
+  apiFetch<{ text: string }>(`/projects/${id}/editorial/days/${date}/my-note`);
+
+export const saveMyNote = (id: string, date: string, text: string) =>
+  apiFetch<{ text: string }>(`/projects/${id}/editorial/days/${date}/my-note`, {
+    method: "PUT",
+    body: JSON.stringify({ text }),
   });
 
 export const removeMember = (id: string, memberId: string) =>

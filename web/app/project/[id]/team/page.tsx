@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMembers, addMember, removeMember } from "@/lib/api";
+import { useProjectStore } from "@/stores/project";
 
 /** Workspace team — everyone here can sign in (Google or email link) and
  *  edit everything in this workspace. */
@@ -18,6 +19,8 @@ export default function TeamPage() {
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [role, setRole] = useState<"producer" | "contributor">("contributor");
+  const project = useProjectStore((s) => s.project);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +30,7 @@ export default function TeamPage() {
     setBusy(true);
     setError(null);
     try {
-      await addMember(projectId, em, name.trim() || null);
+      await addMember(projectId, em, name.trim() || null, role);
       setEmail("");
       setName("");
       await qc.invalidateQueries({ queryKey: ["members", projectId] });
@@ -38,6 +41,9 @@ export default function TeamPage() {
     }
   };
 
+  if (project && project.my_role === "contributor") {
+    return <p style={{ color: "#999", padding: "40px 0", textAlign: "center" }}>Producers only.</p>;
+  }
   if (isLoading || !data) {
     return <p style={{ color: "#999", padding: "40px 0" }}>Loading…</p>;
   }
@@ -66,6 +72,9 @@ export default function TeamPage() {
             <span className="gq2-invite__who">
               {m.name || m.email}
               {m.name && <span className="gq-kv__sub"> {m.email}</span>}
+            </span>
+            <span className={`gq-exp-status ${m.role === "producer" ? "gq-exp-status--review" : "gq-exp-status--reading"}`}>
+              {m.role}
             </span>
             <button
               type="button"
@@ -100,11 +109,21 @@ export default function TeamPage() {
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && add()}
         />
+        <select className="gq-input" value={role} style={{ flex: "none", width: 170 }}
+                onChange={(e) => setRole(e.target.value as "producer" | "contributor")}>
+          <option value="contributor">Contributor</option>
+          <option value="producer">Producer</option>
+        </select>
         <button type="button" className="gq-btn" onClick={add} disabled={busy}
                 style={{ flex: "none" }}>
           {busy ? "Adding…" : "Add"}
         </button>
       </div>
+      <p className="gq-exp-note">
+        Producers can edit everything. Contributors see the calendar and day
+        briefs, keep private notes, and can sync shoots to their Google
+        Calendar — no editing, expenses or team access.
+      </p>
       {error && <p style={{ color: "#C33", fontSize: 12, marginTop: 8 }}>{error}</p>}
     </div>
   );

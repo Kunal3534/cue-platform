@@ -42,15 +42,26 @@ const ICONS: Record<string, React.ReactNode> = {
 };
 
 /** Phone navigation — fixed glass bar at the bottom, app style. */
-export default function MobileTabBar({ projectId }: { projectId: string }) {
+export default function MobileTabBar({
+  projectId,
+  role = "producer",
+}: {
+  projectId: string;
+  role?: string | null;
+}) {
   const pathname = usePathname();
   const base = `/project/${projectId}`;
+  const producer = role !== "contributor";
   const items = [
     { key: "calendar", label: "Calendar", href: `${base}/calendar` },
     { key: "schedule", label: "Schedule", href: `${base}/schedule` },
-    { key: "expenses", label: "Expenses", href: `${base}/expenses` },
-    { key: "activity", label: "Activity", href: `${base}/activity` },
-    { key: "team", label: "Team", href: `${base}/team` },
+    ...(producer
+      ? [
+          { key: "expenses", label: "Expenses", href: `${base}/expenses` },
+          { key: "activity", label: "Activity", href: `${base}/activity` },
+          { key: "team", label: "Team", href: `${base}/team` },
+        ]
+      : []),
   ];
   return (
     <nav className="gq2-tabbar">

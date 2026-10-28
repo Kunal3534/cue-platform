@@ -46,18 +46,26 @@ const ICONS: Record<string, React.ReactNode> = {
 export default function WorkspaceSidebar({
   projectId,
   title,
+  role = "producer",
 }: {
   projectId: string;
   title: string;
+  role?: string | null;
 }) {
   const pathname = usePathname();
   const base = `/project/${projectId}`;
+  const producer = role !== "contributor";
   const items = [
     { key: "calendar", label: "Calendar", href: `${base}/calendar` },
     { key: "schedule", label: "Schedule", href: `${base}/schedule` },
-    { key: "expenses", label: "Expenses", href: `${base}/expenses` },
-    { key: "activity", label: "Activity", href: `${base}/activity` },
-    { key: "team", label: "Team", href: `${base}/team` },
+    // producer-only surfaces: money, edit history, team management
+    ...(producer
+      ? [
+          { key: "expenses", label: "Expenses", href: `${base}/expenses` },
+          { key: "activity", label: "Activity", href: `${base}/activity` },
+          { key: "team", label: "Team", href: `${base}/team` },
+        ]
+      : []),
   ];
 
   return (

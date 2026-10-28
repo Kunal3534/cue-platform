@@ -38,6 +38,7 @@ class ProjectDetail(BaseModel):
     title: str
     window: str | None = None
     status: str
+    my_role: str | None = None  # super | producer | contributor
     start_date: date | None = None
     end_date: date | None = None
     live_scenario_id: str | None = None
@@ -222,6 +223,9 @@ async def get_project(
     if not p_row:
         raise HTTPException(status_code=404, detail="Project not found")
 
+    from ..auth import project_role
+    my_role = await project_role(project_id, user, session)
+
     unit_cols = [
         r.unit_code
         for r in (await session.execute(
@@ -244,6 +248,7 @@ async def get_project(
         title=p_row.title,
         window=p_row.window,
         status=p_row.status,
+        my_role=my_role,
         start_date=p_row.start_date,
         end_date=p_row.end_date,
         live_scenario_id=p_row.live_scenario_id,
@@ -303,16 +308,16 @@ async def create_editorial_workspace(
 
 
 
-async def _assert_workspace_access(project_id: str, user: User, session: AsyncSession) -> None:
-    row = (await session.execute(
-        sa.text("SELECT 1 FROM projects p WHERE p.id = :pid AND (p.owner_id = :uid OR :team = TRUE "
-                "OR EXISTS (SELECT 1 FROM workspace_members wm "
-                "WHERE wm.project_id = p.id AND wm.email = :uemail))"),
-        {"pid": project_id, "uid": user.id, "team": is_team_member(user),
-         "uemail": user.email.lower()},
-    )).first()
-    if not row:
+async def _assert_workspace_access(
+    project_id: str, user: User, session: AsyncSession, min_role: str = "contributor",
+) -> None:
+    from ..auth import project_role
+
+    role = await project_role(project_id, user, session)
+    if role is None:
         raise HTTPException(status_code=404, detail="Project not found")
+    if min_role == "producer" and role == "contributor":
+        raise HTTPException(status_code=403, detail="Producers only")
 
 # ---------------------------------------------------------------------------
 # Workspace members — app-managed team access
@@ -321,10 +326,11 @@ async def _assert_workspace_access(project_id: str, user: User, session: AsyncSe
 class MemberIn(BaseModel):
     email: str
     name: str | None = None
+    role: str = "contributor"  # producer | contributor
 
 
 def _member_out(r) -> dict:
-    return {"id": r.id, "email": r.email, "name": r.name,
+    return {"id": r.id, "email": r.email, "name": r.name, "role": r.role,
             "added_by": r.added_by, "created_at": r.created_at.isoformat()}
 
 
@@ -334,13 +340,14 @@ async def list_members(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _assert_workspace_access(project_id, user, session)
+    await _assert_workspace_access(project_id, user, session, min_role="producer")
     rows = (await session.execute(
-        sa.text("SELECT id, email, name, added_by, created_at FROM workspace_members "
+        sa.text("SELECT id, email, name, role, added_by, created_at FROM workspace_members "
                 "WHERE project_id = :pid ORDER BY created_at"),
         {"pid": project_id},
     )).fetchall()
-    return {"members": [_member_out(r) for r in rows]}
+    from ..auth import is_super_admin
+    return {"members": [_member_out(r) for r in rows if not is_super_admin(r.email)]}
 
 
 @router.post("/{project_id}/members")
@@ -352,10 +359,15 @@ async def add_member(
 ) -> dict:
     from ..services import activity
 
-    await _assert_workspace_access(project_id, user, session)
+    await _assert_workspace_access(project_id, user, session, min_role="producer")
     email = body.email.lower().strip()
     if "@" not in email or "." not in email.split("@")[-1]:
         raise HTTPException(status_code=422, detail="That doesn't look like an email address")
+    from ..auth import is_super_admin
+    if is_super_admin(email):
+        raise HTTPException(status_code=409, detail="That account already has full access")
+    if body.role not in ("producer", "contributor"):
+        raise HTTPException(status_code=422, detail="Role must be producer or contributor")
     existing = (await session.execute(
         sa.text("SELECT id FROM workspace_members WHERE project_id = :pid AND email = :em"),
         {"pid": project_id, "em": email},
@@ -364,16 +376,16 @@ async def add_member(
         raise HTTPException(status_code=409, detail="Already a member of this workspace")
     member_id = str(uuid.uuid4())
     await session.execute(
-        sa.text("INSERT INTO workspace_members (id, project_id, email, name, added_by, created_at) "
-                "VALUES (:id, :pid, :em, :nm, :by, NOW())"),
+        sa.text("INSERT INTO workspace_members (id, project_id, email, name, role, added_by, created_at) "
+                "VALUES (:id, :pid, :em, :nm, :rl, :by, NOW())"),
         {"id": member_id, "pid": project_id, "em": email,
-         "nm": body.name or None, "by": user.email},
+         "nm": body.name or None, "rl": body.role, "by": user.email},
     )
     await activity.log(session, project_id, user, "member.added",
-                       f"Added {body.name or email} to the workspace")
+                       f"Added {body.name or email} to the workspace as {body.role}")
     await session.commit()
     row = (await session.execute(
-        sa.text("SELECT id, email, name, added_by, created_at FROM workspace_members WHERE id = :id"),
+        sa.text("SELECT id, email, name, role, added_by, created_at FROM workspace_members WHERE id = :id"),
         {"id": member_id},
     )).first()
     return _member_out(row)
@@ -389,7 +401,7 @@ async def remove_member(
 ) -> None:
     from ..services import activity
 
-    await _assert_workspace_access(project_id, user, session)
+    await _assert_workspace_access(project_id, user, session, min_role="producer")
     row = (await session.execute(
         sa.text("SELECT id, email, name FROM workspace_members "
                 "WHERE id = :id AND project_id = :pid"),

@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     public_api_url: str | None = None
     # Comma-separated emails allowed to sign in. Empty = anyone (dev default).
     allowed_emails: str = ""
+    # Super admins: full access everywhere, never listed on any Team page.
+    super_admin_emails: str = "kunal.panjwani@pixis.ai"
     # Google OAuth ("Sign in with Google" + Calendar sync). Create a Web
     # OAuth client in Google Cloud Console; authorised redirect URI is
     # {PUBLIC_API_URL or API base}/auth/google/callback.

@@ -17,6 +17,7 @@ import DayDetail from "@/components/editorial/DayDetail";
 import DayTodos from "@/components/editorial/DayTodos";
 import DayMarkers from "@/components/editorial/DayMarkers";
 import InviteBlock from "@/components/editorial/InviteBlock";
+import MyDayNotes from "@/components/editorial/MyDayNotes";
 
 function dnStripClass(dn: string | null | undefined): string {
   const d = (dn ?? "").toLowerCase();
@@ -44,6 +45,8 @@ function GqDayPage() {
 
   const day = data?.days.find((d) => d.date === date);
   const [shareState, setShareState] = useState<"idle" | "copied" | "error">("idle");
+  const project = useProjectStore((s) => s.project);
+  const producer = project?.my_role !== "contributor";
 
   const handleShareDay = async () => {
     try {
@@ -78,15 +81,17 @@ function GqDayPage() {
         </div>
         <div style={{ padding: "16px 0 8px", textAlign: "center" }}>
           <p style={{ color: "#999" }}>No shoot on this date.</p>
-          <Link
-            href={`/project/${projectId}/day/${date}/edit`}
-            className="gq-btn"
-            style={{ display: "inline-block", marginTop: 16 }}
-          >
-            Add a shoot here
-          </Link>
+          {producer && (
+            <Link
+              href={`/project/${projectId}/day/${date}/edit`}
+              className="gq-btn"
+              style={{ display: "inline-block", marginTop: 16 }}
+            >
+              Add a shoot here
+            </Link>
+          )}
         </div>
-        <DayMarkers projectId={projectId} date={date} />
+        {producer && <DayMarkers projectId={projectId} date={date} />}
       </div>
     );
   }
@@ -97,6 +102,7 @@ function GqDayPage() {
         <Link href={`/project/${projectId}/calendar`} style={{ fontSize: 11, letterSpacing: "0.2em", textTransform: "uppercase", color: "#999", whiteSpace: "nowrap" }}>
           ← Calendar
         </Link>
+        {producer && (
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "flex-end" }}>
           <button
             type="button"
@@ -126,6 +132,7 @@ function GqDayPage() {
             Delete
           </button>
         </div>
+        )}
       </div>
       <div className="gq2-day">
         <div className="gq2-day__main">
@@ -137,9 +144,15 @@ function GqDayPage() {
         </div>
         <aside className="gq2-day__side">
           <div className="gq-detail">
-            <InviteBlock projectId={projectId} date={date} />
-            <DayMarkers projectId={projectId} date={date} />
-            <DayTodos projectId={projectId} date={date} />
+            {producer ? (
+              <>
+                <InviteBlock projectId={projectId} date={date} />
+                <DayMarkers projectId={projectId} date={date} />
+                <DayTodos projectId={projectId} date={date} />
+              </>
+            ) : (
+              <MyDayNotes projectId={projectId} date={date} />
+            )}
           </div>
         </aside>
       </div>

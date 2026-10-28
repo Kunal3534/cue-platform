@@ -21,6 +21,34 @@ from .db import get_async_db
 from .models import User
 
 
+def is_super_admin(email: str) -> bool:
+    supers = {e.strip().lower() for e in settings.super_admin_emails.split(",") if e.strip()}
+    return email.lower() in supers
+
+
+async def project_role(project_id: str, user: User, session) -> str | None:
+    """Effective role on one workspace: 'super' (hidden full access),
+    'producer' (owner, env allowlist, or producer member), 'contributor'
+    (view + own notes + calendar sync), or None (no access)."""
+    import sqlalchemy as sa
+    if is_super_admin(user.email):
+        return "super"
+    row = (await session.execute(
+        sa.text("SELECT p.owner_id, wm.role AS member_role FROM projects p "
+                "LEFT JOIN workspace_members wm "
+                "ON wm.project_id = p.id AND wm.email = :em "
+                "WHERE p.id = :pid"),
+        {"pid": project_id, "em": user.email.lower()},
+    )).first()
+    if not row:
+        return None
+    if row.owner_id == user.id or is_team_member(user):
+        return "producer"
+    if row.member_role:
+        return "producer" if row.member_role == "producer" else "contributor"
+    return None
+
+
 async def may_sign_in(email: str, session) -> bool:
     """Who gets through the door: the env allowlist (producers), anyone a
     producer has added as a workspace member, or everyone when the allowlist

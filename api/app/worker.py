@@ -155,10 +155,15 @@ async def sync_day_to_google(ctx: dict, project_id: str, date_iso: str,
         stored: dict = dict((day_row.google_events if day_row else None) or {})
 
         users = (await session.execute(
-            sa.text("SELECT id, email, google_refresh_token FROM users "
-                    "WHERE google_refresh_token IS NOT NULL"),
+            sa.text("SELECT u.id, u.email, u.google_refresh_token FROM users u "
+                    "WHERE u.google_refresh_token IS NOT NULL"),
         )).fetchall()
-        team = [u for u in users if not allowed or u.email.lower() in allowed]
+        members = {r.email.lower() for r in (await session.execute(
+            sa.text("SELECT email FROM workspace_members WHERE project_id = :pid"),
+            {"pid": project_id},
+        )).fetchall()}
+        team = [u for u in users
+                if (not allowed or u.email.lower() in allowed) or u.email.lower() in members]
         if not team:
             return {"skipped": "no connected calendars"}
 
@@ -245,6 +250,7 @@ Reply with ONLY a JSON object, no prose and no code fences:
   "currency": "ISO code, e.g. INR",
   "total_amount": 1234.50,
   "category": "one of: travel, food, location, equipment, styling, hmu, production, misc",
+  "pay_type": "contributor_payment if this pays a professional contributor for their services (makeup artist, photographer, stylist, videographer and similar); cash_advance for everything else (food, travel, vendor purchases, rentals, on-set helpers)",
   "description": "one short line saying what this was for",
   "line_items": [{"description": "...", "amount": 123.0}]
 }
@@ -342,10 +348,12 @@ async def extract_expense(ctx: dict, expense_id: str) -> dict:
         except (InvalidOperation, ValueError):
             amount = None
         category = parsed.get("category")
+        pay_type = parsed.get("pay_type")
         fields = {
             "vendor": (parsed.get("vendor") or None),
             "description": (parsed.get("description") or None),
             "category": category if category in EXPENSE_CATEGORIES else "misc",
+            "pay_type": pay_type if pay_type in ("cash_advance", "contributor_payment") else "cash_advance",
             "amount": amount,
             "currency": (parsed.get("currency") or "INR").upper()[:8],
         }

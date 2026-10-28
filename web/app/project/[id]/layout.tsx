@@ -43,7 +43,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
     return (
       <div className="gq-page">
         <div className="gq2-wrap">
-          <WorkspaceSidebar projectId={projectId} title={project.title} />
+          <WorkspaceSidebar projectId={projectId} title={project.title} role={project.my_role} />
           <div className="gq2-main gq-inner">
             <header className="gq2-top">
               <div className="gq2-top__crumb">November 2026 · Shoot calendar</div>
@@ -57,7 +57,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
             <div className="gq-foot">Produced on Cue</div>
           </div>
         </div>
-        <MobileTabBar projectId={projectId} />
+        <MobileTabBar projectId={projectId} role={project.my_role} />
       </div>
     );
   }

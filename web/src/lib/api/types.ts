@@ -14,6 +14,7 @@ export interface ProjectSummary {
 export interface ProjectDetail extends ProjectSummary {
   start_date: string | null;
   end_date: string | null;
+  my_role?: "super" | "producer" | "contributor" | null;
   live_scenario_id: string | null;
   unit_cols: string[];
   settings: { mode?: "film" | "editorial"; share_token?: string } & Record<string, unknown>;
@@ -31,6 +32,7 @@ export interface WorkspaceMember {
   id: string;
   email: string;
   name: string | null;
+  role: "producer" | "contributor";
   added_by: string | null;
   created_at: string;
 }
@@ -252,6 +254,7 @@ export interface ExpenseItem {
   category: string | null;
   amount: number | null;
   currency: string;
+  pay_type: "cash_advance" | "contributor_payment" | null;
   source: "manual" | "receipt";
   has_receipt: boolean;
   filename: string | null;
@@ -265,12 +268,17 @@ export interface ExpenseItem {
 
 export interface ExpensesResponse {
   items: ExpenseItem[];
-  totals: { by_date: Record<string, number>; grand: number };
+  totals: {
+    by_date: Record<string, number>;
+    by_pay_type: Record<string, number>;
+    grand: number;
+  };
   categories: string[];
 }
 
 export interface ExpenseInput {
   date?: string | null;
+  pay_type?: "cash_advance" | "contributor_payment" | null;
   vendor?: string | null;
   description?: string | null;
   category?: string | null;

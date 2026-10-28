@@ -127,16 +127,23 @@ def _parse_date(raw: str) -> date_cls:
         raise HTTPException(status_code=422, detail=f"Bad date: {raw!r} (use YYYY-MM-DD)")
 
 
-async def _owner_project(project_id: str, user: User, session: AsyncSession):
-    row = (await session.execute(
-        sa.text("SELECT id, settings FROM projects WHERE id = :pid AND (owner_id = :uid OR :team = TRUE "
-                "OR EXISTS (SELECT 1 FROM workspace_members wm "
-                "WHERE wm.project_id = projects.id AND wm.email = :uemail))"),
-        {"pid": project_id, "uid": user.id, "team": is_team_member(user),
-         "uemail": user.email.lower()},
-    )).first()
-    if not row:
+async def _owner_project(
+    project_id: str, user: User, session: AsyncSession, min_role: str = "contributor",
+):
+    """Access gate. min_role="contributor" allows anyone on the workspace
+    (view surfaces); min_role="producer" is required for anything that edits
+    or sees producer-only material (to-dos, invites, expenses, team)."""
+    from ..auth import project_role
+
+    role = await project_role(project_id, user, session)
+    if role is None:
         raise HTTPException(status_code=404, detail="Project not found")
+    if min_role == "producer" and role == "contributor":
+        raise HTTPException(status_code=403, detail="Producers only")
+    row = (await session.execute(
+        sa.text("SELECT id, settings FROM projects WHERE id = :pid"),
+        {"pid": project_id},
+    )).first()
     return row
 
 
@@ -349,7 +356,7 @@ async def upsert_shoot_day(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     day_date = _parse_date(date)
 
     # Location: find-or-create by name
@@ -531,7 +538,7 @@ async def mint_day_share_link(
     calendar link, it exposes nothing beyond this single date."""
     import secrets
 
-    proj = await _owner_project(project_id, user, session)
+    proj = await _owner_project(project_id, user, session, min_role="producer")
     day_date = _parse_date(date)
 
     day = (await session.execute(
@@ -565,7 +572,7 @@ async def move_shoot_day(
     """Move a shoot to another date. The day row keeps its id, so talent,
     segments, HMU, crew and the moodboard all travel with it; the moodboard's
     stored files and this day's todos are re-keyed to the new date."""
-    proj = await _owner_project(project_id, user, session)
+    proj = await _owner_project(project_id, user, session, min_role="producer")
     src = _parse_date(date)
     dst = _parse_date(body.to)
 
@@ -695,7 +702,7 @@ async def delete_shoot_day(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> None:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     day_date = _parse_date(date)
 
     day_row = (await session.execute(
@@ -737,7 +744,7 @@ async def upload_moodboard(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     day_date = _parse_date(date)
 
     if (file.content_type or "") != "application/pdf" and not (file.filename or "").lower().endswith(".pdf"):
@@ -795,7 +802,7 @@ async def set_moodboard_from_google(
     from ..services import google_drive as gdrive
     from ..services.google_calendar import access_token_for
 
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     day_date = _parse_date(date)
     if not body.files:
         raise HTTPException(status_code=422, detail="Nothing was picked")
@@ -1002,7 +1009,7 @@ async def list_invites(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     day_date = _parse_date(date)
     rows = (await session.execute(
         sa.text("SELECT id, email, name, status, created_by, created_at FROM shoot_invites "
@@ -1020,7 +1027,7 @@ async def create_invite(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    proj = await _owner_project(project_id, user, session)
+    proj = await _owner_project(project_id, user, session, min_role="producer")
     day_date = _parse_date(date)
     email = body.email.lower().strip()
     if "@" not in email or "." not in email.split("@")[-1]:
@@ -1079,7 +1086,7 @@ async def delete_invite(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> None:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     day_date = _parse_date(date)
     row = (await session.execute(
         sa.text("SELECT id, email, name FROM shoot_invites "
@@ -1096,6 +1103,53 @@ async def delete_invite(
 
 
 # ---------------------------------------------------------------------------
+# Private day notes — each signed-in user sees only their own
+# ---------------------------------------------------------------------------
+
+class MyNoteIn(BaseModel):
+    text: str = ""
+
+
+@router.get("/{project_id}/editorial/days/{date}/my-note")
+async def get_my_note(
+    project_id: str,
+    date: str,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    await _owner_project(project_id, user, session)
+    day_date = _parse_date(date)
+    row = (await session.execute(
+        sa.text("SELECT text FROM user_day_notes "
+                "WHERE project_id = :pid AND date = :dt AND user_email = :em"),
+        {"pid": project_id, "dt": day_date, "em": user.email.lower()},
+    )).first()
+    return {"text": row.text if row else ""}
+
+
+@router.put("/{project_id}/editorial/days/{date}/my-note")
+async def put_my_note(
+    project_id: str,
+    date: str,
+    body: MyNoteIn,
+    user: User = Depends(current_user),
+    session: AsyncSession = Depends(get_async_db),
+) -> dict:
+    await _owner_project(project_id, user, session)
+    day_date = _parse_date(date)
+    await session.execute(
+        sa.text("INSERT INTO user_day_notes (id, project_id, date, user_email, text, updated_at) "
+                "VALUES (:id, :pid, :dt, :em, :tx, NOW()) "
+                "ON CONFLICT ON CONSTRAINT uq_day_notes_pde "
+                "DO UPDATE SET text = :tx, updated_at = NOW()"),
+        {"id": _uid(), "pid": project_id, "dt": day_date,
+         "em": user.email.lower(), "tx": body.text},
+    )
+    await session.commit()
+    return {"text": body.text}
+
+
+# ---------------------------------------------------------------------------
 # Producer to-do list (never exposed through /share)
 # ---------------------------------------------------------------------------
 
@@ -1105,7 +1159,7 @@ async def get_todos(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    row = await _owner_project(project_id, user, session)
+    row = await _owner_project(project_id, user, session, min_role="producer")
     return {"todos": (row.settings or {}).get("todos", [])}
 
 
@@ -1116,7 +1170,7 @@ async def save_markers(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    proj = await _owner_project(project_id, user, session)
+    proj = await _owner_project(project_id, user, session, min_role="producer")
     markers = [m.model_dump() for m in body.markers]
     await session.execute(
         sa.text("UPDATE projects SET settings = settings || CAST(:patch AS jsonb) WHERE id = :pid"),
@@ -1144,7 +1198,7 @@ async def save_todos(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    proj = await _owner_project(project_id, user, session)
+    proj = await _owner_project(project_id, user, session, min_role="producer")
     todos = [t.model_dump() for t in body.todos]
     await session.execute(
         sa.text("UPDATE projects SET settings = settings || CAST(:patch AS jsonb) WHERE id = :pid"),
@@ -1184,7 +1238,7 @@ async def get_activity(
     user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_db),
 ) -> dict:
-    await _owner_project(project_id, user, session)
+    await _owner_project(project_id, user, session, min_role="producer")
     rows = (await session.execute(
         sa.text("SELECT id, user_email, action, summary, created_at FROM activity_log "
                 "WHERE project_id = :pid ORDER BY created_at DESC LIMIT 150"),

@@ -18,6 +18,11 @@ import {
 import type { ExpenseItem, ExpensePatch } from "@/lib/api/types";
 import ReceiptScanner from "@/components/editorial/ReceiptScanner";
 
+const PAY_TYPE_LABELS: Record<string, string> = {
+  cash_advance: "Cash advance",
+  contributor_payment: "Contributor payment",
+};
+
 const CATEGORY_LABELS: Record<string, string> = {
   travel: "Travel",
   food: "Food & catering",
@@ -63,6 +68,7 @@ function ExpenseEditor({
   const [description, setDescription] = useState(item.description ?? "");
   const [amount, setAmount] = useState(item.amount != null ? String(item.amount) : "");
   const [category, setCategory] = useState(item.category ?? "misc");
+  const [payType, setPayType] = useState(item.pay_type ?? "cash_advance");
   const [date, setDate] = useState(item.date ?? "");
   const [notes, setNotes] = useState(item.notes ?? "");
   const [saving, setSaving] = useState(false);
@@ -82,6 +88,7 @@ function ExpenseEditor({
         description: description.trim() || null,
         amount: parsed,
         category,
+        pay_type: payType as "cash_advance" | "contributor_payment",
         notes: notes.trim() || null,
         ...(date ? { date } : { clear_date: true }),
       });
@@ -115,6 +122,13 @@ function ExpenseEditor({
             {categories.map((c) => (
               <option key={c} value={c}>{CATEGORY_LABELS[c] ?? c}</option>
             ))}
+          </select>
+        </div>
+        <div>
+          <label className="gq-label">Paid as</label>
+          <select className="gq-input" value={payType} onChange={(e) => setPayType(e.target.value as "cash_advance" | "contributor_payment")}>
+            <option value="cash_advance">Cash advance</option>
+            <option value="contributor_payment">Contributor payment</option>
           </select>
         </div>
         <div>
@@ -246,6 +260,16 @@ export default function ExpensesPage() {
         <div className="gq-exp-grand">
           <span className="gq-exp-grand__label">Total spend</span>
           <span className="gq-exp-grand__num">{inr(data.totals.grand)}</span>
+          <span className="gq-kv__sub" style={{ marginTop: 2 }}>
+            {[
+              data.totals.by_pay_type?.cash_advance != null
+                ? `Cash advance ${inr(data.totals.by_pay_type.cash_advance)}`
+                : null,
+              data.totals.by_pay_type?.contributor_payment != null
+                ? `Contributor payments ${inr(data.totals.by_pay_type.contributor_payment)}`
+                : null,
+            ].filter(Boolean).join(" · ") || "No classified spend yet"}
+          </span>
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           {me?.google_calendar_connected && (
@@ -310,7 +334,8 @@ export default function ExpensesPage() {
             <ExpenseEditor
               item={{
                 id: "", date: uploadDate || null, vendor: null, description: null,
-                category: "misc", amount: null, currency: "INR", source: "manual",
+                category: "misc", amount: null, currency: "INR", pay_type: "cash_advance",
+                source: "manual",
                 has_receipt: false, filename: null, content_type: null,
                 status: "ready", extracted: null, notes: null, created_by: null,
                 created_at: "",
@@ -377,6 +402,7 @@ export default function ExpensesPage() {
                       <div className="gq-exp-row__sub">
                         {[
                           item.vendor && item.description ? item.description : null,
+                          item.pay_type ? PAY_TYPE_LABELS[item.pay_type] : null,
                           item.category ? (CATEGORY_LABELS[item.category] ?? item.category) : null,
                           item.notes,
                         ]
