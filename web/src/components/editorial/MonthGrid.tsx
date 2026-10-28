@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import type { EditorialDay } from "@/lib/api/types";
 
 const DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -12,8 +13,10 @@ function firstNames(day: EditorialDay): string[] {
 }
 
 /**
- * Full-month minimal calendar. Shoot days carry the talent names and a
- * PHOTOS + FILM tag; clicking one hands the date to `onSelect`.
+ * Minimal month calendar with ‹ › navigation — any month, any year; shoots
+ * aren't limited to the seeded window. Shoot days carry the talent names and
+ * a PHOTOS + FILM tag; clicking one hands the date to `onSelect`. The agenda
+ * below always lists every shoot across all months.
  */
 export default function MonthGrid({
   days,
@@ -28,8 +31,16 @@ export default function MonthGrid({
   selectedDate?: string | null;
 }) {
   const anchor = days[0] ? new Date(`${days[0].date}T00:00:00`) : new Date();
-  const year = anchor.getFullYear();
-  const month = anchor.getMonth(); // 0-based
+  const [view, setView] = useState({
+    year: anchor.getFullYear(),
+    month: anchor.getMonth(), // 0-based
+  });
+  const { year, month } = view;
+
+  const step = (delta: number) => {
+    const d = new Date(year, month + delta, 1);
+    setView({ year: d.getFullYear(), month: d.getMonth() });
+  };
 
   const byDate = new Map(days.map((d) => [d.date, d]));
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -50,9 +61,17 @@ export default function MonthGrid({
 
   return (
     <div>
-      <h2 className="gq-month">
-        {MONTHS[month]} {year}
-      </h2>
+      <div className="gq-month-row">
+        <button type="button" className="gq-month-nav" aria-label="Previous month" onClick={() => step(-1)}>
+          ‹
+        </button>
+        <h2 className="gq-month" style={{ margin: 0 }}>
+          {MONTHS[month]} {year}
+        </h2>
+        <button type="button" className="gq-month-nav" aria-label="Next month" onClick={() => step(1)}>
+          ›
+        </button>
+      </div>
       <div className="gq-grid-head">
         {DOW.map((d) => (
           <div key={d}>{d}</div>
@@ -106,6 +125,7 @@ export default function MonthGrid({
               <div className="gq-agenda__date">
                 <div className="gq-agenda__num">{date.getDate()}</div>
                 <div className="gq-agenda__dow">
+                  {date.toLocaleDateString("en-GB", { month: "short" })} ·{" "}
                   {date.toLocaleDateString("en-GB", { weekday: "short" })}
                 </div>
               </div>
