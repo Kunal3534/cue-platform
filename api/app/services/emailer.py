@@ -52,29 +52,53 @@ def kv_rows(pairs: list[tuple[str, str]]) -> str:
 def frame(eyebrow: str, headline: str, sub: str | None, body_html: str) -> str:
     base = _base()
     return f"""
-<div style="background:{PAPER};padding:30px 14px;margin:0">
-  <div style="max-width:520px;margin:0 auto;text-align:center">
-    <img src="{base}/moty-email.png" alt="GQ Men of the Year" width="112"
-         style="width:112px;height:auto;margin:0 auto 18px;display:inline-block" />
-  </div>
-  <div style="max-width:520px;margin:0 auto;background:{CARD};
-              border:1px solid #FFFFFF;border-top:3px solid #B08D2E;border-radius:20px;
-              padding:30px 32px 28px;box-shadow:0 10px 28px rgba(20,20,24,0.09)">
-    <p style="letter-spacing:0.24em;font-size:10.5px;color:{GOLD};margin:0 0 8px;
-              font-family:Helvetica,Arial,sans-serif">{eyebrow}</p>
-    <h1 style="font-family:Georgia,serif;font-weight:600;font-size:27px;line-height:1.25;
-               color:{INK};margin:0 0 4px">{headline}</h1>
-    {f'<p style="font-size:14px;color:{MUTED};margin:0 0 6px;font-family:Georgia,serif">{sub}</p>' if sub else ''}
-    <div style="font-family:Georgia,serif;color:{INK};font-size:15px;line-height:1.7">
-      {body_html}
+<div style="background:{PAPER};padding:26px 14px 30px;margin:0">
+  <div style="max-width:560px;margin:0 auto">
+
+    <table style="width:100%;border-collapse:collapse;margin:0 0 16px">
+      <tr>
+        <td style="font-family:Helvetica,Arial,sans-serif;font-size:14px;
+                   letter-spacing:0.3em;color:{INK};font-weight:bold">CUE</td>
+        <td style="text-align:right;font-family:Helvetica,Arial,sans-serif;font-size:11px;
+                   letter-spacing:0.12em">
+          <a href="{base}" style="color:{MUTED};text-decoration:none">GQ.CUEIT.IO</a></td>
+      </tr>
+    </table>
+
+    <div style="background:#FBFAF6;border-radius:20px;overflow:hidden;
+                border:1px solid #FFFFFF;box-shadow:0 12px 32px rgba(20,20,24,0.10)">
+      <img src="{base}/email-hero.jpg" alt="GQ Men of the Year" width="560"
+           style="width:100%;height:auto;display:block" />
+      <div style="padding:34px 38px 34px">
+        <p style="letter-spacing:0.24em;font-size:10.5px;color:{GOLD};margin:0 0 10px;
+                  font-family:Helvetica,Arial,sans-serif">{eyebrow}</p>
+        <h1 style="font-family:Georgia,serif;font-weight:600;font-size:28px;line-height:1.25;
+                   color:{INK};margin:0 0 6px">{headline}</h1>
+        {f'<p style="font-size:14px;color:{MUTED};margin:0 0 6px;font-family:Georgia,serif">{sub}</p>' if sub else ''}
+        <div style="font-family:Georgia,serif;color:{INK};font-size:15px;line-height:1.7">
+          {body_html}
+        </div>
+      </div>
     </div>
-  </div>
-  <div style="max-width:520px;margin:20px auto 0;text-align:center">
-    <p style="font-size:10px;letter-spacing:0.22em;color:#9A978F;margin:0;
-              font-family:Helvetica,Arial,sans-serif">
-      <img src="{base}/cue-email.png" alt="Cue" width="18" height="18"
-           style="width:18px;height:18px;vertical-align:-4px;margin-right:8px" />PRODUCED ON CUE
-      · <a href="{base}" style="color:#9A978F;text-decoration:none">{base.replace('https://', '').upper()}</a></p>
+
+    <table style="width:100%;border-collapse:collapse;margin:26px 0 0">
+      <tr><td style="text-align:center;font-family:Helvetica,Arial,sans-serif;
+                     font-size:11px;letter-spacing:0.1em;padding:0 0 16px">
+        <a href="{base}" style="color:{MUTED};text-decoration:none">gq.cueit.io</a>
+        <span style="color:#C9C6BE">&nbsp;|&nbsp;</span>
+        <a href="{base}/privacy" style="color:{MUTED};text-decoration:none">Privacy</a>
+        <span style="color:#C9C6BE">&nbsp;|&nbsp;</span>
+        <a href="{base}/terms" style="color:{MUTED};text-decoration:none">Terms</a>
+      </td></tr>
+      <tr><td style="text-align:center">
+        <a href="{base}"><img src="{base}/cue-badge.png" alt="Cue" width="40" height="40"
+             style="width:40px;height:40px;display:inline-block" /></a>
+      </td></tr>
+      <tr><td style="text-align:center;font-family:Helvetica,Arial,sans-serif;font-size:9.5px;
+                     letter-spacing:0.22em;color:#A5A29A;padding:10px 0 0">
+        PRODUCED ON CUE</td></tr>
+    </table>
+
   </div>
 </div>"""
 

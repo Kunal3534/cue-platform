@@ -341,7 +341,8 @@ async def _send_welcome_email(email: str, name: str | None, role: str,
     """Branded invitation: you're in, here's where to sign in."""
     from ..services import emailer
 
-    greeting = f"Hi {name}," if name else "Hi,"
+    nice_name = (name.strip()[:1].upper() + name.strip()[1:]) if name else None
+    greeting = f"Hi {nice_name}," if nice_name else "Hi,"
     role_line = ("You&rsquo;ll see each shoot day as it takes shape: the briefs, the "
                  "call times, your own private notes, and, if you want it, every day "
                  "placed neatly in your Google Calendar."

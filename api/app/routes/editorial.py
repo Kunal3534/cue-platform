@@ -964,7 +964,8 @@ async def _send_invite_email(email: str, name: str | None, day: dict, share_url:
     d = date_cls.fromisoformat(day["date"])
     nice_date = d.strftime("%A, ") + f"{d.day} " + d.strftime("%B %Y")
     loc = (day.get("location") or {}).get("name")
-    greeting = f"Hi {name}," if name else "Hi,"
+    nice_name = (name.strip()[:1].upper() + name.strip()[1:]) if name else None
+    greeting = f"Hi {nice_name}," if nice_name else "Hi,"
     body = (
         f"<p style='margin:14px 0 4px'>{greeting} consider this your invitation. "
         f"The day, in brief:</p>"
